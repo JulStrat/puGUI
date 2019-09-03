@@ -818,11 +818,9 @@ type
   (* -------------------------------------------------------------------------------- *)
 
   PUG_PSET = ^UG_PSET;
-  UG_PSET = procedure(x: UG_S16; y: UG_S16; c: UG_COLOR);
-  UG_ACC_FILLFRAME = procedure(x1: UG_S16; y1: UG_S16; x2: UG_S16;
-    y2: UG_S16; c: UG_COLOR);
-  UG_ACC_DRAWLINE = procedure(x1: UG_S16; y1: UG_S16; x2: UG_S16;
-    y2: UG_S16; c: UG_COLOR);
+  UG_PSET = procedure(x, y: UG_S16; c: UG_COLOR);
+  _HW_DRAWLINE = function(x1, y1: UG_S16; x2, y2: UG_S16; c: UG_COLOR): UG_RESULT;
+  _HW_FILLFRAME = function(x1, y1: UG_S16; x2, y2: UG_S16; c: UG_COLOR): UG_RESULT;
 
   UG_CONSOLE = record
     x_pos: UG_S16;
@@ -874,6 +872,8 @@ procedure UG_DrawPixel(x0, y0: UG_S16; c: UG_COLOR);
 procedure UG_DrawCircle(x0, y0: UG_S16; r: UG_S16; c: UG_COLOR);
 procedure UG_FillCircle(x0, y0: UG_S16; r: UG_S16; c: UG_COLOR);
 procedure UG_DrawArc(x0, y0: UG_S16; r: UG_S16; s: UG_U8; c: UG_COLOR);
+procedure UG_DrawHLine(x1, x2, y: UG_S16; c: UG_COLOR);
+procedure UG_DrawVLine(y1, y2, x: UG_S16; c: UG_COLOR);
 procedure UG_DrawLine(x1, y1: UG_S16; x2, y2: UG_S16; c: UG_COLOR);
 procedure UG_PutString(x, y: UG_S16; str: PChar);
 procedure UG_PutChar(chr: char; x, y: UG_S16; fc: UG_COLOR; bc: UG_COLOR);
@@ -896,7 +896,7 @@ procedure UG_Update;
 procedure UG_TouchUpdate(xp, yp: UG_S16; state: UG_U8);
 
 (* Driver functions *)
-procedure UG_DriverRegister(t: UG_U8; driver: PUG_U8);
+procedure UG_DriverRegister(t: UG_U8; driver: Pointer);
 procedure UG_DriverEnable(t: UG_U8);
 procedure UG_DriverDisable(t: UG_U8);
 
@@ -912,10 +912,7 @@ procedure _UG_PutChar(chr: char; x, y: UG_S16; fc: UG_COLOR; bc: UG_COLOR;
   const font: UG_FONT);
 var
   i, j, k: UG_U16;
-  { j: UG_U16; }
-  { k: UG_U16; }
   xo, yo: UG_U16;
-  { yo: UG_U16; }
   c: UG_U16;
   bn: UG_U16;
   actual_char_width: UG_U16;
@@ -992,13 +989,13 @@ begin
     if font.font_type = FONT_TYPE_8BPP then
     begin
       index := (Ord(bt) - font.start_char) * font.char_height * font.char_width;
-      for{while} j := 0 to Pred(font.char_height) {j++ } do
+      for j := 0 to Pred(font.char_height) do
       begin
         xo := x;
-        for{while} i := 0 to Pred(actual_char_width) {i++ } do
+        for i := 0 to Pred(actual_char_width) do
         begin
           b := font.p[index];
-          {++} Inc(index);
+          Inc(index);
           color := (((fc and $FF) * Ord(b) + (bc and $FF) * (256 - Ord(b))) shr 8) and
             $FF or (((fc and $FF00) * Ord(b) + (bc and $FF00) * (256 - Ord(b))) shr
             8) and $FF00 or (((fc and $FF0000) * Ord(b) + (bc and $FF0000) *
@@ -1022,20 +1019,14 @@ var
   rc: UG_U16;
   wl: UG_U16;
   xp, yp: UG_S16;
-  { yp: UG_S16; }
   xs, ys: UG_S16;
-  { ys: UG_S16; }
   xe, ye: UG_S16;
-  { ye: UG_S16; }
   align: UG_U8;
   char_width, char_height: UG_S16;
-  { char_height: UG_S16; }
   char_h_space, char_v_space: UG_S16;
-  { char_v_space: UG_S16; }
   chr: char;
   str: PChar;
   c: PChar;
-
 begin
   xs := txt.a.xs;
   ys := txt.a.ys;
@@ -1084,10 +1075,7 @@ begin
       if (Ord(c^) < txt.font^.start_char) or (Ord(c^) > txt.font^.end_char) then
       begin
         Inc(c);
-        begin
-          {!!!7 possible troubles with "for" =>}
-          continue;
-        end;
+        continue;
       end;
       Inc(sl);
       if txt.font^.widths <> nil then
@@ -1095,8 +1083,6 @@ begin
       else
         wl := wl + char_width;
       wl := wl + char_h_space;
-      (* wl:= wl + ((txt.font^.widths {was ?}if
-      then txt.font.widths[c^-txt.font^.start_char] else char_width)+char_h_space); *)
       Inc(c);
     end;
     wl := wl - char_h_space;
@@ -1121,8 +1107,6 @@ begin
       else
         xp := xp + char_width;
       xp := xp + char_h_space;
-      (* xp:= xp + ((txt.font.widths {was ?}if  then
-      txt.font.widths[chr-txt.font.start_char] {was :}else char_width)+char_h_space); *)
     end;
     Inc(str);
     yp := yp + char_height + char_v_space;
@@ -1192,9 +1176,10 @@ end;
 procedure UG_FillFrame(x1, y1: UG_S16; x2, y2: UG_S16; c: UG_COLOR);
 var
   n, m: UG_S16;
-  (* m: UG_S16; *)
-  (* aff: *)
+  pset: UG_PSET;
 begin
+  pset := gui^.pset;
+
   if x2 < x1 then
   begin
     n := x2;
@@ -1211,7 +1196,7 @@ begin
   (* Is hardware acceleration available? *)
   if (Ord(gui^.driver[DRIVER_FILL_FRAME].state) and DRIVER_ENABLED) <> 0 then
   begin
-    UG_ACC_FILLFRAME(gui^.driver[DRIVER_FILL_FRAME].driver)(x1, y1, x2, y2, c);
+    _HW_FILLFRAME(gui^.driver[DRIVER_FILL_FRAME].driver)(x1, y1, x2, y2, c);
     exit;
   end;
 
@@ -1219,7 +1204,8 @@ begin
   begin
     for n := x1 to x2 do
     begin
-      gui^.pset(n, m, c);
+      (* gui^.pset(n, m, c); *)
+      pset(n, m, c);
     end;
   end;
 end;
@@ -1227,7 +1213,6 @@ end;
 procedure UG_FillRoundFrame(x1, y1: UG_S16; x2, y2: UG_S16; r: UG_S16; c: UG_COLOR);
 var
   x, y: UG_S16;
-  (* y: UG_S16; *)
   xd: UG_S16;
 begin
   if x2 < x1 then
@@ -1279,7 +1264,6 @@ end;
 procedure UG_DrawMesh(x1, y1: UG_S16; x2, y2: UG_S16; c: UG_COLOR);
 var
   n, m: UG_S16;
-  (* m: UG_S16; *)
 begin
   if x2 < x1 then
   begin
@@ -1354,9 +1338,7 @@ end;
 procedure UG_DrawCircle(x0, y0: UG_S16; r: UG_S16; c: UG_COLOR);
 var
   x, y: UG_S16;
-  (* y: UG_S16;  *)
   xd, yd: UG_S16;
-  (* yd: UG_S16; *)
   e: UG_S16;
 begin
   if x0 < 0 then
@@ -1396,7 +1378,6 @@ end;
 procedure UG_FillCircle(x0, y0: UG_S16; r: UG_S16; c: UG_COLOR);
 var
   x, y: UG_S16;
-  (* y: UG_S16; *)
   xd: UG_S16;
 begin
   if x0 < 0 then
@@ -1438,9 +1419,7 @@ end;
 procedure UG_DrawArc(x0, y0: UG_S16; r: UG_S16; s: UG_U8; c: UG_COLOR);
 var
   x, y: UG_S16;
-  (* y: UG_S16;  *)
   xd, yd: UG_S16;
-  (* yd: UG_S16; *)
   e: UG_S16;
 begin
   if x0 < 0 then
@@ -1492,27 +1471,63 @@ begin
   end;
 end;
 
+procedure UG_DrawHLine(x1, x2, y: UG_S16; c: UG_COLOR);
+var
+  x: UG_S16;
+begin
+  if x1 > x2 then
+  begin
+    x := x2;
+    x2 := x1;
+    x1 := x;
+  end;
+  (* Is hardware acceleration available? *)
+  if (Ord(gui^.driver[DRIVER_DRAW_LINE].state) and DRIVER_ENABLED) <> 0 then
+  begin
+    _HW_DRAWLINE(gui^.driver[DRIVER_DRAW_LINE].driver)(x1, y, x2, y, c);
+    exit;
+  end;
+  for x := x1 to x2 do
+  begin
+    gui^.pset(x, y, c);
+  end;
+end;
+
+procedure UG_DrawVLine(y1, y2, x: UG_S16; c: UG_COLOR);
+var
+  y: UG_S16;
+begin
+  if y1 > y2 then
+  begin
+    y := y2;
+    y2 := y1;
+    y1 := y;
+  end;
+  (* Is hardware acceleration available? *)
+  if (Ord(gui^.driver[DRIVER_DRAW_LINE].state) and DRIVER_ENABLED) <> 0 then
+  begin
+    _HW_DRAWLINE(gui^.driver[DRIVER_DRAW_LINE].driver)(x, y1, x, y2, c);
+    exit;
+  end;
+  for y := y1 to y2 do
+  begin
+    gui^.pset(x, y, c);
+  end;
+end;
+
 procedure UG_DrawLine(x1, y1: UG_S16; x2, y2: UG_S16; c: UG_COLOR);
 var
   n: UG_S16;
   dx, dy: UG_S16;
-  (* dy: UG_S16; *)
   sgndx, sgndy: UG_S16;
-  (* sgndy: UG_S16; *)
   dxabs, dyabs: UG_S16;
-  (* dyabs: UG_S16; *)
   x, y: UG_S16;
-  (* y: UG_S16; *)
   drawx, drawy: UG_S16;
-  (* drawy: UG_S16; *)
-
 begin
   (* Is hardware acceleration available? *)
-
-
   if (Ord(gui^.driver[DRIVER_DRAW_LINE].state) and DRIVER_ENABLED) <> 0 then
   begin
-    UG_ACC_DRAWLINE(gui^.driver[DRIVER_DRAW_LINE].driver)(x1, y1, x2, y2, c);
+    _HW_DRAWLINE(gui^.driver[DRIVER_DRAW_LINE].driver)(x1, y1, x2, y2, c);
     exit;
   end;
 
@@ -1536,7 +1551,7 @@ begin
 
   if dxabs >= dyabs then
   begin
-    for{while} n := 0 to Pred(dxabs) { n++ } do
+    for n := 0 to Pred(dxabs) do
     begin
       y := y + dyabs;
       if y >= dxabs then
@@ -1567,7 +1582,6 @@ end;
 procedure UG_PutString(x, y: UG_S16; str: PChar);
 var
   xp, yp: UG_S16;
-  (* yp: UG_S16; *)
   cw: UG_U8;
   chr: char;
 begin
@@ -1609,24 +1623,21 @@ var
   chr: char;
   cw: UG_U8;
 begin
-  while {*}str^ <> char(0) do
+  while str^ <> char(0) do
   begin
-    chr := {*}str^;
+    chr := str^;
     if chr = char($0A) then
     begin
       gui^.console.x_pos := gui^.x_dim;
       Inc(str);
-      begin
-        {!!!7 possible troubles with "for" =>}
-        continue;
-      end;
+      continue;
     end;
+
     if gui^.font.widths <> nil then
       cw := gui^.font.widths[Ord(chr) - gui^.font.start_char]
     else
       cw := char(gui^.font.char_width);
 
-    (* cw:= gui^.font.widths {was ?}if  then gui.font.widths[chr-gui.font.start_char] {was :}else gui.font.char_width; *)
     gui^.console.x_pos := gui^.console.x_pos + Ord(cw) + gui^.char_h_space;
     if gui^.console.x_pos + Ord(cw) > gui^.console.x_end then
     begin
@@ -1786,7 +1797,7 @@ end;
 (* -- DRIVER FUNCTIONS                                                           -- *)
 (* -------------------------------------------------------------------------------- *)
 
-procedure UG_DriverRegister(t: UG_U8; driver: PUG_U8);
+procedure UG_DriverRegister(t: UG_U8; driver: Pointer);
 begin
   if Ord(t) < NUMBER_OF_DRIVERS then
   begin
