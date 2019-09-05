@@ -620,6 +620,7 @@ type
   (* -- MESSAGE                                                                    -- *)
   (* -------------------------------------------------------------------------------- *)
   (* Message structure *)
+  PUG_MESSAGE = ^UG_MESSAGE;
 
   UG_MESSAGE = record
     mtype: UG_U8;
@@ -682,6 +683,8 @@ type
   end;
 
   (* Window structure *)
+  UG_WINDOW_CB = procedure(msg: PUG_MESSAGE);
+
   S_WINDOW = record
     objcnt: UG_U8;
     objlst: pUG_OBJECT;
@@ -694,7 +697,7 @@ type
     ye: UG_S16;
     style: UG_U8;
     title: UG_TITLE;
-    cb: procedure{!!!3 unknown typedef};
+    cb: UG_WINDOW_CB;
   end;
 
   UG_WINDOW = S_WINDOW;
@@ -890,6 +893,62 @@ function UG_GetYDim: UG_S16;
 procedure UG_FontSetHSpace(s: UG_U16);
 procedure UG_FontSetVSpace(s: UG_U16);
 
+(* Window functions *)
+
+function UG_WindowCreate(var wnd: UG_WINDOW; objlst: pUG_OBJECT;
+  objcnt: UG_U8; cb: UG_WINDOW_CB): UG_RESULT;
+
+(*
+function UG_WindowDelete(wnd: pUG_WINDOW): UG_RESULT;
+*)
+function UG_WindowShow(var wnd: UG_WINDOW): UG_RESULT;
+(*
+function UG_WindowHide(wnd: pUG_WINDOW): UG_RESULT;
+function UG_WindowResize(wnd: pUG_WINDOW;  xs: UG_S16;  ys: UG_S16;  xe: UG_S16;  ye: UG_S16): UG_RESULT;
+function UG_WindowAlert(wnd: pUG_WINDOW): UG_RESULT;
+function UG_WindowSetForeColor(wnd: pUG_WINDOW;  fc: UG_COLOR): UG_RESULT;
+function UG_WindowSetBackColor(wnd: pUG_WINDOW;  bc: UG_COLOR): UG_RESULT;
+function UG_WindowSetTitleTextColor(wnd: pUG_WINDOW;  c: UG_COLOR): UG_RESULT;
+function UG_WindowSetTitleColor(wnd: pUG_WINDOW;  c: UG_COLOR): UG_RESULT;
+function UG_WindowSetTitleInactiveTextColor(wnd: pUG_WINDOW;  c: UG_COLOR): UG_RESULT;
+function UG_WindowSetTitleInactiveColor(wnd: pUG_WINDOW;  c: UG_COLOR): UG_RESULT;
+*)
+function UG_WindowSetTitleText(var wnd: UG_WINDOW;  str: pchar): UG_RESULT;
+function UG_WindowSetTitleTextFont(var wnd: UG_WINDOW;  font: pUG_FONT): UG_RESULT;
+(*
+function UG_WindowSetTitleTextHSpace(wnd: pUG_WINDOW;  hs: UG_S8): UG_RESULT;
+function UG_WindowSetTitleTextVSpace(wnd: pUG_WINDOW;  vs: UG_S8): UG_RESULT;
+function UG_WindowSetTitleTextAlignment(wnd: pUG_WINDOW;  align: UG_U8): UG_RESULT;
+function UG_WindowSetTitleHeight(wnd: pUG_WINDOW;  height: UG_U8): UG_RESULT;
+function UG_WindowSetXStart(wnd: pUG_WINDOW;  xs: UG_S16): UG_RESULT;
+function UG_WindowSetYStart(wnd: pUG_WINDOW;  ys: UG_S16): UG_RESULT;
+function UG_WindowSetXEnd(wnd: pUG_WINDOW;  xe: UG_S16): UG_RESULT;
+function UG_WindowSetYEnd(wnd: pUG_WINDOW;  ye: UG_S16): UG_RESULT;
+function UG_WindowSetStyle(wnd: pUG_WINDOW;  style: UG_U8): UG_RESULT;
+function UG_WindowGetForeColor(wnd: pUG_WINDOW): UG_COLOR;
+function UG_WindowGetBackColor(wnd: pUG_WINDOW): UG_COLOR;
+function UG_WindowGetTitleTextColor(wnd: pUG_WINDOW): UG_COLOR;
+function UG_WindowGetTitleColor(wnd: pUG_WINDOW): UG_COLOR;
+function UG_WindowGetTitleInactiveTextColor(wnd: pUG_WINDOW): UG_COLOR;
+function UG_WindowGetTitleInactiveColor(wnd: pUG_WINDOW): UG_COLOR;
+function UG_WindowGetTitleText(wnd: pUG_WINDOW): pchar;
+function UG_WindowGetTitleTextFont(wnd: pUG_WINDOW): pUG_FONT;
+function UG_WindowGetTitleTextHSpace(wnd: pUG_WINDOW): UG_S8;
+function UG_WindowGetTitleTextVSpace(wnd: pUG_WINDOW): UG_S8;
+function UG_WindowGetTitleTextAlignment(wnd: pUG_WINDOW): UG_U8;
+function UG_WindowGetTitleHeight(wnd: pUG_WINDOW): UG_U8;
+function UG_WindowGetXStart(wnd: pUG_WINDOW): UG_S16;
+function UG_WindowGetYStart(wnd: pUG_WINDOW): UG_S16;
+function UG_WindowGetXEnd(wnd: pUG_WINDOW): UG_S16;
+function UG_WindowGetYEnd(wnd: pUG_WINDOW): UG_S16;
+function UG_WindowGetStyle(wnd: pUG_WINDOW): UG_U8;
+function UG_WindowGetArea(wnd: pUG_WINDOW;  a: pUG_AREA): UG_RESULT;
+function UG_WindowGetInnerWidth(wnd: pUG_WINDOW): UG_S16;
+function UG_WindowGetOuterWidth(wnd: pUG_WINDOW): UG_S16;
+function UG_WindowGetInnerHeight(wnd: pUG_WINDOW): UG_S16;
+function UG_WindowGetOuterHeight(wnd: pUG_WINDOW): UG_S16;
+*)
+
 (* Miscellaneous functions *)
 procedure UG_WaitForUpdate;
 procedure UG_Update;
@@ -904,6 +963,53 @@ var
   gui: PUG_GUI;
 
 implementation
+
+{$ifdef USE_COLOR_RGB888}
+const
+  (* Frame 0 *)
+  (* Frame 1 *)
+  (* Frame 2 *)
+  pal_window: array [0..11] of UG_COLOR =
+    ($646464, $646464, $646464, $646464, $FFFFFF, $FFFFFF, $696969, $696969,
+    $E3E3E3, $E3E3E3, $A0A0A0, $A0A0A0);
+  (* Frame 0 *)
+  (* Frame 1 *)
+  (* Frame 2 *)
+  pal_button_pressed: array [0..11] of UG_COLOR =
+    ($646464, $646464, $646464, $646464, $A0A0A0, $A0A0A0, $A0A0A0,
+    $A0A0A0, $F0F0F0, $F0F0F0, $F0F0F0, $F0F0F0);
+  (* Frame 0 *)
+  (* Frame 1 *)
+  (* Frame 2 *)
+  pal_button_released: array [0..11] of UG_COLOR =
+    ($646464, $646464, $646464, $646464, $FFFFFF, $FFFFFF, $696969,
+    $696969, $E3E3E3, $E3E3E3, $A0A0A0, $A0A0A0);
+  (* Frame 0 *)
+  (* Frame 1 *)
+  (* Frame 2 *)
+  pal_checkbox_pressed: array [0..11] of UG_COLOR =
+    ($646464, $646464, $646464, $646464, $A0A0A0, $A0A0A0, $A0A0A0,
+    $A0A0A0, $F0F0F0, $F0F0F0, $F0F0F0, $F0F0F0);
+  (* Frame 0 *)
+  (* Frame 1 *)
+  (* Frame 2 *)
+  pal_checkbox_released: array [0..11] of UG_COLOR =
+    ($646464, $646464, $646464, $646464, $FFFFFF, $FFFFFF, $696969,
+    $696969, $E3E3E3, $E3E3E3, $A0A0A0, $A0A0A0);
+{$endif}
+{$ifdef USE_COLOR_RGB565}
+  pal_window: array [0..11] of UG_COLOR =
+    ($632C, $632C, $632C, $632C, $FFFF, $FFFF, $6B4D, $6B4D, $E71C, $E71C, $9D13, $9D13);
+  pal_button_pressed: array [0..11] of UG_COLOR =
+    ($632C, $632C, $632C, $632C, $9D13, $9D13, $9D13, $9D13, $EF7D, $EF7D, $EF7D, $EF7D);
+  pal_button_released: array [0..11] of UG_COLOR =
+    ($632C, $632C, $632C, $632C, $FFFF, $FFFF, $6B4D, $6B4D, $E71C, $E71C, $9D13, $9D13);
+  pal_checkbox_pressed: array [0..11] of UG_COLOR =
+    ($632C, $632C, $632C, $632C, $9D13, $9D13, $9D13, $9D13, $EF7D, $EF7D, $EF7D, $EF7D);
+  pal_checkbox_released: array [0..11] of UG_COLOR =
+    ($632C, $632C, $632C, $632C, $FFFF, $FFFF, $6B4D, $6B4D, $E71C, $E71C, $9D13, $9D13);
+
+{$endif}
 
 (* -------------------------------------------------------------------------------- *)
 (* -- INTERNAL FUNCTIONS                                                         -- *)
@@ -1112,6 +1218,135 @@ begin
     yp := yp + char_height + char_v_space;
   end;
 end;
+
+function _UG_WindowDrawTitle(var wnd: UG_WINDOW): UG_RESULT;
+var
+  txt: UG_TEXT;
+  xs, ys: UG_S16;
+  xe, ye: UG_S16;
+
+begin
+  { if (wnd<>nil) and (Ord(wnd.state) and WND_STATE_VALID) then }
+  if (Ord(wnd.state) and WND_STATE_VALID) <> 0 then
+  begin
+    xs := wnd.xs;
+    ys := wnd.ys;
+    xe := wnd.xe;
+    ye := wnd.ye;
+    (* 3D style? *)
+    if (Ord(wnd.style) and WND_STYLE_3D) <> 0 then
+    begin
+      xs := xs + 3;
+      ys := ys + 3;
+      xe := xe - 3;
+      ye := ye - 3;
+    end;
+
+    (* Is the window active or inactive? *)
+    if @wnd = gui^.active_window then
+    begin
+      txt.bc := wnd.title.bc;
+      txt.fc := wnd.title.fc;
+    end
+    else
+    begin
+      txt.bc := wnd.title.ibc;
+      txt.fc := wnd.title.ifc;
+    end;
+    (* Draw title *)
+
+    UG_FillFrame(xs, ys, xe, ys + Ord(wnd.title.Height) - 1, txt.bc);
+    (* UG_FillFrame(xs, ys, xe, ys + Ord(wnd.title.Height) - 1, 2); *)
+
+    (* Draw title text *)
+    txt.str := wnd.title.str;
+    txt.font := wnd.title.font;
+    txt.a.xs := xs + 3;
+    txt.a.ys := ys;
+    txt.a.xe := xe;
+    txt.a.ye := ys + Ord(wnd.title.Height) - 1;
+    txt.align := wnd.title.align;
+    txt.h_space := wnd.title.h_space;
+    txt.v_space := wnd.title.v_space;
+    _UG_PutText(txt);
+
+    (* Draw line *)
+    UG_DrawLine(xs, ys + Ord(wnd.title.Height), xe, ys + Ord(wnd.title.Height),
+      pal_window[11]);
+    _UG_WindowDrawTitle := UG_RESULT_OK;
+    exit;
+  end;
+  _UG_WindowDrawTitle := UG_RESULT_FAIL;
+end;
+
+procedure _UG_WindowUpdate(var wnd: UG_WINDOW);
+var
+i: UG_U16;
+objcnt: UG_U16;
+obj: pUG_OBJECT;
+xs: UG_S16;
+ys: UG_S16;
+xe: UG_S16;
+ye: UG_S16;
+begin
+  xs:= wnd.xs;
+  ys:= wnd.ys;
+  xe:= wnd.xe;
+  ye:= wnd.ye;
+  wnd.state:= Char(Ord(wnd.state) and ( not WND_STATE_UPDATE));
+  (* Is the window visible? *)
+  if (Ord(wnd.state) and WND_STATE_VISIBLE) <> 0 then
+  begin
+    (* 3D style? *)
+    if ((Ord(wnd.style) and WND_STYLE_3D) <> 0) and
+     (0 = (Ord(wnd.state) and WND_STATE_REDRAW_TITLE)) then
+    begin
+      (* _UG_DrawObjectFrame(xs,ys,xe,ye,pUG_COLOR(pal_window)); *)
+      xs:= xs + 3;
+      ys:= ys + 3;
+      xe:= xe - 3;
+      ye:= ye - 3;
+    end;
+    (* Show title bar? *)
+    if (Ord(wnd.style) and WND_STYLE_SHOW_TITLE) <> 0 then
+    begin
+      _UG_WindowDrawTitle(wnd);
+      ys := ys + Ord(wnd.title.height)+1;
+      if (Ord(wnd.state) and WND_STATE_REDRAW_TITLE) <> 0 then
+      begin
+        wnd.state:= Char(Ord(wnd.state) and (not WND_STATE_REDRAW_TITLE));
+        exit;
+      end;
+    end;
+    UG_FillFrame(xs,ys,xe,ye,wnd.bc);
+    (* Draw window area? *)
+    objcnt := Ord(wnd.objcnt);
+    (* Force each object to be updated! *)
+    for i:=0 to Pred(objcnt) do
+    begin
+      (*
+      obj:= (UG_OBJECT* )@wnd.objlst[i];
+      if 0 = (obj.state and OBJ_STATE_FREE))and((obj.state and OBJ_STATE_VALID))and((obj.state and OBJ_STATE_VISIBLE)
+      then
+      obj.state:= obj.state or ((OBJ_STATE_UPDATE or OBJ_STATE_REDRAW));
+      *)
+    end;
+  end
+  else
+  begin
+    UG_FillFrame(wnd.xs,wnd.xs,wnd.xe, wnd.ye, gui^.desktop_color);
+  end;
+end;
+
+(*
+function _UG_WindowClear(wnd: pUG_WINDOW): UG_RESULT;
+
+procedure _UG_TextboxUpdate(wnd: pUG_WINDOW;  obj: pUG_OBJECT);
+procedure _UG_ButtonUpdate(wnd: pUG_WINDOW;  obj: pUG_OBJECT);
+procedure _UG_CheckboxUpdate(wnd: pUG_WINDOW;  obj: pUG_OBJECT);
+procedure _UG_ImageUpdate(wnd: pUG_WINDOW;  obj: pUG_OBJECT);
+procedure _UG_PutChar(chr: char;  x: UG_S16;  y: UG_S16;  fc: UG_COLOR;  bc: UG_COLOR;  font: pUG_FONT);
+*)
 
 (* CLASSIC *)
 
@@ -1706,6 +1941,112 @@ begin
   gui^.char_v_space := s;
 end;
 
+(* Window functions *)
+
+function UG_WindowCreate(var wnd: UG_WINDOW; objlst: pUG_OBJECT;
+  objcnt: UG_U8; cb: UG_WINDOW_CB): UG_RESULT;
+var
+  i: Byte; (* UG_U8 *)
+  obj: pUG_OBJECT;
+
+begin
+  obj := nil;
+  { if (wnd=0) or (objlst=nil) or (objcnt=0) then }
+  if (objlst = nil) or (Ord(objcnt) = 0) then
+  begin
+    UG_WindowCreate := UG_RESULT_FAIL;
+    exit;
+  end;
+  obj := objlst;
+  (* Initialize all objects of the window *)
+  for i := 0 to Pred(Ord(objcnt)) do
+  begin
+    { obj := (UG_OBJECT* )@objlst[i]; }
+    Inc(obj, i);
+    obj^.state := Char(OBJ_STATE_INIT);
+    obj^.Data := nil;
+  end;
+  wnd.objcnt := objcnt;
+  wnd.objlst := objlst;
+  wnd.state := Char(WND_STATE_VALID);
+
+  (* Initialize window *)
+  {$ifdef USE_COLOR_RGB888}
+  wnd.fc := $000000;
+  wnd.bc := $F0F0F0;
+  {$endif}
+  {$ifdef USE_COLOR_RGB565}
+  wnd.fc := $0000;
+  wnd.bc := $EF7D;
+  {$endif}
+  wnd.xs := 0;
+  wnd.ys := 0;
+  wnd.xe := UG_GetXDim() - 1;
+  wnd.ye := UG_GetYDim() - 1;
+  wnd.cb := cb;
+  wnd.style := Char(WND_STYLE_3D or WND_STYLE_SHOW_TITLE);
+  wnd.title.str := nil;
+
+  (* Initialize window title-bar *)
+  if gui <> nil then
+    wnd.title.font := @gui^.font
+  else
+    wnd.title.font := nil;
+
+  wnd.title.h_space := 2;
+  wnd.title.v_space := 2;
+  wnd.title.align := Char(ALIGN_CENTER_LEFT);
+  wnd.title.fc := C_WHITE;
+  wnd.title.bc := C_BLUE;
+  wnd.title.ifc := C_WHITE;
+  wnd.title.ibc := C_GRAY;
+  wnd.title.Height := Char(15);
+  UG_WindowCreate := UG_RESULT_OK;
+end;
+
+function UG_WindowShow(var wnd: UG_WINDOW): UG_RESULT;
+begin
+    (* Force an update, even if this is the active window! *)
+    wnd.state:= Char(Ord(wnd.state) or (WND_STATE_VISIBLE or WND_STATE_UPDATE));
+    wnd.state:= Char(Ord(wnd.state) and ( not WND_STATE_REDRAW_TITLE));
+    gui^.next_window:= @wnd;
+    UG_WindowShow := UG_RESULT_OK;
+end;
+
+
+function UG_WindowSetTitleText(var wnd: UG_WINDOW; str: pchar): UG_RESULT;
+begin
+  if (Ord(wnd.state) and WND_STATE_VALID) <> 0 then
+  begin
+    wnd.title.str:= str;
+    wnd.state:= Char(Ord(wnd.state) or (WND_STATE_UPDATE or WND_STATE_REDRAW_TITLE));
+    begin
+      UG_WindowSetTitleText:= UG_RESULT_OK;
+      exit;
+    end;
+  end;
+  UG_WindowSetTitleText:= UG_RESULT_FAIL;
+end;
+
+function UG_WindowSetTitleTextFont(var wnd: UG_WINDOW; font: pUG_FONT): UG_RESULT;
+begin
+  if (Ord(wnd.state) and WND_STATE_VALID) <> 0 then
+  begin
+    wnd.state:= Char(Ord(wnd.state) or (WND_STATE_UPDATE or WND_STATE_REDRAW_TITLE));
+    wnd.title.font:= font;
+    if Ord(wnd.title.height) <= font^.char_height+1 then
+    begin
+      wnd.title.height:= Char(font^.char_height+2);
+      wnd.state:= Char(Ord(wnd.state) and ( not WND_STATE_REDRAW_TITLE));
+    end;
+    begin
+      UG_WindowSetTitleTextFont:= UG_RESULT_OK;
+      exit;
+    end;
+  end;
+  UG_WindowSetTitleTextFont:= UG_RESULT_FAIL;
+end;
+
 (* -------------------------------------------------------------------------------- *)
 (* -- MISCELLANEOUS FUNCTIONS                                                    -- *)
 (* -------------------------------------------------------------------------------- *)
@@ -1736,8 +2077,7 @@ begin
           (gui^.last_window^.ye <> gui^.active_window^.ye)) then
         begin
           (* Redraw title of the last window *)
-          { _UG_WindowDrawTitle(gui^.last_window); }
-          ;
+          _UG_WindowDrawTitle(gui^.last_window^);
         end;
       end;
       gui^.active_window^.state :=
@@ -1755,8 +2095,7 @@ begin
     if (Ord(wnd^.state) and WND_STATE_UPDATE) <> 0 then
     begin
       (* Do it! *)
-      { _UG_WindowUpdate(wnd); }
-      ;
+      _UG_WindowUpdate(wnd^);
     end;
 
     (* Is the window visible? *)
@@ -1821,5 +2160,6 @@ begin
       gui^.driver[Ord(t)].state :=
         char(Ord(gui^.driver[Ord(t)].state) and (not DRIVER_ENABLED));
 end;
+
 
 end.
