@@ -5,10 +5,13 @@ unit UG_TYPES;
 interface
 
 type
-  (* PUG_U8 = ^UG_U8; *)
+  (* PUG_U8 = ^UG_U8;
   PUG_U8 = PChar;
   UG_U8 = Char;
-  
+  *)
+  PUG_U8 = ^Byte;
+  UG_U8 = Byte;
+
   PUG_S8 = ^UG_S8;  
   UG_S8 = ShortInt; 
   
@@ -27,7 +30,15 @@ type
 
   PUG_S32 = ^UG_S32;
   UG_S32 = LongInt;
-	
+
+function IncPtrU8(p: PUG_U8; x: LongInt): PUG_U8;
+
 implementation
+
+function IncPtrU8(p: PUG_U8; x: LongInt): PUG_U8;
+begin
+  Inc(p, x);
+  IncPtrU8 := p;
+end;
 
 end.

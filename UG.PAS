@@ -1,4 +1,3 @@
-(* Pascal Port (C) Ioulianos Kakoulidis                                             *)
 (* Original C code license                                                          *)
 (* -------------------------------------------------------------------------------- *)
 (* -- µGUI - Generic GUI module (C)Achim Döbler, 2015                            -- *)
@@ -50,6 +49,7 @@
 (**)
 (*  Oct 11, 2014  V0.1  First release.                                              *)
 (* -------------------------------------------------------------------------------- *)
+(* Pascal Port (C) Ioulianos Kakoulidis                                             *)
 
 unit UG;
 
@@ -720,7 +720,6 @@ type
     str: PChar;
   end;
 
-
 (* -------------------------------------------------------------------------------- *)
 (* -- CHECKBOX OBJECT                                                            -- *)
 (* -------------------------------------------------------------------------------- *)
@@ -805,7 +804,6 @@ type
     img: PUG_U8;
     itype: UG_U8;
   end;
-
 
 (* -------------------------------------------------------------------------------- *)
 (* -- µGUI DRIVER                                                                -- *)
@@ -906,15 +904,18 @@ function UG_WindowShow(var wnd: UG_WINDOW): UG_RESULT;
 function UG_WindowHide(wnd: pUG_WINDOW): UG_RESULT;
 function UG_WindowResize(wnd: pUG_WINDOW;  xs: UG_S16;  ys: UG_S16;  xe: UG_S16;  ye: UG_S16): UG_RESULT;
 function UG_WindowAlert(wnd: pUG_WINDOW): UG_RESULT;
-function UG_WindowSetForeColor(wnd: pUG_WINDOW;  fc: UG_COLOR): UG_RESULT;
-function UG_WindowSetBackColor(wnd: pUG_WINDOW;  bc: UG_COLOR): UG_RESULT;
-function UG_WindowSetTitleTextColor(wnd: pUG_WINDOW;  c: UG_COLOR): UG_RESULT;
-function UG_WindowSetTitleColor(wnd: pUG_WINDOW;  c: UG_COLOR): UG_RESULT;
+*)
+function UG_WindowSetForeColor(var wnd: UG_WINDOW; fc: UG_COLOR): UG_RESULT;
+function UG_WindowSetBackColor(var wnd: UG_WINDOW; bc: UG_COLOR): UG_RESULT;
+
+function UG_WindowSetTitleTextColor(var wnd: UG_WINDOW; c: UG_COLOR): UG_RESULT;
+function UG_WindowSetTitleColor(var wnd: UG_WINDOW; c: UG_COLOR): UG_RESULT;
+(*
 function UG_WindowSetTitleInactiveTextColor(wnd: pUG_WINDOW;  c: UG_COLOR): UG_RESULT;
 function UG_WindowSetTitleInactiveColor(wnd: pUG_WINDOW;  c: UG_COLOR): UG_RESULT;
 *)
-function UG_WindowSetTitleText(var wnd: UG_WINDOW;  str: pchar): UG_RESULT;
-function UG_WindowSetTitleTextFont(var wnd: UG_WINDOW;  font: pUG_FONT): UG_RESULT;
+function UG_WindowSetTitleText(var wnd: UG_WINDOW; str: PChar): UG_RESULT;
+function UG_WindowSetTitleTextFont(var wnd: UG_WINDOW; font: pUG_FONT): UG_RESULT;
 (*
 function UG_WindowSetTitleTextHSpace(wnd: pUG_WINDOW;  hs: UG_S8): UG_RESULT;
 function UG_WindowSetTitleTextVSpace(wnd: pUG_WINDOW;  vs: UG_S8): UG_RESULT;
@@ -959,10 +960,10 @@ procedure UG_DriverRegister(t: UG_U8; driver: Pointer);
 procedure UG_DriverEnable(t: UG_U8);
 procedure UG_DriverDisable(t: UG_U8);
 
+implementation
+
 var
   gui: PUG_GUI;
-
-implementation
 
 {$ifdef USE_COLOR_RGB888}
 const
@@ -1023,7 +1024,7 @@ var
   bn: UG_U16;
   actual_char_width: UG_U16;
   b: UG_U8;
-  bt: UG_U8;
+  bt: Char;
   (* TP7 Compat *)
   index: UG_U16;
   (* index: UG_U32; *)
@@ -1051,7 +1052,7 @@ begin
   if (font.char_width mod 8) <> 0 then
     Inc(bn);
   if font.widths <> nil then
-    actual_char_width := Ord((font.widths + Ord(bt) - Ord(font.start_char))^)
+    actual_char_width := IncPtrU8(font.widths, Ord(bt) - font.start_char)^
   else
     actual_char_width := Ord(font.char_width);
 
@@ -1073,16 +1074,16 @@ begin
         c := actual_char_width;
         for i := 0 to Pred(bn) do
         begin
-          b := font.p[index];
+          b := IncPtrU8(font.p, index)^;
           Inc(index);
           k := 0;
           while (k < 8) and (c <> 0) do
           begin
-            if (Ord(b) and $01) <> 0 then
+            if (b and $01) <> 0 then
               gui^.pset(xo, yo, fc)
             else
               gui^.pset(xo, yo, bc);
-            b := char(Ord(b) shr 1);
+            b := b shr 1;
             Inc(xo);
             Dec(c);
             Inc(k);
@@ -1100,7 +1101,7 @@ begin
         xo := x;
         for i := 0 to Pred(actual_char_width) do
         begin
-          b := font.p[index];
+          b := IncPtrU8(font.p, index)^;
           Inc(index);
           color := (((fc and $FF) * Ord(b) + (bc and $FF) * (256 - Ord(b))) shr 8) and
             $FF or (((fc and $FF00) * Ord(b) + (bc and $FF00) * (256 - Ord(b))) shr
@@ -1145,11 +1146,7 @@ begin
   char_v_space := txt.v_space;
   str := txt.str;
   c := str;
-  if txt.font^.p = nil then
-    exit;
-  if str = nil then
-    exit;
-  if ye - ys < txt.font^.char_height then
+  if (txt.font^.p = nil) or (str = nil) or ((ye - ys) < txt.font^.char_height) then
     exit;
   rc := 1;
   c := str;
@@ -1185,7 +1182,7 @@ begin
       end;
       Inc(sl);
       if txt.font^.widths <> nil then
-        wl := wl + Ord(txt.font^.widths[Ord(c^) - txt.font^.start_char])
+        wl := wl + IncPtrU8(txt.font^.widths, Ord(c^) - txt.font^.start_char)^
       else
         wl := wl + char_width;
       wl := wl + char_h_space;
@@ -1209,7 +1206,7 @@ begin
         exit;
       _UG_PutChar(chr, xp, yp, txt.fc, txt.bc, txt.font^);
       if txt.font^.widths <> nil then
-        xp := xp + Ord(txt.font^.widths[Ord(chr) - txt.font^.start_char])
+        xp := xp + IncPtrU8(txt.font^.widths, Ord(chr) - txt.font^.start_char)^
       else
         xp := xp + char_width;
       xp := xp + char_h_space;
@@ -1281,48 +1278,48 @@ end;
 
 procedure _UG_WindowUpdate(var wnd: UG_WINDOW);
 var
-i: UG_U16;
-objcnt: UG_U16;
-obj: pUG_OBJECT;
-xs: UG_S16;
-ys: UG_S16;
-xe: UG_S16;
-ye: UG_S16;
+  i: UG_U16;
+  objcnt: UG_U16;
+  obj: pUG_OBJECT;
+  xs: UG_S16;
+  ys: UG_S16;
+  xe: UG_S16;
+  ye: UG_S16;
 begin
-  xs:= wnd.xs;
-  ys:= wnd.ys;
-  xe:= wnd.xe;
-  ye:= wnd.ye;
-  wnd.state:= Char(Ord(wnd.state) and ( not WND_STATE_UPDATE));
+  xs := wnd.xs;
+  ys := wnd.ys;
+  xe := wnd.xe;
+  ye := wnd.ye;
+  wnd.state := Ord(wnd.state) and (not WND_STATE_UPDATE);
   (* Is the window visible? *)
   if (Ord(wnd.state) and WND_STATE_VISIBLE) <> 0 then
   begin
     (* 3D style? *)
     if ((Ord(wnd.style) and WND_STYLE_3D) <> 0) and
-     (0 = (Ord(wnd.state) and WND_STATE_REDRAW_TITLE)) then
+      (0 = (Ord(wnd.state) and WND_STATE_REDRAW_TITLE)) then
     begin
       (* _UG_DrawObjectFrame(xs,ys,xe,ye,pUG_COLOR(pal_window)); *)
-      xs:= xs + 3;
-      ys:= ys + 3;
-      xe:= xe - 3;
-      ye:= ye - 3;
+      xs := xs + 3;
+      ys := ys + 3;
+      xe := xe - 3;
+      ye := ye - 3;
     end;
     (* Show title bar? *)
     if (Ord(wnd.style) and WND_STYLE_SHOW_TITLE) <> 0 then
     begin
       _UG_WindowDrawTitle(wnd);
-      ys := ys + Ord(wnd.title.height)+1;
+      ys := ys + Ord(wnd.title.Height) + 1;
       if (Ord(wnd.state) and WND_STATE_REDRAW_TITLE) <> 0 then
       begin
-        wnd.state:= Char(Ord(wnd.state) and (not WND_STATE_REDRAW_TITLE));
+        wnd.state := wnd.state and (not WND_STATE_REDRAW_TITLE);
         exit;
       end;
     end;
-    UG_FillFrame(xs,ys,xe,ye,wnd.bc);
+    UG_FillFrame(xs, ys, xe, ye, wnd.bc);
     (* Draw window area? *)
     objcnt := Ord(wnd.objcnt);
     (* Force each object to be updated! *)
-    for i:=0 to Pred(objcnt) do
+    for i := 0 to Pred(objcnt) do
     begin
       (*
       obj:= (UG_OBJECT* )@wnd.objlst[i];
@@ -1334,7 +1331,7 @@ begin
   end
   else
   begin
-    UG_FillFrame(wnd.xs,wnd.xs,wnd.xe, wnd.ye, gui^.desktop_color);
+    UG_FillFrame(wnd.xs, wnd.xs, wnd.xe, wnd.ye, gui^.desktop_color);
   end;
 end;
 
@@ -1549,9 +1546,7 @@ begin
     y2 := y1;
     y1 := n;
   end;
-  if r > x2 then
-    exit;
-  if r > y2 then
+  if (r > x2) or (r > y2) then
     exit;
 
   UG_DrawLine(x1 + r, y1, x2 - r, y1, c);
@@ -1559,10 +1554,10 @@ begin
   UG_DrawLine(x1, y1 + r, x1, y2 - r, c);
   UG_DrawLine(x2, y1 + r, x2, y2 - r, c);
 
-  UG_DrawArc(x1 + r, y1 + r, r, char($0C), c);
-  UG_DrawArc(x2 - r, y1 + r, r, char($03), c);
-  UG_DrawArc(x1 + r, y2 - r, r, char($30), c);
-  UG_DrawArc(x2 - r, y2 - r, r, char($C0), c);
+  UG_DrawArc(x1 + r, y1 + r, r, $0C, c);
+  UG_DrawArc(x2 - r, y1 + r, r, $03, c);
+  UG_DrawArc(x1 + r, y2 - r, r, $30, c);
+  UG_DrawArc(x2 - r, y2 - r, r, $C0, c);
 end;
 
 procedure UG_DrawPixel(x0, y0: UG_S16; c: UG_COLOR);
@@ -1576,11 +1571,7 @@ var
   xd, yd: UG_S16;
   e: UG_S16;
 begin
-  if x0 < 0 then
-    exit;
-  if y0 < 0 then
-    exit;
-  if r <= 0 then
+  if (x0 < 0) or (y0 < 0) or (r <= 0) then
     exit;
 
   xd := 1 - (r shl 1);
@@ -1615,11 +1606,7 @@ var
   x, y: UG_S16;
   xd: UG_S16;
 begin
-  if x0 < 0 then
-    exit;
-  if y0 < 0 then
-    exit;
-  if r <= 0 then
+  if (x0 < 0) or (y0 < 0) or (r <= 0) then
     exit;
 
   xd := 3 - (r shl 1);
@@ -1657,11 +1644,7 @@ var
   xd, yd: UG_S16;
   e: UG_S16;
 begin
-  if x0 < 0 then
-    exit;
-  if y0 < 0 then
-    exit;
-  if r <= 0 then
+  if (x0 < 0) or (y0 < 0) or (r <= 0) then
     exit;
 
   xd := 1 - (r shl 1);
@@ -1834,9 +1817,9 @@ begin
       Continue;
     end;
     if gui^.font.widths <> nil then
-      cw := gui^.font.widths[Ord(chr) - gui^.font.start_char]
+      cw := IncPtrU8(gui^.font.widths, Ord(chr) - gui^.font.start_char)^
     else
-      cw := char(gui^.font.char_width);
+      cw := gui^.font.char_width;
 
     if xp + Ord(cw) > gui^.x_dim - 1 then
     begin
@@ -1869,9 +1852,9 @@ begin
     end;
 
     if gui^.font.widths <> nil then
-      cw := gui^.font.widths[Ord(chr) - gui^.font.start_char]
+      cw := IncPtrU8(gui^.font.widths, Ord(chr) - gui^.font.start_char)^
     else
-      cw := char(gui^.font.char_width);
+      cw := gui^.font.char_width;
 
     gui^.console.x_pos := gui^.console.x_pos + Ord(cw) + gui^.char_h_space;
     if gui^.console.x_pos + Ord(cw) > gui^.console.x_end then
@@ -1942,17 +1925,14 @@ begin
 end;
 
 (* Window functions *)
-
 function UG_WindowCreate(var wnd: UG_WINDOW; objlst: pUG_OBJECT;
   objcnt: UG_U8; cb: UG_WINDOW_CB): UG_RESULT;
 var
-  i: Byte; (* UG_U8 *)
+  i: UG_U8;
   obj: pUG_OBJECT;
-
 begin
   obj := nil;
-  { if (wnd=0) or (objlst=nil) or (objcnt=0) then }
-  if (objlst = nil) or (Ord(objcnt) = 0) then
+  if (objlst = nil) or (objcnt = 0) then
   begin
     UG_WindowCreate := UG_RESULT_FAIL;
     exit;
@@ -1963,12 +1943,12 @@ begin
   begin
     { obj := (UG_OBJECT* )@objlst[i]; }
     Inc(obj, i);
-    obj^.state := Char(OBJ_STATE_INIT);
+    obj^.state := OBJ_STATE_INIT;
     obj^.Data := nil;
   end;
   wnd.objcnt := objcnt;
   wnd.objlst := objlst;
-  wnd.state := Char(WND_STATE_VALID);
+  wnd.state := WND_STATE_VALID;
 
   (* Initialize window *)
   {$ifdef USE_COLOR_RGB888}
@@ -1981,10 +1961,10 @@ begin
   {$endif}
   wnd.xs := 0;
   wnd.ys := 0;
-  wnd.xe := UG_GetXDim() - 1;
-  wnd.ye := UG_GetYDim() - 1;
+  wnd.xe := UG_GetXDim - 1;
+  wnd.ye := UG_GetYDim - 1;
   wnd.cb := cb;
-  wnd.style := Char(WND_STYLE_3D or WND_STYLE_SHOW_TITLE);
+  wnd.style := WND_STYLE_3D or WND_STYLE_SHOW_TITLE;
   wnd.title.str := nil;
 
   (* Initialize window title-bar *)
@@ -1995,56 +1975,99 @@ begin
 
   wnd.title.h_space := 2;
   wnd.title.v_space := 2;
-  wnd.title.align := Char(ALIGN_CENTER_LEFT);
+  wnd.title.align := ALIGN_CENTER_LEFT;
   wnd.title.fc := C_WHITE;
   wnd.title.bc := C_BLUE;
   wnd.title.ifc := C_WHITE;
   wnd.title.ibc := C_GRAY;
-  wnd.title.Height := Char(15);
+  wnd.title.Height := 15;
   UG_WindowCreate := UG_RESULT_OK;
 end;
 
 function UG_WindowShow(var wnd: UG_WINDOW): UG_RESULT;
 begin
-    (* Force an update, even if this is the active window! *)
-    wnd.state:= Char(Ord(wnd.state) or (WND_STATE_VISIBLE or WND_STATE_UPDATE));
-    wnd.state:= Char(Ord(wnd.state) and ( not WND_STATE_REDRAW_TITLE));
-    gui^.next_window:= @wnd;
-    UG_WindowShow := UG_RESULT_OK;
+  (* Force an update, even if this is the active window! *)
+  wnd.state := wnd.state or WND_STATE_VISIBLE or WND_STATE_UPDATE;
+  wnd.state := wnd.state and (not WND_STATE_REDRAW_TITLE);
+  gui^.next_window := @wnd;
+  UG_WindowShow := UG_RESULT_OK;
 end;
 
-
-function UG_WindowSetTitleText(var wnd: UG_WINDOW; str: pchar): UG_RESULT;
+function UG_WindowSetForeColor(var wnd: UG_WINDOW; fc: UG_COLOR): UG_RESULT;
 begin
-  if (Ord(wnd.state) and WND_STATE_VALID) <> 0 then
+  if (wnd.state and WND_STATE_VALID) <> 0 then
   begin
-    wnd.title.str:= str;
-    wnd.state:= Char(Ord(wnd.state) or (WND_STATE_UPDATE or WND_STATE_REDRAW_TITLE));
-    begin
-      UG_WindowSetTitleText:= UG_RESULT_OK;
-      exit;
-    end;
-  end;
-  UG_WindowSetTitleText:= UG_RESULT_FAIL;
+    wnd.fc := fc;
+    wnd.state := wnd.state or WND_STATE_UPDATE;
+    UG_WindowSetForeColor := UG_RESULT_OK;
+  end
+  else
+    UG_WindowSetForeColor := UG_RESULT_FAIL;
+end;
+
+function UG_WindowSetBackColor(var wnd: UG_WINDOW; bc: UG_COLOR): UG_RESULT;
+begin
+  if (wnd.state and WND_STATE_VALID) <> 0 then
+  begin
+    wnd.bc := bc;
+    wnd.state := wnd.state or WND_STATE_UPDATE;
+    UG_WindowSetBackColor := UG_RESULT_OK;
+  end
+  else
+    UG_WindowSetBackColor := UG_RESULT_FAIL;
+end;
+
+function UG_WindowSetTitleText(var wnd: UG_WINDOW; str: PChar): UG_RESULT;
+begin
+  if (wnd.state and WND_STATE_VALID) <> 0 then
+  begin
+    wnd.title.str := str;
+    wnd.state := wnd.state or WND_STATE_UPDATE or WND_STATE_REDRAW_TITLE;
+    UG_WindowSetTitleText := UG_RESULT_OK;
+  end
+  else
+    UG_WindowSetTitleText := UG_RESULT_FAIL;
 end;
 
 function UG_WindowSetTitleTextFont(var wnd: UG_WINDOW; font: pUG_FONT): UG_RESULT;
 begin
-  if (Ord(wnd.state) and WND_STATE_VALID) <> 0 then
+  if (wnd.state and WND_STATE_VALID) <> 0 then
   begin
-    wnd.state:= Char(Ord(wnd.state) or (WND_STATE_UPDATE or WND_STATE_REDRAW_TITLE));
-    wnd.title.font:= font;
-    if Ord(wnd.title.height) <= font^.char_height+1 then
+    wnd.state := wnd.state or WND_STATE_UPDATE or WND_STATE_REDRAW_TITLE;
+    wnd.title.font := font;
+    if wnd.title.Height <= font^.char_height + 1 then
     begin
-      wnd.title.height:= Char(font^.char_height+2);
-      wnd.state:= Char(Ord(wnd.state) and ( not WND_STATE_REDRAW_TITLE));
+      wnd.title.Height := font^.char_height + 2;
+      wnd.state := wnd.state and (not WND_STATE_REDRAW_TITLE);
     end;
-    begin
-      UG_WindowSetTitleTextFont:= UG_RESULT_OK;
-      exit;
-    end;
-  end;
-  UG_WindowSetTitleTextFont:= UG_RESULT_FAIL;
+    UG_WindowSetTitleTextFont := UG_RESULT_OK;
+  end
+  else
+    UG_WindowSetTitleTextFont := UG_RESULT_FAIL;
+end;
+
+function UG_WindowSetTitleTextColor(var wnd: UG_WINDOW; c: UG_COLOR): UG_RESULT;
+begin
+  if (wnd.state and WND_STATE_VALID) <> 0 then
+  begin
+    wnd.title.fc := c;
+    wnd.state := wnd.state or WND_STATE_UPDATE or WND_STATE_REDRAW_TITLE;
+    UG_WindowSetTitleTextColor := UG_RESULT_OK;
+  end
+  else
+    UG_WindowSetTitleTextColor := UG_RESULT_FAIL;
+end;
+
+function UG_WindowSetTitleColor(var wnd: UG_WINDOW; c: UG_COLOR): UG_RESULT;
+begin
+  if (wnd.state and WND_STATE_VALID) <> 0 then
+  begin
+    wnd.title.bc := c;
+    wnd.state := wnd.state or WND_STATE_UPDATE or WND_STATE_REDRAW_TITLE;
+    UG_WindowSetTitleColor := UG_RESULT_OK;
+  end
+  else
+    UG_WindowSetTitleColor := UG_RESULT_FAIL;
 end;
 
 (* -------------------------------------------------------------------------------- *)
@@ -2056,8 +2079,8 @@ var
   wnd: PUG_WINDOW;
 begin
   (* Is somebody waiting for this update? *)
-  if (Ord(gui^.state) and UG_SATUS_WAIT_FOR_UPDATE) <> 0 then
-    gui^.state := char(Ord(gui^.state) and (not UG_SATUS_WAIT_FOR_UPDATE));
+  if (gui^.state and UG_SATUS_WAIT_FOR_UPDATE) <> 0 then
+    gui^.state := gui^.state and (not UG_SATUS_WAIT_FOR_UPDATE);
   (* Keep track of the windows *)
   if gui^.next_window <> gui^.active_window then
   begin
@@ -2081,9 +2104,9 @@ begin
         end;
       end;
       gui^.active_window^.state :=
-        char(Ord(gui^.active_window^.state) and (not WND_STATE_REDRAW_TITLE));
+        gui^.active_window^.state and (not WND_STATE_REDRAW_TITLE);
       gui^.active_window^.state :=
-        char(Ord(gui^.active_window^.state) or (WND_STATE_UPDATE or WND_STATE_VISIBLE));
+        gui^.active_window^.state or WND_STATE_UPDATE or WND_STATE_VISIBLE;
     end;
   end;
 
@@ -2092,14 +2115,14 @@ begin
   begin
     wnd := gui^.active_window;
     (* Does the window need to be updated? *)
-    if (Ord(wnd^.state) and WND_STATE_UPDATE) <> 0 then
+    if (wnd^.state and WND_STATE_UPDATE) <> 0 then
     begin
       (* Do it! *)
       _UG_WindowUpdate(wnd^);
     end;
 
     (* Is the window visible? *)
-    if (Ord(wnd^.state) and WND_STATE_VISIBLE) <> 0 then
+    if (wnd^.state and WND_STATE_VISIBLE) <> 0 then
     begin
       { _UG_ProcessTouchData(wnd); }
       { _UG_UpdateObjects(wnd);    }
@@ -2111,7 +2134,7 @@ end;
 
 procedure UG_WaitForUpdate;
 begin
-  gui^.state := char(Ord(gui^.state) or (UG_SATUS_WAIT_FOR_UPDATE));
+  gui^.state := Ord(gui^.state) or (UG_SATUS_WAIT_FOR_UPDATE);
   {$ifdef USE_MULTITASKING}
   while Ord(gui^.state) and UG_SATUS_WAIT_FOR_UPDATE do
   begin
@@ -2138,28 +2161,23 @@ end;
 
 procedure UG_DriverRegister(t: UG_U8; driver: Pointer);
 begin
-  if Ord(t) < NUMBER_OF_DRIVERS then
+  if t < NUMBER_OF_DRIVERS then
   begin
-    gui^.driver[Ord(t)].driver := driver;
-    gui^.driver[Ord(t)].state := char(DRIVER_REGISTERED or DRIVER_ENABLED);
+    gui^.driver[t].driver := driver;
+    gui^.driver[t].state := DRIVER_REGISTERED or DRIVER_ENABLED;
   end;
 end;
 
 procedure UG_DriverEnable(t: UG_U8);
 begin
-  if Ord(t) < NUMBER_OF_DRIVERS then
-    if (Ord(gui^.driver[Ord(t)].state) and DRIVER_REGISTERED) <> 0 then
-      gui^.driver[Ord(t)].state :=
-        char(Ord(gui^.driver[Ord(t)].state) or DRIVER_ENABLED);
+  if (t < NUMBER_OF_DRIVERS) and ((gui^.driver[t].state and DRIVER_REGISTERED) <> 0) then
+      gui^.driver[t].state := gui^.driver[t].state or DRIVER_ENABLED;
 end;
 
 procedure UG_DriverDisable(t: UG_U8);
 begin
-  if Ord(t) < NUMBER_OF_DRIVERS then
-    if (Ord(gui^.driver[Ord(t)].state) and DRIVER_REGISTERED) <> 0 then
-      gui^.driver[Ord(t)].state :=
-        char(Ord(gui^.driver[Ord(t)].state) and (not DRIVER_ENABLED));
+  if (t < NUMBER_OF_DRIVERS) and ((gui^.driver[t].state and DRIVER_REGISTERED) <> 0) then
+      gui^.driver[t].state := gui^.driver[t].state and (not DRIVER_ENABLED);
 end;
-
 
 end.
