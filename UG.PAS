@@ -225,17 +225,17 @@ const
   BTN_ID_19 = OBJ_ID_19;
 
   (* Button states *)
-  BTN_STATE_RELEASED = (0 shl 0);
-  BTN_STATE_PRESSED = (1 shl 0);
-  BTN_STATE_ALWAYS_REDRAW = (1 shl 1);
+  BTN_STATE_RELEASED = 0 shl 0;
+  BTN_STATE_PRESSED = 1 shl 0;
+  BTN_STATE_ALWAYS_REDRAW = 1 shl 1;
 
   (* Button style *)
-  BTN_STYLE_2D = (0 shl 0);
-  BTN_STYLE_3D = (1 shl 0);
-  BTN_STYLE_TOGGLE_COLORS = (1 shl 1);
-  BTN_STYLE_USE_ALTERNATE_COLORS = (1 shl 2);
-  BTN_STYLE_NO_BORDERS = (1 shl 3);
-  BTN_STYLE_NO_FILL = (1 shl 4);
+  BTN_STYLE_2D = 0 shl 0;
+  BTN_STYLE_3D = 1 shl 0;
+  BTN_STYLE_TOGGLE_COLORS = 1 shl 1;
+  BTN_STYLE_USE_ALTERNATE_COLORS = 1 shl 2;
+  BTN_STYLE_NO_BORDERS = 1 shl 3;
+  BTN_STYLE_NO_FILL = 1 shl 4;
 
   (* Button events *)
   BTN_EVENT_CLICKED = OBJ_EVENT_CLICKED;
@@ -262,7 +262,7 @@ const
   TXB_ID_18 = OBJ_ID_18;
   TXB_ID_19 = OBJ_ID_19;
 
-  UG_SATUS_WAIT_FOR_UPDATE = (1 shl 0);
+  UG_SATUS_WAIT_FOR_UPDATE = 1 shl 0;
 
   (* -------------------------------------------------------------------------------- *)
   (* -- µGUI COLORS                                                                -- *)
@@ -552,8 +552,8 @@ const
   C_WHITE = $FFFFFF;
 {$endif}
 
-  DRIVER_REGISTERED = (1 shl 0);
-  DRIVER_ENABLED = (1 shl 1);
+  DRIVER_REGISTERED = 1 shl 0;
+  DRIVER_ENABLED = 1 shl 1;
 
   (* Supported drivers *)
   NUMBER_OF_DRIVERS = 3;
@@ -764,17 +764,17 @@ const
   CHB_ID_19 = OBJ_ID_19;
 
   (* Checkbox states *)
-  CHB_STATE_RELEASED = (0 shl 0);
-  CHB_STATE_PRESSED = (1 shl 0);
-  CHB_STATE_ALWAYS_REDRAW = (1 shl 1);
+  CHB_STATE_RELEASED = 0 shl 0;
+  CHB_STATE_PRESSED = 1 shl 0;
+  CHB_STATE_ALWAYS_REDRAW = 1 shl 1;
 
   (* Checkbox style *)
-  CHB_STYLE_2D = (0 shl 0);
-  CHB_STYLE_3D = (1 shl 0);
-  CHB_STYLE_TOGGLE_COLORS = (1 shl 1);
-  CHB_STYLE_USE_ALTERNATE_COLORS = (1 shl 2);
-  CHB_STYLE_NO_BORDERS = (1 shl 3);
-  CHB_STYLE_NO_FILL = (1 shl 4);
+  CHB_STYLE_2D = 0 shl 0;
+  CHB_STYLE_3D = 1 shl 0;
+  CHB_STYLE_TOGGLE_COLORS = 1 shl 1;
+  CHB_STYLE_USE_ALTERNATE_COLORS = 1 shl 2;
+  CHB_STYLE_NO_BORDERS = 1 shl 3;
+  CHB_STYLE_NO_FILL = 1 shl 4;
 
   (* Checkbox events *)
   CHB_EVENT_CLICKED = OBJ_EVENT_CLICKED;
@@ -1054,7 +1054,7 @@ begin
   if font.widths <> nil then
     actual_char_width := IncPtrU8(font.widths, Ord(bt) - font.start_char)^
   else
-    actual_char_width := Ord(font.char_width);
+    actual_char_width := font.char_width;
 
   (* Is hardware acceleration available? *)
   if 1 = 0 then
@@ -1103,10 +1103,10 @@ begin
         begin
           b := IncPtrU8(font.p, index)^;
           Inc(index);
-          color := (((fc and $FF) * Ord(b) + (bc and $FF) * (256 - Ord(b))) shr 8) and
-            $FF or (((fc and $FF00) * Ord(b) + (bc and $FF00) * (256 - Ord(b))) shr
-            8) and $FF00 or (((fc and $FF0000) * Ord(b) + (bc and $FF0000) *
-            (256 - Ord(b))) shr 8) and $FF0000;
+          color := (((fc and $FF) * b + (bc and $FF) * (256 - b)) shr 8) and
+            $FF or (((fc and $FF00) * b + (bc and $FF00) * (256 - b)) shr
+            8) and $FF00 or (((fc and $FF0000) * b + (bc and $FF0000) *
+            (256 - b)) shr 8) and $FF0000;
           gui^.pset(xo, yo, color);
           (* Blue component  *)
           (* Green component *)
@@ -1157,7 +1157,7 @@ begin
     Inc(c);
   end;
   yp := 0;
-  if (Ord(align) and (ALIGN_V_CENTER or ALIGN_V_BOTTOM)) <> 0 then
+  if (align and (ALIGN_V_CENTER or ALIGN_V_BOTTOM)) <> 0 then
   begin
     yp := ye - ys + 1;
     yp := yp - char_height * rc;
@@ -1165,7 +1165,7 @@ begin
     if yp < 0 then
       exit;
   end;
-  if (Ord(align) and ALIGN_V_CENTER) <> 0 then
+  if (align and ALIGN_V_CENTER) <> 0 then
     yp := yp shr 1;
   yp := yp + ys;
   while True do
@@ -1193,9 +1193,9 @@ begin
     xp := xp - wl;
     if xp < 0 then
       exit;
-    if (Ord(align) and ALIGN_H_LEFT) <> 0 then
+    if (align and ALIGN_H_LEFT) <> 0 then
       xp := 0
-    else if (Ord(align) and ALIGN_H_CENTER) <> 0 then
+    else if (align and ALIGN_H_CENTER) <> 0 then
       xp := xp shr (1);
     xp := xp + xs;
     while str^ <> char($0A) do
@@ -1224,14 +1224,14 @@ var
 
 begin
   { if (wnd<>nil) and (Ord(wnd.state) and WND_STATE_VALID) then }
-  if (Ord(wnd.state) and WND_STATE_VALID) <> 0 then
+  if (wnd.state and WND_STATE_VALID) <> 0 then
   begin
     xs := wnd.xs;
     ys := wnd.ys;
     xe := wnd.xe;
     ye := wnd.ye;
     (* 3D style? *)
-    if (Ord(wnd.style) and WND_STYLE_3D) <> 0 then
+    if (wnd.style and WND_STYLE_3D) <> 0 then
     begin
       xs := xs + 3;
       ys := ys + 3;
@@ -1252,7 +1252,7 @@ begin
     end;
     (* Draw title *)
 
-    UG_FillFrame(xs, ys, xe, ys + Ord(wnd.title.Height) - 1, txt.bc);
+    UG_FillFrame(xs, ys, xe, ys + wnd.title.Height - 1, txt.bc);
     (* UG_FillFrame(xs, ys, xe, ys + Ord(wnd.title.Height) - 1, 2); *)
 
     (* Draw title text *)
@@ -1261,14 +1261,14 @@ begin
     txt.a.xs := xs + 3;
     txt.a.ys := ys;
     txt.a.xe := xe;
-    txt.a.ye := ys + Ord(wnd.title.Height) - 1;
+    txt.a.ye := ys + wnd.title.Height - 1;
     txt.align := wnd.title.align;
     txt.h_space := wnd.title.h_space;
     txt.v_space := wnd.title.v_space;
     _UG_PutText(txt);
 
     (* Draw line *)
-    UG_DrawLine(xs, ys + Ord(wnd.title.Height), xe, ys + Ord(wnd.title.Height),
+    UG_DrawLine(xs, ys + wnd.title.Height, xe, ys + wnd.title.Height,
       pal_window[11]);
     _UG_WindowDrawTitle := UG_RESULT_OK;
     exit;
@@ -1290,13 +1290,13 @@ begin
   ys := wnd.ys;
   xe := wnd.xe;
   ye := wnd.ye;
-  wnd.state := Ord(wnd.state) and (not WND_STATE_UPDATE);
+  wnd.state := wnd.state and (not WND_STATE_UPDATE);
   (* Is the window visible? *)
-  if (Ord(wnd.state) and WND_STATE_VISIBLE) <> 0 then
+  if (wnd.state and WND_STATE_VISIBLE) <> 0 then
   begin
     (* 3D style? *)
-    if ((Ord(wnd.style) and WND_STYLE_3D) <> 0) and
-      (0 = (Ord(wnd.state) and WND_STATE_REDRAW_TITLE)) then
+    if ((wnd.style and WND_STYLE_3D) <> 0) and
+      (0 = (wnd.state and WND_STATE_REDRAW_TITLE)) then
     begin
       (* _UG_DrawObjectFrame(xs,ys,xe,ye,pUG_COLOR(pal_window)); *)
       xs := xs + 3;
@@ -1305,11 +1305,11 @@ begin
       ye := ye - 3;
     end;
     (* Show title bar? *)
-    if (Ord(wnd.style) and WND_STYLE_SHOW_TITLE) <> 0 then
+    if (wnd.style and WND_STYLE_SHOW_TITLE) <> 0 then
     begin
       _UG_WindowDrawTitle(wnd);
-      ys := ys + Ord(wnd.title.Height) + 1;
-      if (Ord(wnd.state) and WND_STATE_REDRAW_TITLE) <> 0 then
+      ys := ys + wnd.title.Height + 1;
+      if (wnd.state and WND_STATE_REDRAW_TITLE) <> 0 then
       begin
         wnd.state := wnd.state and (not WND_STATE_REDRAW_TITLE);
         exit;
@@ -1317,7 +1317,7 @@ begin
     end;
     UG_FillFrame(xs, ys, xe, ye, wnd.bc);
     (* Draw window area? *)
-    objcnt := Ord(wnd.objcnt);
+    objcnt := wnd.objcnt;
     (* Force each object to be updated! *)
     for i := 0 to Pred(objcnt) do
     begin
@@ -1426,7 +1426,7 @@ begin
   end;
 
   (* Is hardware acceleration available? *)
-  if (Ord(gui^.driver[DRIVER_FILL_FRAME].state) and DRIVER_ENABLED) <> 0 then
+  if (gui^.driver[DRIVER_FILL_FRAME].state and DRIVER_ENABLED) <> 0 then
   begin
     _HW_FILLFRAME(gui^.driver[DRIVER_FILL_FRAME].driver)(x1, y1, x2, y2, c);
     exit;
@@ -1700,7 +1700,7 @@ begin
     x1 := x;
   end;
   (* Is hardware acceleration available? *)
-  if (Ord(gui^.driver[DRIVER_DRAW_LINE].state) and DRIVER_ENABLED) <> 0 then
+  if (gui^.driver[DRIVER_DRAW_LINE].state and DRIVER_ENABLED) <> 0 then
   begin
     _HW_DRAWLINE(gui^.driver[DRIVER_DRAW_LINE].driver)(x1, y, x2, y, c);
     exit;
@@ -1722,7 +1722,7 @@ begin
     y1 := y;
   end;
   (* Is hardware acceleration available? *)
-  if (Ord(gui^.driver[DRIVER_DRAW_LINE].state) and DRIVER_ENABLED) <> 0 then
+  if (gui^.driver[DRIVER_DRAW_LINE].state and DRIVER_ENABLED) <> 0 then
   begin
     _HW_DRAWLINE(gui^.driver[DRIVER_DRAW_LINE].driver)(x, y1, x, y2, c);
     exit;
@@ -1743,7 +1743,7 @@ var
   drawx, drawy: UG_S16;
 begin
   (* Is hardware acceleration available? *)
-  if (Ord(gui^.driver[DRIVER_DRAW_LINE].state) and DRIVER_ENABLED) <> 0 then
+  if (gui^.driver[DRIVER_DRAW_LINE].state and DRIVER_ENABLED) <> 0 then
   begin
     _HW_DRAWLINE(gui^.driver[DRIVER_DRAW_LINE].driver)(x1, y1, x2, y2, c);
     exit;
@@ -1821,13 +1821,13 @@ begin
     else
       cw := gui^.font.char_width;
 
-    if xp + Ord(cw) > gui^.x_dim - 1 then
+    if xp + cw > gui^.x_dim - 1 then
     begin
       xp := x;
       yp := yp + gui^.font.char_height + gui^.char_v_space;
     end;
     UG_PutChar(chr, xp, yp, gui^.fore_color, gui^.back_color);
-    xp := xp + Ord(cw) + gui^.char_h_space;
+    xp := xp + cw + gui^.char_h_space;
   end;
 end;
 
@@ -1856,8 +1856,8 @@ begin
     else
       cw := gui^.font.char_width;
 
-    gui^.console.x_pos := gui^.console.x_pos + Ord(cw) + gui^.char_h_space;
-    if gui^.console.x_pos + Ord(cw) > gui^.console.x_end then
+    gui^.console.x_pos := gui^.console.x_pos + cw + gui^.char_h_space;
+    if gui^.console.x_pos + cw > gui^.console.x_end then
     begin
       gui^.console.x_pos := gui^.console.x_start;
       gui^.console.y_pos := gui^.console.y_pos + gui^.font.char_height +
@@ -1939,7 +1939,7 @@ begin
   end;
   obj := objlst;
   (* Initialize all objects of the window *)
-  for i := 0 to Pred(Ord(objcnt)) do
+  for i := 0 to Pred(objcnt) do
   begin
     { obj := (UG_OBJECT* )@objlst[i]; }
     Inc(obj, i);
@@ -2090,8 +2090,8 @@ begin
       gui^.active_window := gui^.next_window;
       (* Do we need to draw an inactive title? *)
       if (gui^.last_window <> nil) and
-        (((Ord(gui^.last_window^.style) and WND_STYLE_SHOW_TITLE) and
-        (Ord(gui^.last_window^.state) and WND_STATE_VISIBLE)) <> 0) then
+        (((gui^.last_window^.style and WND_STYLE_SHOW_TITLE) and
+        (gui^.last_window^.state and WND_STATE_VISIBLE)) <> 0) then
       begin
         (* Do both windows differ in size *)
         if ((gui^.last_window^.xs <> gui^.active_window^.xs) or
@@ -2134,14 +2134,14 @@ end;
 
 procedure UG_WaitForUpdate;
 begin
-  gui^.state := Ord(gui^.state) or (UG_SATUS_WAIT_FOR_UPDATE);
+  gui^.state := gui^.state or UG_SATUS_WAIT_FOR_UPDATE;
   {$ifdef USE_MULTITASKING}
-  while Ord(gui^.state) and UG_SATUS_WAIT_FOR_UPDATE do
+  while gui^.state and UG_SATUS_WAIT_FOR_UPDATE do
   begin
   end;
   {$endif}
   {$ifndef USE_MULTITASKING}
-  while Ord(gui^.state) and UG_SATUS_WAIT_FOR_UPDATE <> 0 do
+  while gui^.state and UG_SATUS_WAIT_FOR_UPDATE <> 0 do
   begin
     ;
   end;
