@@ -5,11 +5,7 @@ unit UG_TYPES;
 interface
 
 type
-  (* PUG_U8 = ^UG_U8;
-  PUG_U8 = PChar;
-  UG_U8 = Char;
-  *)
-  PUG_U8 = ^Byte;
+  PUG_U8 = ^UG_U8;
   UG_U8 = Byte;
 
   PUG_S8 = ^UG_S8;  

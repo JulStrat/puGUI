@@ -63,12 +63,12 @@ uses UG_FONTS, UG_TYPES;
 
 const
   (* Alignments *)
-  ALIGN_H_LEFT = (1 shl 0);
-  ALIGN_H_CENTER = (1 shl 1);
-  ALIGN_H_RIGHT = (1 shl 2);
-  ALIGN_V_TOP = (1 shl 3);
-  ALIGN_V_CENTER = (1 shl 4);
-  ALIGN_V_BOTTOM = (1 shl 5);
+  ALIGN_H_LEFT = 1 shl 0;
+  ALIGN_H_CENTER = 1 shl 1;
+  ALIGN_H_RIGHT = 1 shl 2;
+  ALIGN_V_TOP = 1 shl 3;
+  ALIGN_V_CENTER = 1 shl 4;
+  ALIGN_V_BOTTOM = 1 shl 5;
   ALIGN_BOTTOM_RIGHT = ALIGN_V_BOTTOM or ALIGN_H_RIGHT;
   ALIGN_BOTTOM_CENTER = ALIGN_V_BOTTOM or ALIGN_H_CENTER;
   ALIGN_BOTTOM_LEFT = ALIGN_V_BOTTOM or ALIGN_H_LEFT;
@@ -141,41 +141,41 @@ const
   OBJ_EVENT_RELEASED = 5;
 
   (* Object states *)
-  OBJ_STATE_FREE = (1 shl 0);
-  OBJ_STATE_VALID = (1 shl 1);
-  OBJ_STATE_BUSY = (1 shl 2);
-  OBJ_STATE_VISIBLE = (1 shl 3);
-  OBJ_STATE_ENABLE = (1 shl 4);
-  OBJ_STATE_UPDATE = (1 shl 5);
-  OBJ_STATE_REDRAW = (1 shl 6);
-  OBJ_STATE_TOUCH_ENABLE = (1 shl 7);
-  OBJ_STATE_INIT = (OBJ_STATE_FREE or OBJ_STATE_VALID);
+  OBJ_STATE_FREE = 1 shl 0;
+  OBJ_STATE_VALID = 1 shl 1;
+  OBJ_STATE_BUSY = 1 shl 2;
+  OBJ_STATE_VISIBLE = 1 shl 3;
+  OBJ_STATE_ENABLE = 1 shl 4;
+  OBJ_STATE_UPDATE = 1 shl 5;
+  OBJ_STATE_REDRAW = 1 shl 6;
+  OBJ_STATE_TOUCH_ENABLE = 1 shl 7;
+  OBJ_STATE_INIT = OBJ_STATE_FREE or OBJ_STATE_VALID;
 
   (* Object touch states *)
-  OBJ_TOUCH_STATE_CHANGED = (1 shl 0);
-  OBJ_TOUCH_STATE_PRESSED_ON_OBJECT = (1 shl 1);
-  OBJ_TOUCH_STATE_PRESSED_OUTSIDE_OBJECT = (1 shl 2);
-  OBJ_TOUCH_STATE_RELEASED_ON_OBJECT = (1 shl 3);
-  OBJ_TOUCH_STATE_RELEASED_OUTSIDE_OBJECT = (1 shl 4);
-  OBJ_TOUCH_STATE_IS_PRESSED_ON_OBJECT = (1 shl 5);
-  OBJ_TOUCH_STATE_IS_PRESSED = (1 shl 6);
-  OBJ_TOUCH_STATE_CLICK_ON_OBJECT = (1 shl 7);
+  OBJ_TOUCH_STATE_CHANGED = 1 shl 0;
+  OBJ_TOUCH_STATE_PRESSED_ON_OBJECT = 1 shl 1;
+  OBJ_TOUCH_STATE_PRESSED_OUTSIDE_OBJECT = 1 shl 2;
+  OBJ_TOUCH_STATE_RELEASED_ON_OBJECT = 1 shl 3;
+  OBJ_TOUCH_STATE_RELEASED_OUTSIDE_OBJECT = 1 shl 4;
+  OBJ_TOUCH_STATE_IS_PRESSED_ON_OBJECT = 1 shl 5;
+  OBJ_TOUCH_STATE_IS_PRESSED = 1 shl 6;
+  OBJ_TOUCH_STATE_CLICK_ON_OBJECT = 1 shl 7;
   OBJ_TOUCH_STATE_INIT = 0;
 
   (* Window states *)
-  WND_STATE_FREE = (1 shl 0);
-  WND_STATE_VALID = (1 shl 1);
-  WND_STATE_BUSY = (1 shl 2);
-  WND_STATE_VISIBLE = (1 shl 3);
-  WND_STATE_ENABLE = (1 shl 4);
-  WND_STATE_UPDATE = (1 shl 5);
-  WND_STATE_REDRAW_TITLE = (1 shl 6);
+  WND_STATE_FREE = 1 shl 0;
+  WND_STATE_VALID = 1 shl 1;
+  WND_STATE_BUSY = 1 shl 2;
+  WND_STATE_VISIBLE = 1 shl 3;
+  WND_STATE_ENABLE = 1 shl 4;
+  WND_STATE_UPDATE = 1 shl 5;
+  WND_STATE_REDRAW_TITLE = 1 shl 6;
 
   (* Window styles *)
-  WND_STYLE_2D = (0 shl 0);
-  WND_STYLE_3D = (1 shl 0);
-  WND_STYLE_HIDE_TITLE = (0 shl 1);
-  WND_STYLE_SHOW_TITLE = (1 shl 1);
+  WND_STYLE_2D = 0 shl 0;
+  WND_STYLE_3D = 1 shl 0;
+  WND_STYLE_HIDE_TITLE = 0 shl 1;
+  WND_STYLE_SHOW_TITLE = 1 shl 1;
 
   (* Default image IDs *)
   IMG_ID_0 = OBJ_ID_0;
@@ -200,7 +200,7 @@ const
   IMG_ID_19 = OBJ_ID_19;
 
   (* Image types *)
-  IMG_TYPE_BMP = (1 shl 0);
+  IMG_TYPE_BMP = 1 shl 0;
 
   (* Default button IDs *)
   BTN_ID_0 = OBJ_ID_0;
@@ -634,7 +634,6 @@ type
   (* -- TOUCH                                                                      -- *)
   (* -------------------------------------------------------------------------------- *)
   (* Touch structure *)
-
   UG_TOUCH = record
     state: UG_U8;
     xp: UG_S16;
@@ -668,7 +667,6 @@ type
   (* -- WINDOW                                                                     -- *)
   (* -------------------------------------------------------------------------------- *)
   (* Title structure *)
-
   UG_TITLE = record
     str: PChar;
     font: pUG_FONT;
@@ -926,29 +924,31 @@ function UG_WindowSetYStart(wnd: pUG_WINDOW;  ys: UG_S16): UG_RESULT;
 function UG_WindowSetXEnd(wnd: pUG_WINDOW;  xe: UG_S16): UG_RESULT;
 function UG_WindowSetYEnd(wnd: pUG_WINDOW;  ye: UG_S16): UG_RESULT;
 function UG_WindowSetStyle(wnd: pUG_WINDOW;  style: UG_U8): UG_RESULT;
-function UG_WindowGetForeColor(wnd: pUG_WINDOW): UG_COLOR;
-function UG_WindowGetBackColor(wnd: pUG_WINDOW): UG_COLOR;
-function UG_WindowGetTitleTextColor(wnd: pUG_WINDOW): UG_COLOR;
-function UG_WindowGetTitleColor(wnd: pUG_WINDOW): UG_COLOR;
-function UG_WindowGetTitleInactiveTextColor(wnd: pUG_WINDOW): UG_COLOR;
-function UG_WindowGetTitleInactiveColor(wnd: pUG_WINDOW): UG_COLOR;
-function UG_WindowGetTitleText(wnd: pUG_WINDOW): pchar;
-function UG_WindowGetTitleTextFont(wnd: pUG_WINDOW): pUG_FONT;
-function UG_WindowGetTitleTextHSpace(wnd: pUG_WINDOW): UG_S8;
-function UG_WindowGetTitleTextVSpace(wnd: pUG_WINDOW): UG_S8;
-function UG_WindowGetTitleTextAlignment(wnd: pUG_WINDOW): UG_U8;
-function UG_WindowGetTitleHeight(wnd: pUG_WINDOW): UG_U8;
-function UG_WindowGetXStart(wnd: pUG_WINDOW): UG_S16;
-function UG_WindowGetYStart(wnd: pUG_WINDOW): UG_S16;
-function UG_WindowGetXEnd(wnd: pUG_WINDOW): UG_S16;
-function UG_WindowGetYEnd(wnd: pUG_WINDOW): UG_S16;
-function UG_WindowGetStyle(wnd: pUG_WINDOW): UG_U8;
-function UG_WindowGetArea(wnd: pUG_WINDOW;  a: pUG_AREA): UG_RESULT;
-function UG_WindowGetInnerWidth(wnd: pUG_WINDOW): UG_S16;
-function UG_WindowGetOuterWidth(wnd: pUG_WINDOW): UG_S16;
-function UG_WindowGetInnerHeight(wnd: pUG_WINDOW): UG_S16;
-function UG_WindowGetOuterHeight(wnd: pUG_WINDOW): UG_S16;
 *)
+(* Window getters >>> *)
+function UG_WindowGetForeColor(const wnd: UG_WINDOW): UG_COLOR;
+function UG_WindowGetBackColor(const wnd: UG_WINDOW): UG_COLOR;
+function UG_WindowGetTitleTextColor(const wnd: UG_WINDOW): UG_COLOR;
+function UG_WindowGetTitleColor(const wnd: UG_WINDOW): UG_COLOR;
+function UG_WindowGetTitleInactiveTextColor(const wnd: UG_WINDOW): UG_COLOR;
+function UG_WindowGetTitleInactiveColor(const wnd: UG_WINDOW): UG_COLOR;
+function UG_WindowGetTitleText(const wnd: UG_WINDOW): PChar;
+function UG_WindowGetTitleTextFont(const wnd: UG_WINDOW): pUG_FONT;
+function UG_WindowGetTitleTextHSpace(const wnd: UG_WINDOW): UG_S8;
+function UG_WindowGetTitleTextVSpace(const wnd: UG_WINDOW): UG_S8;
+function UG_WindowGetTitleTextAlignment(const wnd: UG_WINDOW): UG_U8;
+function UG_WindowGetTitleHeight(const wnd: UG_WINDOW): UG_U8;
+function UG_WindowGetXStart(const wnd: UG_WINDOW): UG_S16;
+function UG_WindowGetYStart(const wnd: UG_WINDOW): UG_S16;
+function UG_WindowGetXEnd(const wnd: UG_WINDOW): UG_S16;
+function UG_WindowGetYEnd(const wnd: UG_WINDOW): UG_S16;
+function UG_WindowGetStyle(const wnd: UG_WINDOW): UG_U8;
+function UG_WindowGetArea(const wnd: UG_WINDOW; var a: UG_AREA): UG_RESULT;
+function UG_WindowGetInnerWidth(const wnd: UG_WINDOW): UG_S16;
+function UG_WindowGetOuterWidth(const wnd: UG_WINDOW): UG_S16;
+function UG_WindowGetInnerHeight(const wnd: UG_WINDOW): UG_S16;
+function UG_WindowGetOuterHeight(const wnd: UG_WINDOW): UG_S16;
+(* <<< Window getters *)
 
 (* Miscellaneous functions *)
 procedure UG_WaitForUpdate;
@@ -2070,6 +2070,236 @@ begin
     UG_WindowSetTitleColor := UG_RESULT_FAIL;
 end;
 
+(* Window getters >>> *)
+function UG_WindowGetForeColor(const wnd: UG_WINDOW): UG_COLOR;
+begin
+  if (wnd.state and WND_STATE_VALID) <> 0 then
+    UG_WindowGetForeColor := wnd.fc
+  else
+    UG_WindowGetForeColor := C_BLACK;
+end;
+
+function UG_WindowGetBackColor(const wnd: UG_WINDOW): UG_COLOR;
+begin
+  if (wnd.state and WND_STATE_VALID) <> 0 then
+    UG_WindowGetBackColor := wnd.bc
+  else
+    UG_WindowGetBackColor := C_BLACK;
+end;
+
+function UG_WindowGetTitleTextColor(const wnd: UG_WINDOW): UG_COLOR;
+begin
+  if (wnd.state and WND_STATE_VALID) <> 0 then
+    UG_WindowGetTitleTextColor := wnd.title.fc
+  else
+    UG_WindowGetTitleTextColor := C_BLACK;
+end;
+
+function UG_WindowGetTitleColor(const wnd: UG_WINDOW): UG_COLOR;
+begin
+  if (wnd.state and WND_STATE_VALID) <> 0 then
+    UG_WindowGetTitleColor := wnd.title.bc
+  else
+    UG_WindowGetTitleColor := C_BLACK;
+end;
+
+function UG_WindowGetTitleInactiveTextColor(const wnd: UG_WINDOW): UG_COLOR;
+begin
+  if (wnd.state and WND_STATE_VALID) <> 0 then
+    UG_WindowGetTitleInactiveTextColor := wnd.title.ifc
+  else
+    UG_WindowGetTitleInactiveTextColor := C_BLACK;
+end;
+
+function UG_WindowGetTitleInactiveColor(const wnd: UG_WINDOW): UG_COLOR;
+begin
+  if (wnd.state and WND_STATE_VALID) <> 0 then
+    UG_WindowGetTitleInactiveColor := wnd.title.ibc
+  else
+    UG_WindowGetTitleInactiveColor := C_BLACK;
+end;
+
+function UG_WindowGetTitleText(const wnd: UG_WINDOW): PChar;
+begin
+  if (wnd.state and WND_STATE_VALID) <> 0 then
+    UG_WindowGetTitleText := wnd.title.str
+  else
+    UG_WindowGetTitleText := nil;
+end;
+
+function UG_WindowGetTitleTextFont(const wnd: UG_WINDOW): pUG_FONT;
+begin
+  if (wnd.state and WND_STATE_VALID) <> 0 then
+    UG_WindowGetTitleTextFont := wnd.title.font
+  else
+    UG_WindowGetTitleTextFont := nil;
+end;
+
+function UG_WindowGetTitleTextHSpace(const wnd: UG_WINDOW): UG_S8;
+begin
+  if (wnd.state and WND_STATE_VALID) <> 0 then
+    UG_WindowGetTitleTextHSpace := wnd.title.h_space
+  else
+    UG_WindowGetTitleTextHSpace := 0;
+end;
+
+function UG_WindowGetTitleTextVSpace(const wnd: UG_WINDOW): UG_S8;
+begin
+  if (wnd.state and WND_STATE_VALID) <> 0 then
+    UG_WindowGetTitleTextVSpace := wnd.title.v_space
+  else
+    UG_WindowGetTitleTextVSpace := 0;
+end;
+
+function UG_WindowGetTitleTextAlignment(const wnd: UG_WINDOW): UG_U8;
+begin
+  if (wnd.state and WND_STATE_VALID) <> 0 then
+    UG_WindowGetTitleTextAlignment := wnd.title.align
+  else
+    UG_WindowGetTitleTextAlignment := 0;
+end;
+
+function UG_WindowGetTitleHeight(const wnd: UG_WINDOW): UG_U8;
+begin
+  if (wnd.state and WND_STATE_VALID) <> 0 then
+    UG_WindowGetTitleHeight := wnd.title.Height
+  else
+    UG_WindowGetTitleHeight := 0;
+end;
+
+function UG_WindowGetXStart(const wnd: UG_WINDOW): UG_S16;
+begin
+  if (wnd.state and WND_STATE_VALID) <> 0 then
+    UG_WindowGetXStart := wnd.xs
+  else
+    UG_WindowGetXStart := -1;
+end;
+
+function UG_WindowGetYStart(const wnd: UG_WINDOW): UG_S16;
+begin
+  if (wnd.state and WND_STATE_VALID) <> 0 then
+    UG_WindowGetYStart := wnd.ys
+  else
+    UG_WindowGetYStart := -1;
+end;
+
+function UG_WindowGetXEnd(const wnd: UG_WINDOW): UG_S16;
+begin
+  if (wnd.state and WND_STATE_VALID) <> 0 then
+    UG_WindowGetXEnd := wnd.xe
+  else
+    UG_WindowGetXEnd := -1;
+end;
+
+function UG_WindowGetYEnd(const wnd: UG_WINDOW): UG_S16;
+begin
+  if (wnd.state and WND_STATE_VALID) <> 0 then
+    UG_WindowGetYEnd := wnd.ye
+  else
+    UG_WindowGetYEnd := -1;
+end;
+
+function UG_WindowGetStyle(const wnd: UG_WINDOW): UG_U8;
+begin
+  if (wnd.state and WND_STATE_VALID) <> 0 then
+    UG_WindowGetStyle := wnd.style
+  else
+    UG_WindowGetStyle := 0;
+end;
+
+function UG_WindowGetArea(const wnd: UG_WINDOW; var a: UG_AREA): UG_RESULT;
+begin
+  if (wnd.state and WND_STATE_VALID) <> 0 then
+  begin
+    a.xs := wnd.xs;
+    a.ys := wnd.ys;
+    a.xe := wnd.xe;
+    a.ye := wnd.ye;
+    if (wnd.style and WND_STYLE_3D) <> 0 then
+    begin
+      a.xs := a.xs + 3;
+      a.ys := a.ys + 3;
+      a.xe := a.xe - 3;
+      a.ye := a.ye - 3;
+    end;
+    if (wnd.style and WND_STYLE_SHOW_TITLE) <> 0 then
+      a.ys := a.ys + wnd.title.Height + 1;
+    UG_WindowGetArea := UG_RESULT_OK;
+  end
+  else
+    UG_WindowGetArea := UG_RESULT_FAIL;
+end;
+
+function UG_WindowGetInnerWidth(const wnd: UG_WINDOW): UG_S16;
+var
+  w: UG_S16;
+begin
+  w := 0;
+  if (wnd.state and WND_STATE_VALID) <> 0 then
+  begin
+    w := wnd.xe - wnd.xs;
+    (* 3D style? *)
+    if (wnd.style and WND_STYLE_3D) <> 0 then
+      w := w - 6;
+    if w < 0 then
+      w := 0;
+  end;
+  UG_WindowGetInnerWidth := w;
+end;
+
+function UG_WindowGetOuterWidth(const wnd: UG_WINDOW): UG_S16;
+var
+  w: UG_S16;
+begin
+  w := 0;
+  if (wnd.state and WND_STATE_VALID) <> 0 then
+  begin
+    w := wnd.xe - wnd.xs;
+    if w < 0 then
+      w := 0;
+  end;
+  UG_WindowGetOuterWidth := w;
+end;
+
+function UG_WindowGetInnerHeight(const wnd: UG_WINDOW): UG_S16;
+var
+  h: UG_S16;
+
+begin
+  h := 0;
+  if (wnd.state and WND_STATE_VALID) <> 0 then
+  begin
+    h := wnd.ye - wnd.ys;
+    (* 3D style? *)
+    if (wnd.style and WND_STYLE_3D) <> 0 then
+      h := h - 6;
+    (* Is the title active *)
+    if (wnd.style and WND_STYLE_SHOW_TITLE) <> 0 then
+      h := h - wnd.title.Height;
+    if h < 0 then
+      h := 0;
+  end;
+  UG_WindowGetInnerHeight := h;
+end;
+
+function UG_WindowGetOuterHeight(const wnd: UG_WINDOW): UG_S16;
+var
+  h: UG_S16;
+
+begin
+  h := 0;
+  if (wnd.state and WND_STATE_VALID) <> 0 then
+  begin
+    h := wnd.ye - wnd.ys;
+    if h < 0 then
+      h := 0;
+  end;
+  UG_WindowGetOuterHeight := h;
+end;
+
+(* <<< Window getters *)
+
+
 (* -------------------------------------------------------------------------------- *)
 (* -- MISCELLANEOUS FUNCTIONS                                                    -- *)
 (* -------------------------------------------------------------------------------- *)
@@ -2171,13 +2401,13 @@ end;
 procedure UG_DriverEnable(t: UG_U8);
 begin
   if (t < NUMBER_OF_DRIVERS) and ((gui^.driver[t].state and DRIVER_REGISTERED) <> 0) then
-      gui^.driver[t].state := gui^.driver[t].state or DRIVER_ENABLED;
+    gui^.driver[t].state := gui^.driver[t].state or DRIVER_ENABLED;
 end;
 
 procedure UG_DriverDisable(t: UG_U8);
 begin
   if (t < NUMBER_OF_DRIVERS) and ((gui^.driver[t].state and DRIVER_REGISTERED) <> 0) then
-      gui^.driver[t].state := gui^.driver[t].state and (not DRIVER_ENABLED);
+    gui^.driver[t].state := gui^.driver[t].state and (not DRIVER_ENABLED);
 end;
 
 end.
