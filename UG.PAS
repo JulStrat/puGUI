@@ -893,25 +893,20 @@ procedure UG_FontSetVSpace(s: UG_U16);
 
 function UG_WindowCreate(var wnd: UG_WINDOW; objlst: pUG_OBJECT;
   objcnt: UG_U8; cb: UG_WINDOW_CB): UG_RESULT;
-
-(*
-function UG_WindowDelete(wnd: pUG_WINDOW): UG_RESULT;
-*)
+function UG_WindowDelete(var wnd: UG_WINDOW): UG_RESULT;
 function UG_WindowShow(var wnd: UG_WINDOW): UG_RESULT;
-(*
-function UG_WindowHide(wnd: pUG_WINDOW): UG_RESULT;
-function UG_WindowResize(wnd: pUG_WINDOW;  xs: UG_S16;  ys: UG_S16;  xe: UG_S16;  ye: UG_S16): UG_RESULT;
-function UG_WindowAlert(wnd: pUG_WINDOW): UG_RESULT;
-*)
+function UG_WindowHide(var wnd: UG_WINDOW): UG_RESULT;
+function UG_WindowResize(var wnd: UG_WINDOW; xs: UG_S16; ys: UG_S16;
+  xe: UG_S16; ye: UG_S16): UG_RESULT;
+function UG_WindowAlert(var wnd: UG_WINDOW): UG_RESULT;
+
+(* Window setters >>> *)
 function UG_WindowSetForeColor(var wnd: UG_WINDOW; fc: UG_COLOR): UG_RESULT;
 function UG_WindowSetBackColor(var wnd: UG_WINDOW; bc: UG_COLOR): UG_RESULT;
-
 function UG_WindowSetTitleTextColor(var wnd: UG_WINDOW; c: UG_COLOR): UG_RESULT;
 function UG_WindowSetTitleColor(var wnd: UG_WINDOW; c: UG_COLOR): UG_RESULT;
-(*
-function UG_WindowSetTitleInactiveTextColor(wnd: pUG_WINDOW;  c: UG_COLOR): UG_RESULT;
-function UG_WindowSetTitleInactiveColor(wnd: pUG_WINDOW;  c: UG_COLOR): UG_RESULT;
-*)
+function UG_WindowSetTitleInactiveTextColor(var wnd: UG_WINDOW; c: UG_COLOR): UG_RESULT;
+function UG_WindowSetTitleInactiveColor(var wnd: UG_WINDOW; c: UG_COLOR): UG_RESULT;
 function UG_WindowSetTitleText(var wnd: UG_WINDOW; str: PChar): UG_RESULT;
 function UG_WindowSetTitleTextFont(var wnd: UG_WINDOW; font: pUG_FONT): UG_RESULT;
 (*
@@ -925,6 +920,8 @@ function UG_WindowSetXEnd(wnd: pUG_WINDOW;  xe: UG_S16): UG_RESULT;
 function UG_WindowSetYEnd(wnd: pUG_WINDOW;  ye: UG_S16): UG_RESULT;
 function UG_WindowSetStyle(wnd: pUG_WINDOW;  style: UG_U8): UG_RESULT;
 *)
+(* Window setters <<< *)
+
 (* Window getters >>> *)
 function UG_WindowGetForeColor(const wnd: UG_WINDOW): UG_COLOR;
 function UG_WindowGetBackColor(const wnd: UG_WINDOW): UG_COLOR;
@@ -1335,9 +1332,111 @@ begin
   end;
 end;
 
-(*
-function _UG_WindowClear(wnd: pUG_WINDOW): UG_RESULT;
+function _UG_WindowClear(var wnd: UG_WINDOW): UG_RESULT;
+begin
+  if (wnd.state and WND_STATE_VISIBLE) <> 0 then
+  begin
+    wnd.state := wnd.state and (not WND_STATE_VISIBLE);
+    UG_FillFrame(wnd.xs, wnd.ys, wnd.xe, wnd.ye, gui^.desktop_color);
+    if @wnd <> gui^.active_window then
+    begin
+      (* If the current window is visible, update it! *)
+      if (gui^.active_window^.state and WND_STATE_VISIBLE) <> 0 then
+      begin
+        gui^.active_window^.state :=
+          gui^.active_window^.state and (not WND_STATE_REDRAW_TITLE);
+        gui^.active_window^.state := gui^.active_window^.state or WND_STATE_UPDATE;
+      end;
+    end;
+  end;
+  _UG_WindowClear := UG_RESULT_OK;
+end;
 
+procedure _UG_ProcessTouchData(var wnd: UG_WINDOW);
+var
+  xp, yp: UG_S16;
+  i: UG_U16;
+  objcnt: UG_U16;
+  obj: pUG_OBJECT;
+  objstate: UG_U8;
+  objtouch: UG_U8;
+  tchstate: UG_U8;
+begin
+  xp := gui^.touch.xp;
+  yp := gui^.touch.yp;
+  tchstate := gui^.touch.state;
+  objcnt := wnd.objcnt;
+  obj := wnd.objlst;
+  for i := 0 to Pred(objcnt) do
+  begin
+    (* obj := wnd.objlst[i]; *)
+    (* post inc *)
+    objstate := obj^.state;
+    objtouch := obj^.touch_state;
+    if ((objstate and OBJ_STATE_FREE) = 0) and
+      ((objstate and OBJ_STATE_VALID) <> 0) and
+      ((objstate and OBJ_STATE_VISIBLE) <> 0) and
+      ((objstate and OBJ_STATE_REDRAW) = 0) then
+    begin
+      (* Process touch data *)
+      if (tchstate <> 0) and (xp <> -1) then
+      begin
+        if (objtouch and OBJ_TOUCH_STATE_IS_PRESSED) = 0 then
+        begin
+          objtouch := objtouch or OBJ_TOUCH_STATE_PRESSED_OUTSIDE_OBJECT or
+            OBJ_TOUCH_STATE_CHANGED;
+          objtouch := objtouch and
+            (not (OBJ_TOUCH_STATE_RELEASED_ON_OBJECT or OBJ_TOUCH_STATE_RELEASED_OUTSIDE_OBJECT or
+            OBJ_TOUCH_STATE_CLICK_ON_OBJECT));
+        end;
+        objtouch := objtouch and (not OBJ_TOUCH_STATE_IS_PRESSED_ON_OBJECT);
+        if xp >= obj^.a_abs.xs then
+        begin
+          if xp <= obj^.a_abs.xe then
+          begin
+            if yp >= obj^.a_abs.ys then
+            begin
+              if yp <= obj^.a_abs.ye then
+              begin
+                objtouch := objtouch or OBJ_TOUCH_STATE_IS_PRESSED_ON_OBJECT;
+                if (objtouch and OBJ_TOUCH_STATE_IS_PRESSED) = 0 then
+                begin
+                  objtouch := objtouch and (not OBJ_TOUCH_STATE_PRESSED_OUTSIDE_OBJECT);
+                  objtouch := objtouch or OBJ_TOUCH_STATE_PRESSED_ON_OBJECT;
+                end;
+              end;
+            end;
+          end;
+        end;
+        objtouch := objtouch or OBJ_TOUCH_STATE_IS_PRESSED;
+      end
+      else
+      if (objtouch and OBJ_TOUCH_STATE_IS_PRESSED) <> 0 then
+      begin
+        if (objtouch and OBJ_TOUCH_STATE_IS_PRESSED_ON_OBJECT) <> 0 then
+        begin
+          if (objtouch and OBJ_TOUCH_STATE_PRESSED_ON_OBJECT) <> 0 then
+            objtouch := objtouch or OBJ_TOUCH_STATE_CLICK_ON_OBJECT;
+          objtouch := objtouch or OBJ_TOUCH_STATE_RELEASED_ON_OBJECT;
+        end
+        else
+        begin
+          objtouch := objtouch or OBJ_TOUCH_STATE_RELEASED_OUTSIDE_OBJECT;
+        end;
+        if (objtouch and OBJ_TOUCH_STATE_IS_PRESSED) <> 0 then
+          objtouch := objtouch or OBJ_TOUCH_STATE_CHANGED;
+        objtouch := objtouch and
+          (not (OBJ_TOUCH_STATE_PRESSED_OUTSIDE_OBJECT or
+          OBJ_TOUCH_STATE_PRESSED_ON_OBJECT or OBJ_TOUCH_STATE_IS_PRESSED));
+      end;
+    end;
+    obj^.touch_state := objtouch;
+    (* post inc *)
+    Inc(obj);
+  end;
+end;
+
+(*
 procedure _UG_TextboxUpdate(wnd: pUG_WINDOW;  obj: pUG_OBJECT);
 procedure _UG_ButtonUpdate(wnd: pUG_WINDOW;  obj: pUG_OBJECT);
 procedure _UG_CheckboxUpdate(wnd: pUG_WINDOW;  obj: pUG_OBJECT);
@@ -1984,6 +2083,30 @@ begin
   UG_WindowCreate := UG_RESULT_OK;
 end;
 
+function UG_WindowDelete(var wnd: UG_WINDOW): UG_RESULT;
+begin
+  if @wnd = gui^.active_window then
+  begin
+    UG_WindowDelete := UG_RESULT_FAIL;
+  end
+  else
+  if (wnd.state and WND_STATE_VALID) <> 0 then
+  begin
+    wnd.state := 0;
+    wnd.cb := nil;
+    wnd.objcnt := 0;
+    wnd.objlst := nil;
+    wnd.xs := 0;
+    wnd.ys := 0;
+    wnd.xe := 0;
+    wnd.ye := 0;
+    wnd.style := 0;
+    UG_WindowDelete := UG_RESULT_OK;
+  end
+  else
+    UG_WindowDelete := UG_RESULT_FAIL;
+end;
+
 function UG_WindowShow(var wnd: UG_WINDOW): UG_RESULT;
 begin
   (* Force an update, even if this is the active window! *)
@@ -1991,6 +2114,114 @@ begin
   wnd.state := wnd.state and (not WND_STATE_REDRAW_TITLE);
   gui^.next_window := @wnd;
   UG_WindowShow := UG_RESULT_OK;
+end;
+
+function UG_WindowHide(var wnd: UG_WINDOW): UG_RESULT;
+begin
+  if @wnd = gui^.active_window then
+  begin
+    (* Is there an old window which just lost the focus? *)
+    if (gui^.last_window <> nil) and
+      ((gui^.last_window^.state and WND_STATE_VISIBLE) <> 0) then
+    begin
+      if (gui^.last_window^.xs > wnd.xs) or (gui^.last_window^.ys > wnd.ys) or
+        (gui^.last_window^.xe < wnd.xe) or (gui^.last_window^.ye < wnd.ye) then
+      begin
+        _UG_WindowClear(wnd);
+      end;
+      gui^.next_window := gui^.last_window;
+    end
+    else
+    begin
+      gui^.active_window^.state :=
+        gui^.active_window^.state and (not WND_STATE_VISIBLE);
+      gui^.active_window^.state := gui^.active_window^.state or WND_STATE_UPDATE;
+    end;
+  end
+  else
+  begin
+    (* If the old window is visible, clear it! *)
+    _UG_WindowClear(wnd);
+    UG_WindowHide := UG_RESULT_OK;
+  end;
+end;
+
+function UG_WindowResize(var wnd: UG_WINDOW; xs: UG_S16; ys: UG_S16;
+  xe: UG_S16; ye: UG_S16): UG_RESULT;
+var
+  pos: UG_S16;
+  xmax: UG_S16;
+  ymax: UG_S16;
+begin
+  xmax := UG_GetXDim - 1;
+  ymax := UG_GetYDim - 1;
+  if (wnd.state and WND_STATE_VALID) <> 0 then
+  begin
+    (* Do some checks... *)
+    if (xs < 0) or (ys < 0) then
+    begin
+      UG_WindowResize := UG_RESULT_FAIL;
+      exit;
+    end;
+    if (xe > xmax) or (ye > ymax) then
+    begin
+      UG_WindowResize := UG_RESULT_FAIL;
+      exit;
+    end;
+    pos := xe - xs;
+    if pos < 10 then
+    begin
+      UG_WindowResize := UG_RESULT_FAIL;
+      exit;
+    end;
+    pos := ye - ys;
+    if pos < 10 then
+    begin
+      UG_WindowResize := UG_RESULT_FAIL;
+      exit;
+    end;
+    (* ... and if everything is OK move the window! *)
+    wnd.xs := xs;
+    wnd.ys := ys;
+    wnd.xe := xe;
+    wnd.ye := ye;
+    if ((wnd.state and WND_STATE_VISIBLE) <> 0) and (gui^.active_window = @wnd) then
+    begin
+      if wnd.ys <> 0 then
+        UG_FillFrame(0, 0, xmax, wnd.ys - 1, gui^.desktop_color);
+      pos := wnd.ye + 1;
+      if pos <= ymax then
+        UG_FillFrame(0, pos, xmax, ymax, gui^.desktop_color);
+      if wnd.xs <> 0 then
+        UG_FillFrame(0, wnd.ys, wnd.xs - 1, wnd.ye, gui^.desktop_color);
+      pos := wnd.xe + 1;
+      if pos <= xmax then
+        UG_FillFrame(pos, wnd.ys, xmax, wnd.ye, gui^.desktop_color);
+      wnd.state := wnd.state and (not WND_STATE_REDRAW_TITLE);
+      wnd.state := wnd.state or (WND_STATE_UPDATE);
+    end;
+    UG_WindowResize := UG_RESULT_OK;
+  end
+  else
+    UG_WindowResize := UG_RESULT_FAIL;
+end;
+
+function UG_WindowAlert(var wnd: UG_WINDOW): UG_RESULT;
+var
+  c: UG_COLOR;
+begin
+  c := UG_WindowGetTitleTextColor(wnd);
+  if UG_WindowSetTitleTextColor(wnd, UG_WindowGetTitleColor(wnd)) = UG_RESULT_FAIL then
+  begin
+    UG_WindowAlert := UG_RESULT_FAIL;
+    exit;
+  end;
+  if UG_WindowSetTitleColor(wnd, c) = UG_RESULT_FAIL then
+  begin
+    UG_WindowAlert := UG_RESULT_FAIL;
+    exit;
+  end;
+  UG_WindowAlert := UG_RESULT_OK;
 end;
 
 function UG_WindowSetForeColor(var wnd: UG_WINDOW; fc: UG_COLOR): UG_RESULT;
@@ -2068,6 +2299,30 @@ begin
   end
   else
     UG_WindowSetTitleColor := UG_RESULT_FAIL;
+end;
+
+function UG_WindowSetTitleInactiveTextColor(var wnd: UG_WINDOW; c: UG_COLOR): UG_RESULT;
+begin
+  if (wnd.state and WND_STATE_VALID) <> 0 then
+  begin
+    wnd.title.ifc := c;
+    wnd.state := wnd.state or WND_STATE_UPDATE or WND_STATE_REDRAW_TITLE;
+    UG_WindowSetTitleInactiveTextColor := UG_RESULT_OK;
+  end
+  else
+    UG_WindowSetTitleInactiveTextColor := UG_RESULT_FAIL;
+end;
+
+function UG_WindowSetTitleInactiveColor(var wnd: UG_WINDOW; c: UG_COLOR): UG_RESULT;
+begin
+  if (wnd.state and WND_STATE_VALID) <> 0 then
+  begin
+    wnd.title.ibc := c;
+    wnd.state := wnd.state or WND_STATE_UPDATE or WND_STATE_REDRAW_TITLE;
+    UG_WindowSetTitleInactiveColor := UG_RESULT_OK;
+  end
+  else
+    UG_WindowSetTitleInactiveColor := UG_RESULT_FAIL;
 end;
 
 (* Window getters >>> *)
@@ -2264,7 +2519,6 @@ end;
 function UG_WindowGetInnerHeight(const wnd: UG_WINDOW): UG_S16;
 var
   h: UG_S16;
-
 begin
   h := 0;
   if (wnd.state and WND_STATE_VALID) <> 0 then
@@ -2285,7 +2539,6 @@ end;
 function UG_WindowGetOuterHeight(const wnd: UG_WINDOW): UG_S16;
 var
   h: UG_S16;
-
 begin
   h := 0;
   if (wnd.state and WND_STATE_VALID) <> 0 then
@@ -2298,7 +2551,6 @@ begin
 end;
 
 (* <<< Window getters *)
-
 
 (* -------------------------------------------------------------------------------- *)
 (* -- MISCELLANEOUS FUNCTIONS                                                    -- *)
@@ -2354,10 +2606,9 @@ begin
     (* Is the window visible? *)
     if (wnd^.state and WND_STATE_VISIBLE) <> 0 then
     begin
-      { _UG_ProcessTouchData(wnd); }
+      _UG_ProcessTouchData(wnd^);
       { _UG_UpdateObjects(wnd);    }
       { _UG_HandleEvents(wnd);     }
-      ;
     end;
   end;
 end;
