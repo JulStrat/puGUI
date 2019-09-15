@@ -572,6 +572,8 @@ type
 
   (* UG_WINDOW = S_WINDOW; *)
   UG_RESULT = UG_S8;
+
+  PUG_COLOR = ^UG_COLOR;
 {$ifdef USE_COLOR_RGB888}
   UG_COLOR = UG_U32;
 {$endif}
@@ -1213,6 +1215,37 @@ begin
   end;
 end;
 
+procedure _UG_DrawObjectFrame(xs: UG_S16; ys: UG_S16; xe: UG_S16;
+  ye: UG_S16; p: pUG_COLOR);
+begin
+  UG_DrawLine(xs, ys, xe - 1, ys, p^);
+  Inc(p);
+  (* Frame 0*)
+  UG_DrawLine(xs, ys + 1, xs, ye - 1, p^);
+  Inc(p);
+  UG_DrawLine(xs, ye, xe, ye, p^);
+  Inc(p);
+  UG_DrawLine(xe, ys, xe, ye - 1, p^);
+  Inc(p);
+  UG_DrawLine(xs + 1, ys + 1, xe - 2, ys + 1, p^);
+  Inc(p);
+  (* Frame 1*)
+  UG_DrawLine(xs + 1, ys + 2, xs + 1, ye - 2, p^);
+  Inc(p);
+  UG_DrawLine(xs + 1, ye - 1, xe - 1, ye - 1, p^);
+  Inc(p);
+  UG_DrawLine(xe - 1, ys + 1, xe - 1, ye - 2, p^);
+  Inc(p);
+  UG_DrawLine(xs + 2, ys + 2, xe - 3, ys + 2, p^);
+  Inc(p);
+  (* Frame 2*)
+  UG_DrawLine(xs + 2, ys + 3, xs + 2, ye - 3, p^);
+  Inc(p);
+  UG_DrawLine(xs + 2, ye - 2, xe - 2, ye - 2, p^);
+  Inc(p);
+  UG_DrawLine(xe - 2, ys + 2, xe - 2, ye - 3, p^);
+end;
+
 function _UG_WindowDrawTitle(var wnd: UG_WINDOW): UG_RESULT;
 var
   txt: UG_TEXT;
@@ -1295,7 +1328,7 @@ begin
     if ((wnd.style and WND_STYLE_3D) <> 0) and
       (0 = (wnd.state and WND_STATE_REDRAW_TITLE)) then
     begin
-      (* _UG_DrawObjectFrame(xs,ys,xe,ye,pUG_COLOR(pal_window)); *)
+      _UG_DrawObjectFrame(xs, ys, xe, ye, PUG_COLOR(@pal_window[0]));
       xs := xs + 3;
       ys := ys + 3;
       xe := xe - 3;
@@ -1386,8 +1419,8 @@ begin
           objtouch := objtouch or OBJ_TOUCH_STATE_PRESSED_OUTSIDE_OBJECT or
             OBJ_TOUCH_STATE_CHANGED;
           objtouch := objtouch and
-            (not (OBJ_TOUCH_STATE_RELEASED_ON_OBJECT or OBJ_TOUCH_STATE_RELEASED_OUTSIDE_OBJECT or
-            OBJ_TOUCH_STATE_CLICK_ON_OBJECT));
+            (not (OBJ_TOUCH_STATE_RELEASED_ON_OBJECT or
+            OBJ_TOUCH_STATE_RELEASED_OUTSIDE_OBJECT or OBJ_TOUCH_STATE_CLICK_ON_OBJECT));
         end;
         objtouch := objtouch and (not OBJ_TOUCH_STATE_IS_PRESSED_ON_OBJECT);
         if xp >= obj^.a_abs.xs then
@@ -1441,7 +1474,6 @@ procedure _UG_TextboxUpdate(wnd: pUG_WINDOW;  obj: pUG_OBJECT);
 procedure _UG_ButtonUpdate(wnd: pUG_WINDOW;  obj: pUG_OBJECT);
 procedure _UG_CheckboxUpdate(wnd: pUG_WINDOW;  obj: pUG_OBJECT);
 procedure _UG_ImageUpdate(wnd: pUG_WINDOW;  obj: pUG_OBJECT);
-procedure _UG_PutChar(chr: char;  x: UG_S16;  y: UG_S16;  fc: UG_COLOR;  bc: UG_COLOR;  font: pUG_FONT);
 *)
 
 (* CLASSIC *)

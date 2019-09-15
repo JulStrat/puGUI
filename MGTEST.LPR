@@ -29,10 +29,10 @@ var
 
   function DrawLine(x1, y1: UG_S16; x2, y2: UG_S16; c: UG_COLOR): UG_RESULT;
   var
-    clr: Word;
+    clr: Byte;
   begin
     clr := GetColor;
-    SetColor(Word(c));
+    SetColor(Byte(c));
     Line(x1, y1, x2, y2);
     SetColor(clr);
     DrawLine := 1;
@@ -40,11 +40,11 @@ var
 
   function FillFrame(x1, y1: UG_S16; x2, y2: UG_S16; c: UG_COLOR): UG_RESULT;
   var
-    clr: Word;
+    clr: Byte;
   begin
     clr := GetColor;
-    setfillstyle(12, Word(c));
-    SetColor(Word(c));
+    setfillstyle(12, Byte(c));
+    SetColor(Byte(c));
     Bar(x1, y1, x2, y2);
     SetColor(clr);
     FillFrame := 1;
@@ -89,6 +89,10 @@ begin
   UG_WindowSetTitleTextColor(ugWnd, blue);
   UG_WindowSetTitleColor(ugWnd, white);
   UG_WindowResize(ugWnd, 40, 40, getmaxx - 40, getmaxy - 40);
+  (*
+  WriteLn(UG_WindowGetXStart(ugWnd), ',', UG_WindowGetYStart(ugWnd), ',',
+    UG_WindowGetXEnd(ugWnd), ',', UG_WindowGetYEnd(ugWnd));
+  *)
   UG_WindowShow(ugWnd);
   UG_Update;
   ReadLn;
