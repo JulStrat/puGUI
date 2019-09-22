@@ -654,13 +654,13 @@ type
   S_OBJECT = record
     state: UG_U8;         (* object state                               *)
     touch_state: UG_U8;   (* object touch state                         *)
-    update: PUG_CALLBACK; (* pointer to object-specific update function *)
+    update: UG_CALLBACK;  (* pointer to object-specific update function *)
     a_abs: UG_AREA;       (* absolute area of the object                *)
     a_rel: UG_AREA;       (* relative area of the object                *)
     otype: UG_U8;         (* object type                                *)
     id: UG_U8;            (* object ID                                  *)
     event: UG_U8;         (* object-specific events                     *)
-    Data: PUG_U8;       (* pointer to object-specific data            *)
+    Data: PUG_U8;         (* pointer to object-specific data            *)
   end;
   UG_OBJECT = S_OBJECT;
 
@@ -700,7 +700,6 @@ type
     title: UG_TITLE;
     cb: UG_WINDOW_CB;
   end;
-
   UG_WINDOW = S_WINDOW;
 
   (* -------------------------------------------------------------------------------- *)
@@ -1099,9 +1098,9 @@ begin
         b := IncPtrU8(font.p, index)^;
         Inc(index);
         color := (((fc and $FF) * b + (bc and $FF) * (256 - b)) shr 8) and
-          $FF or (((fc and $FF00) * b + (bc and $FF00) * (256 - b)) shr
-          8) and $FF00 or (((fc and $FF0000) * b + (bc and $FF0000) *
-          (256 - b)) shr 8) and $FF0000;
+          $FF or (((fc and $FF00) * b + (bc and $FF00) * (256 - b)) shr 8) and
+          $FF00 or (((fc and $FF0000) * b + (bc and $FF0000) * (256 - b)) shr 8) and
+          $FF0000;
         gui^.pset(xo, yo, color);
         (* Blue component  *)
         (* Green component *)
@@ -1482,7 +1481,7 @@ begin
     Inc(obj);
   end;
 end;
-{
+
 procedure _UG_UpdateObjects(var wnd: UG_WINDOW);
 var
   i: UG_U16;
@@ -1491,27 +1490,67 @@ var
   objstate: UG_U8;
   objtouch: UG_U8;
 begin
-  objcnt:= wnd.objcnt;
+  objcnt := wnd.objcnt;
   obj := wnd.objlst;
   (* Check each object, if it needs to be updated? *)
-  for i:=0 to Pred(objcnt) do
+  for i := 0 to Pred(objcnt) do
   begin
-    objstate:= obj^.state;
-    objtouch:= obj^.touch_state;
+    objstate := obj^.state;
+    objtouch := obj^.touch_state;
     if ((objstate and OBJ_STATE_FREE) = 0) and
       ((objstate and OBJ_STATE_VALID) <> 0) then
     begin
       if (objstate and OBJ_STATE_UPDATE) <> 0 then
-        obj^.update(wnd, obj);
+        obj^.update(@wnd, obj);
       if ((objstate and OBJ_STATE_VISIBLE) <> 0) and
         ((objstate and OBJ_STATE_TOUCH_ENABLE) <> 0) then
-        if (objtouch and (OBJ_TOUCH_STATE_CHANGED or OBJ_TOUCH_STATE_IS_PRESSED)) <> 0 then
-          obj^.update(wnd,obj);
+        if (objtouch and (OBJ_TOUCH_STATE_CHANGED or
+          OBJ_TOUCH_STATE_IS_PRESSED)) <> 0 then
+          obj^.update(@wnd, obj);
     end;
     Inc(obj);
   end;
 end;
-}
+
+var
+  msg: UG_MESSAGE;
+
+procedure _UG_HandleEvents(var wnd: UG_WINDOW);
+var
+  i: UG_U16;
+  objcnt: UG_U16;
+  obj: pUG_OBJECT;
+  objstate: UG_U8;
+begin
+  msg.src := nil;
+  msg.mtype := MSG_TYPE_OBJECT;
+  objcnt := wnd.objcnt;
+  obj := wnd.objlst;
+
+  (* Handle window-related events *)
+  (*ToDo*)
+
+  (* Handle object-related events *)
+  for i := 0 to Pred(objcnt) do
+  begin
+    (* obj:= (UG_OBJECT* )@wnd.objlst[i]; *)
+    objstate := obj^.state;
+    if ((objstate and OBJ_STATE_FREE) = 0) and ((objstate and OBJ_STATE_VALID) <> 0) then
+    begin
+      if obj^.event <> OBJ_EVENT_NONE then
+      begin
+        msg.src := @obj;
+        msg.id := obj^.otype;
+        msg.sub_id := obj^.id;
+        msg.event := obj^.event;
+        wnd.cb(@msg);
+        obj^.event := OBJ_EVENT_NONE;
+      end;
+    end;
+    Inc(obj);
+  end;
+end;
+
 
 (*
 procedure _UG_TextboxUpdate(wnd: pUG_WINDOW;  obj: pUG_OBJECT);
@@ -2817,8 +2856,8 @@ begin
     if (wnd^.state and WND_STATE_VISIBLE) <> 0 then
     begin
       _UG_ProcessTouchData(wnd^);
-      { _UG_UpdateObjects(wnd);    }
-      { _UG_HandleEvents(wnd);     }
+      _UG_UpdateObjects(wnd^);
+      _UG_HandleEvents(wnd^);
     end;
   end;
 end;
