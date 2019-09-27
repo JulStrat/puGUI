@@ -24,7 +24,7 @@ var
 
   procedure pset(x: UG_S16; y: UG_S16; c: UG_COLOR);
   begin
-    PutPixel(x, y, Word(c));
+    PutPixel(x, y, Byte(c));
   end;
 
   function DrawLine(x1, y1: UG_S16; x2, y2: UG_S16; c: UG_COLOR): UG_RESULT;
@@ -35,7 +35,7 @@ var
     SetColor(Byte(c));
     Line(x1, y1, x2, y2);
     SetColor(clr);
-    DrawLine := 1;
+    DrawLine := UG_RESULT_OK;
   end;
 
   function FillFrame(x1, y1: UG_S16; x2, y2: UG_S16; c: UG_COLOR): UG_RESULT;
@@ -47,7 +47,7 @@ var
     SetColor(Byte(c));
     Bar(x1, y1, x2, y2);
     SetColor(clr);
-    FillFrame := 1;
+    FillFrame := UG_RESULT_OK;
   end;
 
 begin
@@ -88,6 +88,7 @@ begin
   UG_WindowSetBackColor(ugWnd, green);
   UG_WindowSetTitleTextColor(ugWnd, blue);
   UG_WindowSetTitleColor(ugWnd, white);
+  UG_WindowSetTitleTextHSpace(ugWnd, 10);  
   UG_WindowResize(ugWnd, 40, 40, getmaxx - 40, getmaxy - 40);
   (*
   WriteLn(UG_WindowGetXStart(ugWnd), ',', UG_WindowGetYStart(ugWnd), ',',
