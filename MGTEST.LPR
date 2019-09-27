@@ -60,7 +60,7 @@ begin
 {$endif}
   UG_Init(gui, pset, getmaxx + 1, getmaxy + 1);
   UG_DriverRegister(0, @DrawLine);
-  (* UG_DriverRegister(1, @FillFrame); *)
+  UG_DriverRegister(1, @FillFrame);
   UG_SetBackcolor(black);
   UG_SetForecolor(blue);
   UG_FontSelect(@FONT_8X14);

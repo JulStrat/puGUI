@@ -55,7 +55,7 @@ unit UG;
 
 {$ifdef FPC}{$mode tp}{$endif}
 {$ifdef VER70}{$X+}{$endif}
-{$define USE_COLOR_RGB888}
+{$I UG_CFG.inc}
 
 interface
 
@@ -63,6 +63,7 @@ uses UG_FONTS, UG_TYPES
 {$ifdef FPC}, SysUtils (* Delay func *){$endif};
 
 const
+  UG_VERSION = 1;
   (* Alignments *)
   ALIGN_H_LEFT = 1 shl 0;
   ALIGN_H_CENTER = 1 shl 1;
@@ -878,12 +879,6 @@ procedure UG_DrawVLine(y1, y2, x: UG_S16; c: UG_COLOR);
 procedure UG_DrawLine(x1, y1: UG_S16; x2, y2: UG_S16; c: UG_COLOR);
 procedure UG_PutString(x, y: UG_S16; str: PChar);
 procedure UG_PutChar(chr: char; x, y: UG_S16; fc: UG_COLOR; bc: UG_COLOR);
-(* Console *)
-procedure UG_ConsolePutString(str: PChar);
-procedure UG_ConsoleSetArea(xs, ys: UG_S16; xe, ye: UG_S16);
-procedure UG_ConsoleSetForecolor(c: UG_COLOR);
-procedure UG_ConsoleSetBackcolor(c: UG_COLOR);
-
 procedure UG_SetForecolor(c: UG_COLOR);
 procedure UG_SetBackcolor(c: UG_COLOR);
 function UG_GetXDim: UG_S16;
@@ -891,8 +886,13 @@ function UG_GetYDim: UG_S16;
 procedure UG_FontSetHSpace(s: UG_U16);
 procedure UG_FontSetVSpace(s: UG_U16);
 
-(* Window functions *)
+(* Console *)
+procedure UG_ConsolePutString(str: PChar);
+procedure UG_ConsoleSetArea(xs, ys: UG_S16; xe, ye: UG_S16);
+procedure UG_ConsoleSetForecolor(c: UG_COLOR);
+procedure UG_ConsoleSetBackcolor(c: UG_COLOR);
 
+(* Window functions *)
 function UG_WindowCreate(var wnd: UG_WINDOW; objlst: pUG_OBJECT;
   objcnt: UG_U8; cb: UG_WINDOW_CB): UG_RESULT;
 function UG_WindowDelete(var wnd: UG_WINDOW): UG_RESULT;
@@ -904,7 +904,6 @@ function UG_WindowAlert(var wnd: UG_WINDOW): UG_RESULT;
 (* Window setters >>> *)
 function UG_WindowSetForeColor(var wnd: UG_WINDOW; fc: UG_COLOR): UG_RESULT;
 function UG_WindowSetBackColor(var wnd: UG_WINDOW; bc: UG_COLOR): UG_RESULT;
-
 function UG_WindowSetTitleTextColor(var wnd: UG_WINDOW; c: UG_COLOR): UG_RESULT;
 function UG_WindowSetTitleColor(var wnd: UG_WINDOW; c: UG_COLOR): UG_RESULT;
 function UG_WindowSetTitleInactiveTextColor(var wnd: UG_WINDOW; c: UG_COLOR): UG_RESULT;
@@ -915,12 +914,10 @@ function UG_WindowSetTitleTextHSpace(var wnd: UG_WINDOW; hs: UG_S8): UG_RESULT;
 function UG_WindowSetTitleTextVSpace(var wnd: UG_WINDOW; vs: UG_S8): UG_RESULT;
 function UG_WindowSetTitleTextAlignment(var wnd: UG_WINDOW; align: UG_U8): UG_RESULT;
 function UG_WindowSetTitleHeight(var wnd: UG_WINDOW; Height: UG_U8): UG_RESULT;
-
 function UG_WindowSetXStart(var wnd: UG_WINDOW; xs: UG_S16): UG_RESULT;
 function UG_WindowSetYStart(var wnd: UG_WINDOW; ys: UG_S16): UG_RESULT;
 function UG_WindowSetXEnd(var wnd: UG_WINDOW; xe: UG_S16): UG_RESULT;
 function UG_WindowSetYEnd(var wnd: UG_WINDOW; ye: UG_S16): UG_RESULT;
-
 function UG_WindowSetStyle(var wnd: UG_WINDOW; style: UG_U8): UG_RESULT;
 (* Window setters <<< *)
 
@@ -964,8 +961,8 @@ implementation
 var
   gui: PUG_GUI;
 
-{$ifdef USE_COLOR_RGB888}
 const
+  {$ifdef USE_COLOR_RGB888}
   (* Frame 0 *)
   (* Frame 1 *)
   (* Frame 2 *)
@@ -1362,12 +1359,6 @@ begin
         ((obj^.state and OBJ_STATE_VISIBLE) <> 0) then
         obj^.state := obj^.state or OBJ_STATE_UPDATE or OBJ_STATE_REDRAW;
       Inc(obj);
-      (*
-      obj:= (UG_OBJECT* )@wnd.objlst[i];
-      if 0 = (obj.state and OBJ_STATE_FREE))and((obj.state and OBJ_STATE_VALID))and((obj.state and OBJ_STATE_VISIBLE)
-      then
-      obj.state:= obj.state or ((OBJ_STATE_UPDATE or OBJ_STATE_REDRAW));
-      *)
     end;
   end
   else
@@ -1394,6 +1385,78 @@ begin
     end;
   end;
   _UG_WindowClear := UG_RESULT_OK;
+end;
+
+function _UG_GetFreeObject(var wnd: UG_WINDOW): pUG_OBJECT;
+var
+  i: UG_U8;
+  obj: pUG_OBJECT;
+
+begin
+  obj := wnd.objlst;
+  for i := 0 to Pred(wnd.objcnt) do
+  begin
+    if ((obj^.state and OBJ_STATE_FREE) <> 0) and
+      ((obj^.state and OBJ_STATE_VALID) <> 0) then
+    begin
+      (* Free object found! *)
+      _UG_GetFreeObject := obj;
+      exit;
+    end;
+    Inc(obj);
+  end;
+  _UG_GetFreeObject := nil;
+end;
+
+function _UG_SearchObject(var wnd: UG_WINDOW; otype: UG_U8; id: UG_U8): pUG_OBJECT;
+var
+  i: UG_U8;
+  obj: pUG_OBJECT;
+
+begin
+  obj := wnd.objlst;
+  for i := 0 to Pred(wnd.objcnt) do
+  begin
+    if ((obj^.state and OBJ_STATE_FREE) = 0) and
+      ((obj^.state and OBJ_STATE_VALID) <> 0) and (obj^.otype = otype) and
+      (obj^.id = id) then
+    begin
+      (* Requested object found! *)
+      _UG_SearchObject := obj;
+      exit;
+    end;
+    Inc(obj);
+  end;
+  _UG_SearchObject := nil;
+end;
+
+function _UG_DeleteObject(var wnd: UG_WINDOW; otype: UG_U8; id: UG_U8): UG_RESULT;
+var
+  obj: pUG_OBJECT;
+begin
+  obj := nil;
+  obj := _UG_SearchObject(wnd, otype, id);
+  (* Object found? *)
+  if obj <> nil then
+  begin
+    (* We dont't want to delete a visible or busy object! *)
+    if ((obj^.state and OBJ_STATE_VISIBLE) <> 0) or
+      ((obj^.state and OBJ_STATE_UPDATE) <> 0) then
+      _UG_DeleteObject := UG_RESULT_FAIL
+    else
+    begin
+      obj^.state := OBJ_STATE_INIT;
+      obj^.Data := nil;
+      obj^.event := 0;
+      obj^.id := 0;
+      obj^.touch_state := 0;
+      obj^.otype := 0;
+      obj^.update := nil;
+      _UG_DeleteObject := UG_RESULT_OK;
+    end;
+  end
+  else
+    _UG_DeleteObject := UG_RESULT_FAIL;
 end;
 
 procedure _UG_ProcessTouchData(var wnd: UG_WINDOW);
@@ -1435,22 +1498,15 @@ begin
         end;
         objtouch := objtouch and (not OBJ_TOUCH_STATE_IS_PRESSED_ON_OBJECT);
 
-        if xp >= obj^.a_abs.xs then
+        if (xp >= obj^.a_abs.xs) and (xp <= obj^.a_abs.xe) and
+          (yp >= obj^.a_abs.ys) and (yp <= obj^.a_abs.ye) then
+
         begin
-          if xp <= obj^.a_abs.xe then
+          objtouch := objtouch or OBJ_TOUCH_STATE_IS_PRESSED_ON_OBJECT;
+          if (objtouch and OBJ_TOUCH_STATE_IS_PRESSED) = 0 then
           begin
-            if yp >= obj^.a_abs.ys then
-            begin
-              if yp <= obj^.a_abs.ye then
-              begin
-                objtouch := objtouch or OBJ_TOUCH_STATE_IS_PRESSED_ON_OBJECT;
-                if (objtouch and OBJ_TOUCH_STATE_IS_PRESSED) = 0 then
-                begin
-                  objtouch := objtouch and (not OBJ_TOUCH_STATE_PRESSED_OUTSIDE_OBJECT);
-                  objtouch := objtouch or OBJ_TOUCH_STATE_PRESSED_ON_OBJECT;
-                end;
-              end;
-            end;
+            objtouch := objtouch and (not OBJ_TOUCH_STATE_PRESSED_OUTSIDE_OBJECT);
+            objtouch := objtouch or OBJ_TOUCH_STATE_PRESSED_ON_OBJECT;
           end;
         end;
 
@@ -1466,9 +1522,7 @@ begin
           objtouch := objtouch or OBJ_TOUCH_STATE_RELEASED_ON_OBJECT;
         end
         else
-        begin
           objtouch := objtouch or OBJ_TOUCH_STATE_RELEASED_OUTSIDE_OBJECT;
-        end;
         if (objtouch and OBJ_TOUCH_STATE_IS_PRESSED) <> 0 then
           objtouch := objtouch or OBJ_TOUCH_STATE_CHANGED;
         objtouch := objtouch and
