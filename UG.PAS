@@ -667,9 +667,9 @@ type
 
   (* Currently supported objects *)
 
-  (* -------------------------------------------------------------------------------- *)
-  (* -- WINDOW                                                                     -- *)
-  (* -------------------------------------------------------------------------------- *)
+  (* ------------------------------------------------------------------------ *)
+  (* -- WINDOW                                                             -- *)
+  (* ------------------------------------------------------------------------ *)
   (* Title structure *)
   UG_TITLE = record
     str: PChar;
@@ -703,9 +703,9 @@ type
   end;
   UG_WINDOW = S_WINDOW;
 
-  (* -------------------------------------------------------------------------------- *)
-  (* -- BUTTON OBJECT                                                              -- *)
-  (* -------------------------------------------------------------------------------- *)
+  (* ------------------------------------------------------------------------ *)
+  (* -- BUTTON OBJECT                                                      -- *)
+  (* ------------------------------------------------------------------------ *)
   (* Button structure *)
   UG_BUTTON = record
     state: UG_U8;
@@ -721,9 +721,9 @@ type
     str: PChar;
   end;
 
-(* -------------------------------------------------------------------------------- *)
-(* -- CHECKBOX OBJECT                                                            -- *)
-(* -------------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
+(* -- CHECKBOX OBJECT                                                      -- *)
+(* -------------------------------------------------------------------------- *)
 (* Checkbox structure *)
 type
   UG_CHECKBOX = record
@@ -780,9 +780,9 @@ const
   (* Checkbox events *)
   CHB_EVENT_CLICKED = OBJ_EVENT_CLICKED;
 
-(* -------------------------------------------------------------------------------- *)
-(* -- TEXTBOX OBJECT                                                             -- *)
-(* -------------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
+(* -- TEXTBOX OBJECT                                                       -- *)
+(* -------------------------------------------------------------------------- *)
 (* Textbox structure *)
 type
   UG_TEXTBOX = record
@@ -796,9 +796,9 @@ type
     v_space: UG_S8;
   end;
 
-  (* -------------------------------------------------------------------------------- *)
-  (* -- IMAGE OBJECT                                                               -- *)
-  (* -------------------------------------------------------------------------------- *)
+  (* ------------------------------------------------------------------------ *)
+  (* -- IMAGE OBJECT                                                       -- *)
+  (* ------------------------------------------------------------------------ *)
   (* Image structure *)
 
   UG_IMAGE = record
@@ -806,18 +806,18 @@ type
     itype: UG_U8;
   end;
 
-(* -------------------------------------------------------------------------------- *)
-(* -- µGUI DRIVER                                                                -- *)
-(* -------------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
+(* -- µGUI DRIVER                                                          -- *)
+(* -------------------------------------------------------------------------- *)
 type
   UG_DRIVER = record
     driver: Pointer;
     state: UG_U8;
   end;
 
-  (* -------------------------------------------------------------------------------- *)
-  (* -- µGUI CORE STRUCTURE                                                        -- *)
-  (* -------------------------------------------------------------------------------- *)
+  (* ------------------------------------------------------------------------ *)
+  (* -- µGUI CORE STRUCTURE                                                -- *)
+  (* ------------------------------------------------------------------------ *)
 
   PUG_PSET = ^UG_PSET;
   UG_PSET = procedure(x, y: UG_S16; c: UG_COLOR);
@@ -856,9 +856,9 @@ type
     driver: array[0..Pred(NUMBER_OF_DRIVERS)] of UG_DRIVER;
   end;
 
-(* -------------------------------------------------------------------------------- *)
-(* -- PROTOTYPES                                                                 -- *)
-(* -------------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
+(* -- PROTOTYPES                                                           -- *)
+(* -------------------------------------------------------------------------- *)
 (* Classic functions *)
 
 function UG_Init(var g: UG_GUI; p: UG_PSET; x, y: UG_S16): UG_S16;
@@ -1210,47 +1210,36 @@ end;
 procedure _UG_DrawObjectFrame(xs, ys: UG_S16; xe, ye: UG_S16; p: pUG_COLOR);
 begin
   (* Frame 0*)
-  (* UG_DrawLine(xs, ys, xe - 1, ys, p^); *)
   UG_DrawHLine(xs, xe - 1, ys, p^);
   Inc(p);
-  (* UG_DrawLine(xs, ys + 1, xs, ye - 1, p^); *)
   UG_DrawVLine(ys + 1, ye - 1, xs, p^);
   Inc(p);
-  (* UG_DrawLine(xs, ye, xe, ye, p^); *)
   UG_DrawHLine(xs, xe, ye, p^);
   Inc(p);
-  (* UG_DrawLine(xe, ys, xe, ye - 1, p^); *)
   UG_DrawVLine(ys, ye - 1, xe, p^);
   Inc(p);
 
   (* Frame 1*)
-  (* UG_DrawLine(xs + 1, ys + 1, xe - 2, ys + 1, p^); *)
   UG_DrawHLine(xs + 1, xe - 2, ys + 1, p^);
   Inc(p);
-  (* UG_DrawLine(xs + 1, ys + 2, xs + 1, ye - 2, p^); *)
   UG_DrawVLine(ys + 2, ye - 2, xs + 1, p^);
   Inc(p);
-  (* UG_DrawLine(xs + 1, ye - 1, xe - 1, ye - 1, p^); *)
   UG_DrawHLine(xs + 1, xe - 1, ye - 1, p^);
   Inc(p);
-  (* UG_DrawLine(xe - 1, ys + 1, xe - 1, ye - 2, p^); *)
   UG_DrawVLine(ys + 1, ye - 2, xe - 1, p^);
   Inc(p);
 
   (* Frame 2*)
-  (* UG_DrawLine(xs + 2, ys + 2, xe - 3, ys + 2, p^); *)
   UG_DrawHLine(xs + 2, xe - 3, ys + 2, p^);
   Inc(p);
-  (* UG_DrawLine(xs + 2, ys + 3, xs + 2, ye - 3, p^); *)
   UG_DrawVLine(ys + 3, ye - 3, xs + 2, p^);
   Inc(p);
-  (* UG_DrawLine(xs + 2, ye - 2, xe - 2, ye - 2, p^); *)
   UG_DrawHLine(xs + 2, xe - 2, ye - 2, p^);
   Inc(p);
-  (* UG_DrawLine(xe - 2, ys + 2, xe - 2, ye - 3, p^); *)
   UG_DrawVLine(ys + 2, ye - 3, xe - 2, p^);
 end;
 
+(* Window internal *)
 function _UG_WindowDrawTitle(var wnd: UG_WINDOW): UG_RESULT;
 var
   txt: UG_TEXT;
@@ -1258,7 +1247,6 @@ var
   xe, ye: UG_S16;
 
 begin
-  { if (wnd<>nil) and (Ord(wnd.state) and WND_STATE_VALID) then }
   if (wnd.state and WND_STATE_VALID) <> 0 then
   begin
     xs := wnd.xs;
@@ -1285,8 +1273,8 @@ begin
       txt.bc := wnd.title.ibc;
       txt.fc := wnd.title.ifc;
     end;
-    (* Draw title *)
 
+    (* Draw title *)
     UG_FillFrame(xs, ys, xe, ys + wnd.title.Height - 1, txt.bc);
 
     (* Draw title text *)
@@ -1302,12 +1290,12 @@ begin
     _UG_PutText(txt);
 
     (* Draw line *)
-    UG_DrawLine(xs, ys + wnd.title.Height, xe, ys + wnd.title.Height,
+    UG_DrawHLine(xs, xe, ys + wnd.title.Height,
       pal_window[11]);
     _UG_WindowDrawTitle := UG_RESULT_OK;
-    exit;
-  end;
-  _UG_WindowDrawTitle := UG_RESULT_FAIL;
+  end
+  else
+    _UG_WindowDrawTitle := UG_RESULT_FAIL;
 end;
 
 procedure _UG_WindowUpdate(var wnd: UG_WINDOW);
@@ -1347,8 +1335,8 @@ begin
         exit;
       end;
     end;
-    UG_FillFrame(xs, ys, xe, ye, wnd.bc);
     (* Draw window area? *)
+    UG_FillFrame(xs, ys, xe, ye, wnd.bc);
     objcnt := wnd.objcnt;
     (* Force each object to be updated! *)
     obj := wnd.objlst;
@@ -1362,9 +1350,7 @@ begin
     end;
   end
   else
-  begin
     UG_FillFrame(wnd.xs, wnd.xs, wnd.xe, wnd.ye, gui^.desktop_color);
-  end;
 end;
 
 function _UG_WindowClear(var wnd: UG_WINDOW): UG_RESULT;
@@ -1791,10 +1777,10 @@ end;
 
 procedure UG_DrawFrame(x1, y1: UG_S16; x2, y2: UG_S16; c: UG_COLOR);
 begin
-  UG_DrawLine(x1, y1, x2, y1, c);
-  UG_DrawLine(x1, y2, x2, y2, c);
-  UG_DrawLine(x1, y1, x1, y2, c);
-  UG_DrawLine(x2, y1, x2, y2, c);
+  UG_DrawHLine(x1, x2, y1, c);
+  UG_DrawHLine(x1, x2, y2, c);
+  UG_DrawVLine(y1, y2, x1, c);
+  UG_DrawVLine(y1, y2, x2, c);
 end;
 
 procedure UG_DrawRoundFrame(x1, y1: UG_S16; x2, y2: UG_S16; r: UG_S16; c: UG_COLOR);
@@ -2400,6 +2386,7 @@ begin
 end;
 
 (* Windows setters >>> *)
+(* PACK *)
 function UG_WindowSetForeColor(var wnd: UG_WINDOW; fc: UG_COLOR): UG_RESULT;
 begin
   if (wnd.state and WND_STATE_VALID) <> 0 then
@@ -2422,35 +2409,6 @@ begin
   end
   else
     UG_WindowSetBackColor := UG_RESULT_FAIL;
-end;
-
-function UG_WindowSetTitleText(var wnd: UG_WINDOW; str: PChar): UG_RESULT;
-begin
-  if (wnd.state and WND_STATE_VALID) <> 0 then
-  begin
-    wnd.title.str := str;
-    wnd.state := wnd.state or WND_STATE_UPDATE or WND_STATE_REDRAW_TITLE;
-    UG_WindowSetTitleText := UG_RESULT_OK;
-  end
-  else
-    UG_WindowSetTitleText := UG_RESULT_FAIL;
-end;
-
-function UG_WindowSetTitleTextFont(var wnd: UG_WINDOW; font: pUG_FONT): UG_RESULT;
-begin
-  if (wnd.state and WND_STATE_VALID) <> 0 then
-  begin
-    wnd.state := wnd.state or WND_STATE_UPDATE or WND_STATE_REDRAW_TITLE;
-    wnd.title.font := font;
-    if wnd.title.Height <= font^.char_height + 1 then
-    begin
-      wnd.title.Height := font^.char_height + 2;
-      wnd.state := wnd.state and (not WND_STATE_REDRAW_TITLE);
-    end;
-    UG_WindowSetTitleTextFont := UG_RESULT_OK;
-  end
-  else
-    UG_WindowSetTitleTextFont := UG_RESULT_FAIL;
 end;
 
 function UG_WindowSetTitleTextColor(var wnd: UG_WINDOW; c: UG_COLOR): UG_RESULT;
@@ -2499,6 +2457,35 @@ begin
   end
   else
     UG_WindowSetTitleInactiveColor := UG_RESULT_FAIL;
+end;
+
+function UG_WindowSetTitleText(var wnd: UG_WINDOW; str: PChar): UG_RESULT;
+begin
+  if (wnd.state and WND_STATE_VALID) <> 0 then
+  begin
+    wnd.title.str := str;
+    wnd.state := wnd.state or WND_STATE_UPDATE or WND_STATE_REDRAW_TITLE;
+    UG_WindowSetTitleText := UG_RESULT_OK;
+  end
+  else
+    UG_WindowSetTitleText := UG_RESULT_FAIL;
+end;
+
+function UG_WindowSetTitleTextFont(var wnd: UG_WINDOW; font: pUG_FONT): UG_RESULT;
+begin
+  if (wnd.state and WND_STATE_VALID) <> 0 then
+  begin
+    wnd.state := wnd.state or WND_STATE_UPDATE or WND_STATE_REDRAW_TITLE;
+    wnd.title.font := font;
+    if wnd.title.Height <= font^.char_height + 1 then
+    begin
+      wnd.title.Height := font^.char_height + 2;
+      wnd.state := wnd.state and (not WND_STATE_REDRAW_TITLE);
+    end;
+    UG_WindowSetTitleTextFont := UG_RESULT_OK;
+  end
+  else
+    UG_WindowSetTitleTextFont := UG_RESULT_FAIL;
 end;
 
 function UG_WindowSetTitleTextHSpace(var wnd: UG_WINDOW; hs: UG_S8): UG_RESULT;
@@ -2629,6 +2616,7 @@ end;
 (* <<< Window setters *)
 
 (* Window getters >>> *)
+(* PACK *)
 function UG_WindowGetForeColor(const wnd: UG_WINDOW): UG_COLOR;
 begin
   if (wnd.state and WND_STATE_VALID) <> 0 then
@@ -2855,10 +2843,10 @@ end;
 
 (* <<< Window getters *)
 
-(* -------------------------------------------------------------------------------- *)
-(* -- MISCELLANEOUS FUNCTIONS                                                    -- *)
-(* -------------------------------------------------------------------------------- *)
-
+(* -------------------------------------------------------------------------- *)
+(* -- MISCELLANEOUS FUNCTIONS                                              -- *)
+(* -------------------------------------------------------------------------- *)
+(* PACK *)
 procedure UG_Update;
 var
   wnd: PUG_WINDOW;
@@ -2901,10 +2889,8 @@ begin
     wnd := gui^.active_window;
     (* Does the window need to be updated? *)
     if (wnd^.state and WND_STATE_UPDATE) <> 0 then
-    begin
       (* Do it! *)
       _UG_WindowUpdate(wnd^);
-    end;
 
     (* Is the window visible? *)
     if (wnd^.state and WND_STATE_VISIBLE) <> 0 then
@@ -2937,9 +2923,9 @@ begin
   gui^.touch.state := state;
 end;
 
-(* -------------------------------------------------------------------------------- *)
-(* -- DRIVER FUNCTIONS                                                           -- *)
-(* -------------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
+(* -- DRIVER FUNCTIONS                                                     -- *)
+(* -------------------------------------------------------------------------- *)
 
 procedure UG_DriverRegister(t: UG_U8; driver: Pointer);
 begin

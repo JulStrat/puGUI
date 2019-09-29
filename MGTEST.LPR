@@ -17,6 +17,8 @@ var
 
   ugWnd: UG_WINDOW;
   ugObj: array[0..19] of UG_OBJECT;
+  ugWndReg: UG_WINDOW;
+  ugObjReg: array[0..19] of UG_OBJECT;
 
   procedure WndCallBack(msg: PUG_MESSAGE);
   begin
@@ -60,7 +62,7 @@ begin
 {$endif}
   UG_Init(gui, pset, getmaxx + 1, getmaxy + 1);
   UG_DriverRegister(0, @DrawLine);
-  UG_DriverRegister(1, @FillFrame);
+  { UG_DriverRegister(1, @FillFrame); }
   UG_SetBackcolor(black);
   UG_SetForecolor(blue);
   UG_FontSelect(@FONT_8X14);
@@ -81,25 +83,50 @@ begin
   UG_ConsolePutString('Please, wait...');
   ReadLn;
 
-  UG_WindowCreate(ugWnd, @ugObj[0], 20, WndCallBack);
-  UG_WindowSetTitleText(ugWnd, 'uGUI Demo Window');
-  UG_WindowSetTitleTextFont(ugWnd, @FONT_8X14);
-  UG_WindowSetForeColor(ugWnd, black);
-  UG_WindowSetBackColor(ugWnd, green);
-  UG_WindowSetTitleTextColor(ugWnd, blue);
-  UG_WindowSetTitleColor(ugWnd, white);
-  UG_WindowSetTitleTextHSpace(ugWnd, 10);  
-  UG_WindowResize(ugWnd, 40, 40, getmaxx - 40, getmaxy - 40);
+  if UG_WindowCreate(ugWnd, @ugObj[0], 20, WndCallBack) = UG_RESULT_OK then
+  begin
+    UG_WindowSetTitleText(ugWnd, 'uGUI Demo Window');
+    UG_WindowSetTitleTextFont(ugWnd, @FONT_8X14);
+    UG_WindowSetForeColor(ugWnd, black);
+    UG_WindowSetBackColor(ugWnd, green);
+    UG_WindowSetTitleTextColor(ugWnd, blue);
+    UG_WindowSetTitleColor(ugWnd, white);
+    UG_WindowSetTitleTextHSpace(ugWnd, 10);
+    UG_WindowResize(ugWnd, 40, 40, getmaxx - 40, getmaxy - 40);
+    UG_WindowShow(ugWnd);
+  end;
+  UG_Update;
+  ReadLn;
+
+  if UG_WindowCreate(ugWndReg, @ugObjReg[0], 20, WndCallBack) = UG_RESULT_OK then
+  begin
+    UG_WindowSetTitleText(ugWndReg, 'Registers Window');
+    UG_WindowSetTitleTextFont(ugWndReg, @FONT_8X14);
+    UG_WindowSetForeColor(ugWndReg, black);
+    UG_WindowSetBackColor(ugWndReg, white);
+    UG_WindowSetTitleTextColor(ugWndReg, blue);
+    UG_WindowSetTitleColor(ugWndReg, white);
+    UG_WindowResize(ugWndReg, 140, 140, getmaxx - 140, getmaxy - 140);
+    UG_WindowShow(ugWndReg);
+  end;
+  UG_Update;
   (*
   WriteLn(UG_WindowGetXStart(ugWnd), ',', UG_WindowGetYStart(ugWnd), ',',
     UG_WindowGetXEnd(ugWnd), ',', UG_WindowGetYEnd(ugWnd));
   *)
+  ReadLn;
+
   UG_WindowShow(ugWnd);
+  UG_WindowAlert(ugWnd);
   UG_Update;
   ReadLn;
 
-  UG_WindowAlert(ugWnd);
+  UG_WindowShow(ugWndReg);
+  UG_WindowAlert(ugWndReg);
   UG_Update;
+  ReadLn;
+
+
   ReadLn;
   CloseGraph;
 end.
