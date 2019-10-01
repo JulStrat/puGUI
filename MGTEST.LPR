@@ -16,6 +16,7 @@ var
   x, y: integer;
 
   ugWnd: UG_WINDOW;
+  ugBtn: UG_BUTTON;
   ugObj: array[0..19] of UG_OBJECT;
   ugWndReg: UG_WINDOW;
   ugObjReg: array[0..19] of UG_OBJECT;
@@ -26,15 +27,15 @@ var
 
   procedure pset(x: UG_S16; y: UG_S16; c: UG_COLOR);
   begin
-    PutPixel(x, y, Byte(c));
+    PutPixel(x, y, byte(c));
   end;
 
   function DrawLine(x1, y1: UG_S16; x2, y2: UG_S16; c: UG_COLOR): UG_RESULT;
   var
-    clr: Byte;
+    clr: byte;
   begin
     clr := GetColor;
-    SetColor(Byte(c));
+    SetColor(byte(c));
     Line(x1, y1, x2, y2);
     SetColor(clr);
     DrawLine := UG_RESULT_OK;
@@ -42,11 +43,11 @@ var
 
   function FillFrame(x1, y1: UG_S16; x2, y2: UG_S16; c: UG_COLOR): UG_RESULT;
   var
-    clr: Byte;
+    clr: byte;
   begin
     clr := GetColor;
-    setfillstyle(12, Byte(c));
-    SetColor(Byte(c));
+    setfillstyle(12, byte(c));
+    SetColor(byte(c));
     Bar(x1, y1, x2, y2);
     SetColor(clr);
     FillFrame := UG_RESULT_OK;
@@ -62,7 +63,7 @@ begin
 {$endif}
   UG_Init(gui, pset, getmaxx + 1, getmaxy + 1);
   UG_DriverRegister(0, @DrawLine);
-  { UG_DriverRegister(1, @FillFrame); }
+  UG_DriverRegister(1, @FillFrame);
   UG_SetBackcolor(black);
   UG_SetForecolor(blue);
   UG_FontSelect(@FONT_8X14);
@@ -94,6 +95,9 @@ begin
     UG_WindowSetTitleTextHSpace(ugWnd, 10);
     UG_WindowResize(ugWnd, 40, 40, getmaxx - 40, getmaxy - 40);
     UG_WindowShow(ugWnd);
+    UG_ButtonCreate(ugWnd, ugBtn, BTN_ID_0, 10, 50, 200, 100);
+    UG_ButtonSetText(ugWnd, BTN_ID_0, 'Button');
+    UG_ButtonShow(ugWnd, BTN_ID_0);
   end;
   UG_Update;
   ReadLn;

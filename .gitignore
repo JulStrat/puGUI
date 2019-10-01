@@ -48,6 +48,7 @@
 *.pds
 lib/
 backup/
+csrc/
 
 # NetBeans
 nbproject/
