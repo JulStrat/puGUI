@@ -64,6 +64,8 @@ uses UG_FONTS, UG_TYPES
 
 const
   UG_VERSION = 1;
+
+  {$I UG_CLR.INC}
   (* Alignments *)
   ALIGN_H_LEFT = 1 shl 0;
   ALIGN_H_CENTER = 1 shl 1;
@@ -204,44 +206,6 @@ const
   (* Image types *)
   IMG_TYPE_BMP = 1 shl 0;
 
-  (* Default button IDs *)
-  BTN_ID_0 = OBJ_ID_0;
-  BTN_ID_1 = OBJ_ID_1;
-  BTN_ID_2 = OBJ_ID_2;
-  BTN_ID_3 = OBJ_ID_3;
-  BTN_ID_4 = OBJ_ID_4;
-  BTN_ID_5 = OBJ_ID_5;
-  BTN_ID_6 = OBJ_ID_6;
-  BTN_ID_7 = OBJ_ID_7;
-  BTN_ID_8 = OBJ_ID_8;
-  BTN_ID_9 = OBJ_ID_9;
-  BTN_ID_10 = OBJ_ID_10;
-  BTN_ID_11 = OBJ_ID_11;
-  BTN_ID_12 = OBJ_ID_12;
-  BTN_ID_13 = OBJ_ID_13;
-  BTN_ID_14 = OBJ_ID_14;
-  BTN_ID_15 = OBJ_ID_15;
-  BTN_ID_16 = OBJ_ID_16;
-  BTN_ID_17 = OBJ_ID_17;
-  BTN_ID_18 = OBJ_ID_18;
-  BTN_ID_19 = OBJ_ID_19;
-
-  (* Button states *)
-  BTN_STATE_RELEASED = 0 shl 0;
-  BTN_STATE_PRESSED = 1 shl 0;
-  BTN_STATE_ALWAYS_REDRAW = 1 shl 1;
-
-  (* Button style *)
-  BTN_STYLE_2D = 0 shl 0;
-  BTN_STYLE_3D = 1 shl 0;
-  BTN_STYLE_TOGGLE_COLORS = 1 shl 1;
-  BTN_STYLE_USE_ALTERNATE_COLORS = 1 shl 2;
-  BTN_STYLE_NO_BORDERS = 1 shl 3;
-  BTN_STYLE_NO_FILL = 1 shl 4;
-
-  (* Button events *)
-  BTN_EVENT_CLICKED = OBJ_EVENT_CLICKED;
-
   (* Default textbox IDs *)
   TXB_ID_0 = OBJ_ID_0;
   TXB_ID_1 = OBJ_ID_1;
@@ -265,294 +229,6 @@ const
   TXB_ID_19 = OBJ_ID_19;
 
   UG_SATUS_WAIT_FOR_UPDATE = 1 shl 0;
-
-  (* -------------------------------------------------------------------------------- *)
-  (* -- µGUI COLORS                                                                -- *)
-  (* -- Source: http://www.rapidtables.com/web/color/RGB_Color.htm                 -- *)
-  (* -------------------------------------------------------------------------------- *)
-{$ifdef USE_COLOR_RGB565}
-  C_MAROON = $8000;
-  C_DARK_RED = $8800;
-  C_BROWN = $A145;
-  C_FIREBRICK = $B104;
-  C_CRIMSON = $D8A7;
-  C_RED = $F800;
-  C_TOMATO = $FB09;
-  C_CORAL = $FBEA;
-  C_INDIAN_RED = $CAEB;
-  C_LIGHT_CORAL = $EC10;
-  C_DARK_SALMON = $E4AF;
-  C_SALMON = $F40E;
-  C_LIGHT_SALMON = $FD0F;
-  C_ORANGE_RED = $FA20;
-  C_DARK_ORANGE = $FC60;
-  C_ORANGE = $FD20;
-  C_GOLD = $FEA0;
-  C_DARK_GOLDEN_ROD = $B421;
-  C_GOLDEN_ROD = $DD24;
-  C_PALE_GOLDEN_ROD = $EF35;
-  C_DARK_KHAKI = $BDAD;
-  C_KHAKI = $EF31;
-  C_OLIVE = $8400;
-  C_YELLOW = $FFE0;
-  C_YELLOW_GREEN = $9E66;
-  C_DARK_OLIVE_GREEN = $5346;
-  C_OLIVE_DRAB = $6C64;
-  C_LAWN_GREEN = $7FC0;
-  C_CHART_REUSE = $7FE0;
-  C_GREEN_YELLOW = $AFE6;
-  C_DARK_GREEN = $0320;
-  C_GREEN = $07E0;
-  C_FOREST_GREEN = $2444;
-  C_LIME = $07E0;
-  C_LIME_GREEN = $3666;
-  C_LIGHT_GREEN = $9772;
-  C_PALE_GREEN = $97D2;
-  C_DARK_SEA_GREEN = $8DD1;
-  C_MEDIUM_SPRING_GREEN = $07D3;
-  C_SPRING_GREEN = $07EF;
-  C_SEA_GREEN = $344B;
-  C_MEDIUM_AQUA_MARINE = $6675;
-  C_MEDIUM_SEA_GREEN = $3D8E;
-  C_LIGHT_SEA_GREEN = $2595;
-  C_DARK_SLATE_GRAY = $328A;
-  C_TEAL = $0410;
-  C_DARK_CYAN = $0451;
-  C_AQUA = $07FF;
-  C_CYAN = $07FF;
-  C_LIGHT_CYAN = $DFFF;
-  C_DARK_TURQUOISE = $0679;
-  C_TURQUOISE = $46F9;
-  C_MEDIUM_TURQUOISE = $4E99;
-  C_PALE_TURQUOISE = $AF7D;
-  C_AQUA_MARINE = $7FFA;
-  C_POWDER_BLUE = $AEFC;
-  C_CADET_BLUE = $64F3;
-  C_STEEL_BLUE = $4C16;
-  C_CORN_FLOWER_BLUE = $64BD;
-  C_DEEP_SKY_BLUE = $05FF;
-  C_DODGER_BLUE = $249F;
-  C_LIGHT_BLUE = $AEBC;
-  C_SKY_BLUE = $867D;
-  C_LIGHT_SKY_BLUE = $867E;
-  C_MIDNIGHT_BLUE = $18CE;
-  C_NAVY = $0010;
-  C_DARK_BLUE = $0011;
-  C_MEDIUM_BLUE = $0019;
-  C_BLUE = $001F;
-  C_ROYAL_BLUE = $435B;
-  C_BLUE_VIOLET = $897B;
-  C_INDIGO = $4810;
-  C_DARK_SLATE_BLUE = $49F1;
-  C_SLATE_BLUE = $6AD9;
-  C_MEDIUM_SLATE_BLUE = $7B5D;
-  C_MEDIUM_PURPLE = $939B;
-  C_DARK_MAGENTA = $8811;
-  C_DARK_VIOLET = $901A;
-  C_DARK_ORCHID = $9999;
-  C_MEDIUM_ORCHID = $BABA;
-  C_PURPLE = $8010;
-  C_THISTLE = $D5FA;
-  C_PLUM = $DD1B;
-  C_VIOLET = $EC1D;
-  C_MAGENTA = $F81F;
-  C_ORCHID = $DB9A;
-  C_MEDIUM_VIOLET_RED = $C0B0;
-  C_PALE_VIOLET_RED = $DB92;
-  C_DEEP_PINK = $F8B2;
-  C_HOT_PINK = $FB56;
-  C_LIGHT_PINK = $FDB7;
-  C_PINK = $FDF9;
-  C_ANTIQUE_WHITE = $F75A;
-  C_BEIGE = $F7BB;
-  C_BISQUE = $FF18;
-  C_BLANCHED_ALMOND = $FF59;
-  C_WHEAT = $F6F6;
-  C_CORN_SILK = $FFBB;
-  C_LEMON_CHIFFON = $FFD9;
-  C_LIGHT_GOLDEN_ROD_YELLOW = $F7DA;
-  C_LIGHT_YELLOW = $FFFB;
-  C_SADDLE_BROWN = $8A22;
-  C_SIENNA = $9A85;
-  C_CHOCOLATE = $D344;
-  C_PERU = $CC28;
-  C_SANDY_BROWN = $F52C;
-  C_BURLY_WOOD = $DDB0;
-  C_TAN = $D591;
-  C_ROSY_BROWN = $BC71;
-  C_MOCCASIN = $FF16;
-  C_NAVAJO_WHITE = $FEF5;
-  C_PEACH_PUFF = $FED6;
-  C_MISTY_ROSE = $FF1B;
-  C_LAVENDER_BLUSH = $FF7E;
-  C_LINEN = $F77C;
-  C_OLD_LACE = $FFBC;
-  C_PAPAYA_WHIP = $FF7A;
-  C_SEA_SHELL = $FFBD;
-  C_MINT_CREAM = $F7FE;
-  C_SLATE_GRAY = $7412;
-  C_LIGHT_SLATE_GRAY = $7453;
-  C_LIGHT_STEEL_BLUE = $AE1B;
-  C_LAVENDER = $E73E;
-  C_FLORAL_WHITE = $FFDD;
-  C_ALICE_BLUE = $EFBF;
-  C_GHOST_WHITE = $F7BF;
-  C_HONEYDEW = $EFFD;
-  C_IVORY = $FFFD;
-  C_AZURE = $EFFF;
-  C_SNOW = $FFDE;
-  C_BLACK = $0000;
-  C_DIM_GRAY = $6B4D;
-  C_GRAY = $8410;
-  C_DARK_GRAY = $AD55;
-  C_SILVER = $BDF7;
-  C_LIGHT_GRAY = $D69A;
-  C_GAINSBORO = $DEDB;
-  C_WHITE_SMOKE = $F7BE;
-  C_WHITE = $FFFF;
-{$endif}
-
-{$ifdef USE_COLOR_RGB888}
-  C_MAROON = $800000;
-  C_DARK_RED = $8B0000;
-  C_BROWN = $A52A2A;
-  C_FIREBRICK = $B22222;
-  C_CRIMSON = $DC143C;
-  C_RED = $FF0000;
-  C_TOMATO = $FF6347;
-  C_CORAL = $FF7F50;
-  C_INDIAN_RED = $CD5C5C;
-  C_LIGHT_CORAL = $F08080;
-  C_DARK_SALMON = $E9967A;
-  C_SALMON = $FA8072;
-  C_LIGHT_SALMON = $FFA07A;
-  C_ORANGE_RED = $FF4500;
-  C_DARK_ORANGE = $FF8C00;
-  C_ORANGE = $FFA500;
-  C_GOLD = $FFD700;
-  C_DARK_GOLDEN_ROD = $B8860B;
-  C_GOLDEN_ROD = $DAA520;
-  C_PALE_GOLDEN_ROD = $EEE8AA;
-  C_DARK_KHAKI = $BDB76B;
-  C_KHAKI = $F0E68C;
-  C_OLIVE = $808000;
-  C_YELLOW = $FFFF00;
-  C_YELLOW_GREEN = $9ACD32;
-  C_DARK_OLIVE_GREEN = $556B2F;
-  C_OLIVE_DRAB = $6B8E23;
-  C_LAWN_GREEN = $7CFC00;
-  C_CHART_REUSE = $7FFF00;
-  C_GREEN_YELLOW = $ADFF2F;
-  C_DARK_GREEN = $006400;
-  C_GREEN = $00FF00;
-  C_FOREST_GREEN = $228B22;
-  C_LIME = $00FF00;
-  C_LIME_GREEN = $32CD32;
-  C_LIGHT_GREEN = $90EE90;
-  C_PALE_GREEN = $98FB98;
-  C_DARK_SEA_GREEN = $8FBC8F;
-  C_MEDIUM_SPRING_GREEN = $00FA9A;
-  C_SPRING_GREEN = $00FF7F;
-  C_SEA_GREEN = $2E8B57;
-  C_MEDIUM_AQUA_MARINE = $66CDAA;
-  C_MEDIUM_SEA_GREEN = $3CB371;
-  C_LIGHT_SEA_GREEN = $20B2AA;
-  C_DARK_SLATE_GRAY = $2F4F4F;
-  C_TEAL = $008080;
-  C_DARK_CYAN = $008B8B;
-  C_AQUA = $00FFFF;
-  C_CYAN = $00FFFF;
-  C_LIGHT_CYAN = $E0FFFF;
-  C_DARK_TURQUOISE = $00CED1;
-  C_TURQUOISE = $40E0D0;
-  C_MEDIUM_TURQUOISE = $48D1CC;
-  C_PALE_TURQUOISE = $AFEEEE;
-  C_AQUA_MARINE = $7FFFD4;
-  C_POWDER_BLUE = $B0E0E6;
-  C_CADET_BLUE = $5F9EA0;
-  C_STEEL_BLUE = $4682B4;
-  C_CORN_FLOWER_BLUE = $6495ED;
-  C_DEEP_SKY_BLUE = $00BFFF;
-  C_DODGER_BLUE = $1E90FF;
-  C_LIGHT_BLUE = $ADD8E6;
-  C_SKY_BLUE = $87CEEB;
-  C_LIGHT_SKY_BLUE = $87CEFA;
-  C_MIDNIGHT_BLUE = $191970;
-  C_NAVY = $000080;
-  C_DARK_BLUE = $00008B;
-  C_MEDIUM_BLUE = $0000CD;
-  C_BLUE = $0000FF;
-  C_ROYAL_BLUE = $4169E1;
-  C_BLUE_VIOLET = $8A2BE2;
-  C_INDIGO = $4B0082;
-  C_DARK_SLATE_BLUE = $483D8B;
-  C_SLATE_BLUE = $6A5ACD;
-  C_MEDIUM_SLATE_BLUE = $7B68EE;
-  C_MEDIUM_PURPLE = $9370DB;
-  C_DARK_MAGENTA = $8B008B;
-  C_DARK_VIOLET = $9400D3;
-  C_DARK_ORCHID = $9932CC;
-  C_MEDIUM_ORCHID = $BA55D3;
-  C_PURPLE = $800080;
-  C_THISTLE = $D8BFD8;
-  C_PLUM = $DDA0DD;
-  C_VIOLET = $EE82EE;
-  C_MAGENTA = $FF00FF;
-  C_ORCHID = $DA70D6;
-  C_MEDIUM_VIOLET_RED = $C71585;
-  C_PALE_VIOLET_RED = $DB7093;
-  C_DEEP_PINK = $FF1493;
-  C_HOT_PINK = $FF69B4;
-  C_LIGHT_PINK = $FFB6C1;
-  C_PINK = $FFC0CB;
-  C_ANTIQUE_WHITE = $FAEBD7;
-  C_BEIGE = $F5F5DC;
-  C_BISQUE = $FFE4C4;
-  C_BLANCHED_ALMOND = $FFEBCD;
-  C_WHEAT = $F5DEB3;
-  C_CORN_SILK = $FFF8DC;
-  C_LEMON_CHIFFON = $FFFACD;
-  C_LIGHT_GOLDEN_ROD_YELLOW = $FAFAD2;
-  C_LIGHT_YELLOW = $FFFFE0;
-  C_SADDLE_BROWN = $8B4513;
-  C_SIENNA = $A0522D;
-  C_CHOCOLATE = $D2691E;
-  C_PERU = $CD853F;
-  C_SANDY_BROWN = $F4A460;
-  C_BURLY_WOOD = $DEB887;
-  C_TAN = $D2B48C;
-  C_ROSY_BROWN = $BC8F8F;
-  C_MOCCASIN = $FFE4B5;
-  C_NAVAJO_WHITE = $FFDEAD;
-  C_PEACH_PUFF = $FFDAB9;
-  C_MISTY_ROSE = $FFE4E1;
-  C_LAVENDER_BLUSH = $FFF0F5;
-  C_LINEN = $FAF0E6;
-  C_OLD_LACE = $FDF5E6;
-  C_PAPAYA_WHIP = $FFEFD5;
-  C_SEA_SHELL = $FFF5EE;
-  C_MINT_CREAM = $F5FFFA;
-  C_SLATE_GRAY = $708090;
-  C_LIGHT_SLATE_GRAY = $778899;
-  C_LIGHT_STEEL_BLUE = $B0C4DE;
-  C_LAVENDER = $E6E6FA;
-  C_FLORAL_WHITE = $FFFAF0;
-  C_ALICE_BLUE = $F0F8FF;
-  C_GHOST_WHITE = $F8F8FF;
-  C_HONEYDEW = $F0FFF0;
-  C_IVORY = $FFFFF0;
-  C_AZURE = $F0FFFF;
-  C_SNOW = $FFFAFA;
-  C_BLACK = $000000;
-  C_DIM_GRAY = $696969;
-  C_GRAY = $808080;
-  C_DARK_GRAY = $A9A9A9;
-  C_SILVER = $C0C0C0;
-  C_LIGHT_GRAY = $D3D3D3;
-  C_GAINSBORO = $DCDCDC;
-  C_WHITE_SMOKE = $F5F5F5;
-  C_WHITE = $FFFFFF;
-{$endif}
 
   DRIVER_REGISTERED = 1 shl 0;
   DRIVER_ENABLED = 1 shl 1;
@@ -583,9 +259,9 @@ type
   UG_COLOR = UG_U16;
 {$endif}
 
-  (* -------------------------------------------------------------------------------- *)
-  (* -- UNIVERSAL STRUCTURES                                                       -- *)
-  (* -------------------------------------------------------------------------------- *)
+  (* -------------------------------------------------------------------------- *)
+  (* -- UNIVERSAL STRUCTURES                                                 -- *)
+  (* -------------------------------------------------------------------------- *)
   (* Area structure *)
 
   UG_AREA = record
@@ -702,26 +378,6 @@ type
     cb: UG_WINDOW_CB;
   end;
   UG_WINDOW = S_WINDOW;
-
-  (* ------------------------------------------------------------------------ *)
-  (* -- BUTTON OBJECT                                                      -- *)
-  (* ------------------------------------------------------------------------ *)
-  (* Button structure *)
-  PUG_BUTTON = ^UG_BUTTON;
-
-  UG_BUTTON = record
-    state: UG_U8;
-    style: UG_U8;
-    fc: UG_COLOR;
-    bc: UG_COLOR;
-    afc: UG_COLOR;
-    abc: UG_COLOR;
-    font: PUG_FONT;
-    align: UG_U8;
-    h_space: UG_S8;
-    v_space: UG_S8;
-    str: PChar;
-  end;
 
 (* -------------------------------------------------------------------------- *)
 (* -- CHECKBOX OBJECT                                                      -- *)
@@ -862,7 +518,6 @@ type
 (* -- PROTOTYPES                                                           -- *)
 (* -------------------------------------------------------------------------- *)
 (* Classic functions *)
-
 function UG_Init(var g: UG_GUI; p: UG_PSET; x, y: UG_S16): UG_S16;
 function UG_SelectGUI(g: PUG_GUI): UG_S16;
 procedure UG_FontSelect(font: PUG_FONT);
@@ -948,8 +603,67 @@ function UG_WindowGetInnerHeight(const wnd: UG_WINDOW): UG_S16;
 function UG_WindowGetOuterHeight(const wnd: UG_WINDOW): UG_S16;
 (* <<< Window getters *)
 
-(* Button functions *)
+(* -------------------------------------------------------------------------- *)
+(* -- BUTTON OBJECT                                                        -- *)
+(* -------------------------------------------------------------------------- *)
+(* Button structure *)
+type
+  PUG_BUTTON = ^UG_BUTTON;
 
+  UG_BUTTON = record
+    state: UG_U8;
+    style: UG_U8;
+    fc: UG_COLOR;
+    bc: UG_COLOR;
+    afc: UG_COLOR;
+    abc: UG_COLOR;
+    font: PUG_FONT;
+    align: UG_U8;
+    h_space: UG_S8;
+    v_space: UG_S8;
+    str: PChar;
+  end;
+
+const
+  (* Default button IDs *)
+  BTN_ID_0 = OBJ_ID_0;
+  BTN_ID_1 = OBJ_ID_1;
+  BTN_ID_2 = OBJ_ID_2;
+  BTN_ID_3 = OBJ_ID_3;
+  BTN_ID_4 = OBJ_ID_4;
+  BTN_ID_5 = OBJ_ID_5;
+  BTN_ID_6 = OBJ_ID_6;
+  BTN_ID_7 = OBJ_ID_7;
+  BTN_ID_8 = OBJ_ID_8;
+  BTN_ID_9 = OBJ_ID_9;
+  BTN_ID_10 = OBJ_ID_10;
+  BTN_ID_11 = OBJ_ID_11;
+  BTN_ID_12 = OBJ_ID_12;
+  BTN_ID_13 = OBJ_ID_13;
+  BTN_ID_14 = OBJ_ID_14;
+  BTN_ID_15 = OBJ_ID_15;
+  BTN_ID_16 = OBJ_ID_16;
+  BTN_ID_17 = OBJ_ID_17;
+  BTN_ID_18 = OBJ_ID_18;
+  BTN_ID_19 = OBJ_ID_19;
+
+  (* Button states *)
+  BTN_STATE_RELEASED = 0 shl 0;
+  BTN_STATE_PRESSED = 1 shl 0;
+  BTN_STATE_ALWAYS_REDRAW = 1 shl 1;
+
+  (* Button style *)
+  BTN_STYLE_2D = 0 shl 0;
+  BTN_STYLE_3D = 1 shl 0;
+  BTN_STYLE_TOGGLE_COLORS = 1 shl 1;
+  BTN_STYLE_USE_ALTERNATE_COLORS = 1 shl 2;
+  BTN_STYLE_NO_BORDERS = 1 shl 3;
+  BTN_STYLE_NO_FILL = 1 shl 4;
+
+  (* Button events *)
+  BTN_EVENT_CLICKED = OBJ_EVENT_CLICKED;
+
+(* Button functions *)
 function UG_ButtonCreate(const wnd: UG_WINDOW; var btn: UG_BUTTON;
   id: UG_U8; xs, ys: UG_S16; xe, ye: UG_S16): UG_RESULT;
 function UG_ButtonDelete(const wnd: UG_WINDOW; id: UG_U8): UG_RESULT;
@@ -1007,18 +721,6 @@ const
   (* Frame 0 *)
   (* Frame 1 *)
   (* Frame 2 *)
-  pal_button_pressed: array [0..11] of UG_COLOR =
-    ($646464, $646464, $646464, $646464, $A0A0A0, $A0A0A0, $A0A0A0,
-    $A0A0A0, $F0F0F0, $F0F0F0, $F0F0F0, $F0F0F0);
-  (* Frame 0 *)
-  (* Frame 1 *)
-  (* Frame 2 *)
-  pal_button_released: array [0..11] of UG_COLOR =
-    ($646464, $646464, $646464, $646464, $FFFFFF, $FFFFFF, $696969,
-    $696969, $E3E3E3, $E3E3E3, $A0A0A0, $A0A0A0);
-  (* Frame 0 *)
-  (* Frame 1 *)
-  (* Frame 2 *)
   pal_checkbox_pressed: array [0..11] of UG_COLOR =
     ($646464, $646464, $646464, $646464, $A0A0A0, $A0A0A0, $A0A0A0,
     $A0A0A0, $F0F0F0, $F0F0F0, $F0F0F0, $F0F0F0);
@@ -1031,10 +733,6 @@ const
 {$endif}
 {$ifdef USE_COLOR_RGB565}
   pal_window: array [0..11] of UG_COLOR =
-    ($632C, $632C, $632C, $632C, $FFFF, $FFFF, $6B4D, $6B4D, $E71C, $E71C, $9D13, $9D13);
-  pal_button_pressed: array [0..11] of UG_COLOR =
-    ($632C, $632C, $632C, $632C, $9D13, $9D13, $9D13, $9D13, $EF7D, $EF7D, $EF7D, $EF7D);
-  pal_button_released: array [0..11] of UG_COLOR =
     ($632C, $632C, $632C, $632C, $FFFF, $FFFF, $6B4D, $6B4D, $E71C, $E71C, $9D13, $9D13);
   pal_checkbox_pressed: array [0..11] of UG_COLOR =
     ($632C, $632C, $632C, $632C, $9D13, $9D13, $9D13, $9D13, $EF7D, $EF7D, $EF7D, $EF7D);
@@ -2877,634 +2575,7 @@ end;
 
 (* <<< Window getters *)
 
-(* Button functions *)
-
-procedure _UG_ButtonUpdate(wnd: PUG_WINDOW; obj: PUG_OBJECT);
-var
-  btn: PUG_BUTTON;
-  a: UG_AREA;
-  txt: UG_TEXT;
-  d: UG_U8;
-  (* Get object-specific data *)
-begin
-  btn := PUG_BUTTON(obj^.Data);
-  (* -------------------------------------------------- *)
-  (* Object touch section                               *)
-  (* -------------------------------------------------- *)
-  if (obj^.touch_state and OBJ_TOUCH_STATE_CHANGED) <> 0 then
-  begin
-    (* Handle 'click' event *)
-    if (obj^.touch_state and OBJ_TOUCH_STATE_CLICK_ON_OBJECT) <> 0 then
-    begin
-      obj^.event := BTN_EVENT_CLICKED;
-      obj^.state := obj^.state or OBJ_STATE_UPDATE;
-    end;
-    (* Is the button pressed down? *)
-    if (obj^.touch_state and OBJ_TOUCH_STATE_PRESSED_ON_OBJECT) <> 0 then
-    begin
-      btn^.state := btn^.state or BTN_STATE_PRESSED;
-      obj^.state := obj^.state or OBJ_STATE_UPDATE;
-      obj^.event := OBJ_EVENT_PRESSED;
-    end
-    else
-    (* Can we release the button? *)
-    if (btn^.state and BTN_STATE_PRESSED) <> 0 then
-    begin
-      btn^.state := btn^.state and (not BTN_STATE_PRESSED);
-      obj^.state := obj^.state or OBJ_STATE_UPDATE;
-      obj^.event := OBJ_EVENT_RELEASED;
-    end;
-    obj^.touch_state := obj^.touch_state and (not OBJ_TOUCH_STATE_CHANGED);
-  end;
-
-  (* -------------------------------------------------- *)
-  (* Object update section                              *)
-  (* -------------------------------------------------- *)
-  if (obj^.state and OBJ_STATE_UPDATE) <> 0 then
-  begin
-    if (obj^.state and OBJ_STATE_VISIBLE) <> 0 then
-    begin
-      (* Full redraw necessary? *)
-      if ((obj^.state and OBJ_STATE_REDRAW) <> 0) or
-        ((btn^.state and BTN_STATE_ALWAYS_REDRAW) <> 0) then
-      begin
-        UG_WindowGetArea(wnd^, a);
-        obj^.a_abs.xs := obj^.a_rel.xs + a.xs;
-        obj^.a_abs.ys := obj^.a_rel.ys + a.ys;
-        obj^.a_abs.xe := obj^.a_rel.xe + a.xs;
-        obj^.a_abs.ye := obj^.a_rel.ye + a.ys;
-        if obj^.a_abs.ye > wnd^.ye then
-          exit;
-        if obj^.a_abs.xe > wnd^.xe then
-          exit;
-        {$ifdef USE_PRERENDER_EVENT}
-        _UG_SendObjectPrerenderEvent(wnd, obj);
-        {$endif}
-        (* 3D or 2D style? *)
-        if (btn^.style and BTN_STYLE_3D) <> 0 then
-          d := 3
-        else
-          d := 1;
-        txt.bc := btn^.bc;
-        txt.fc := btn^.fc;
-
-
-
-        if (btn^.state and BTN_STATE_PRESSED) <> 0 then
-        begin
-          (* "toggle" style? *)
-          if (btn^.style and BTN_STYLE_TOGGLE_COLORS) <> 0 then
-          begin
-            (* Swap colors *)
-            txt.bc := btn^.fc;
-            txt.fc := btn^.bc;
-          end
-          else
-          (* Use alternate colors? *)
-          if (btn^.style and BTN_STYLE_USE_ALTERNATE_COLORS) <> 0 then
-          begin
-            txt.bc := btn^.abc;
-            txt.fc := btn^.afc;
-          end;
-        end;
-        if (btn^.style and BTN_STYLE_NO_FILL) = 0 then
-          UG_FillFrame(obj^.a_abs.xs + d, obj^.a_abs.ys + d, obj^.a_abs.xe -
-            d, obj^.a_abs.ye - d, txt.bc);
-        (* Draw button text *)
-        txt.a.xs := obj^.a_abs.xs + d;
-        txt.a.ys := obj^.a_abs.ys + d;
-        txt.a.xe := obj^.a_abs.xe - d;
-        txt.a.ye := obj^.a_abs.ye - d;
-        txt.align := btn^.align;
-        txt.font := btn^.font;
-        txt.h_space := 2;
-        txt.v_space := 2;
-        txt.str := btn^.str;
-        _UG_PutText(txt);
-        obj^.state := obj^.state and (not OBJ_STATE_REDRAW);
-        {$ifdef USE_POSTRENDER_EVENT}
-        _UG_SendObjectPostrenderEvent(wnd, obj);
-        {$endif}
-      end;
-      (* Draw button frame *)
-      if (btn^.style and BTN_STYLE_NO_BORDERS) = 0 then
-        if (btn^.style and BTN_STYLE_3D) <> 0 then
-          (* 3D *)
-          if (btn^.state and BTN_STATE_PRESSED) <> 0 then
-            _UG_DrawObjectFrame(obj^.a_abs.xs, obj^.a_abs.ys, obj^.a_abs.xe,
-              obj^.a_abs.ye, pal_button_pressed)
-          else
-            _UG_DrawObjectFrame(obj^.a_abs.xs, obj^.a_abs.ys, obj^.a_abs.xe,
-              obj^.a_abs.ye, pal_button_released)
-        else
-        (* 2D *)
-        if (btn^.state and BTN_STATE_PRESSED) <> 0 then
-          UG_DrawFrame(obj^.a_abs.xs, obj^.a_abs.ys, obj^.a_abs.xe,
-            obj^.a_abs.ye, btn^.abc)
-        else
-          UG_DrawFrame(obj^.a_abs.xs, obj^.a_abs.ys, obj^.a_abs.xe, obj^.a_abs.ye,
-            btn^.afc);
-
-    end
-    else
-    if (btn^.style and BTN_STYLE_NO_FILL) = 0 then
-      UG_FillFrame(obj^.a_abs.xs, obj^.a_abs.ys, obj^.a_abs.xe, obj^.a_abs.ye, wnd^.bc);
-    obj^.state := obj^.state and (not OBJ_STATE_UPDATE);
-  end;
-end;
-
-function UG_ButtonCreate(const wnd: UG_WINDOW; var btn: UG_BUTTON;
-  id: UG_U8; xs, ys: UG_S16; xe, ye: UG_S16): UG_RESULT;
-var
-  obj: PUG_OBJECT;
-begin
-  obj := _UG_GetFreeObject(wnd);
-  if obj = nil then
-  begin
-    UG_ButtonCreate := UG_RESULT_FAIL;
-    exit;
-  end;
-  (* Initialize object-specific parameters *)
-  btn.state := BTN_STATE_RELEASED;
-  btn.bc := wnd.bc;
-  btn.fc := wnd.fc;
-  btn.abc := wnd.bc;
-  btn.afc := wnd.fc;
-  btn.style := BTN_STYLE_3D;
-  btn.align := ALIGN_CENTER;
-
-  if gui <> nil then
-    btn.font := @(gui^.font)
-  else
-    btn.font := nil;
-
-  btn.str := '-';
-  (* Initialize standard object parameters *)
-  obj^.update := _UG_ButtonUpdate;
-  obj^.touch_state := OBJ_TOUCH_STATE_INIT;
-  obj^.otype := OBJ_TYPE_BUTTON;
-  obj^.event := OBJ_EVENT_NONE;
-  obj^.a_rel.xs := xs;
-  obj^.a_rel.ys := ys;
-  obj^.a_rel.xe := xe;
-  obj^.a_rel.ye := ye;
-  obj^.a_abs.xs := -1;
-  obj^.a_abs.ys := -1;
-  obj^.a_abs.xe := -1;
-  obj^.a_abs.ye := -1;
-  obj^.id := id;
-  obj^.state := obj^.state or OBJ_STATE_VISIBLE or OBJ_STATE_REDRAW or
-    OBJ_STATE_VALID or OBJ_STATE_TOUCH_ENABLE;
-  obj^.Data := @btn;
-  (* Update function: Do your thing! *)
-  obj^.state := obj^.state and (not OBJ_STATE_FREE);
-  UG_ButtonCreate := UG_RESULT_OK;
-end;
-
-function UG_ButtonDelete(const wnd: UG_WINDOW; id: UG_U8): UG_RESULT;
-begin
-  UG_ButtonDelete := _UG_DeleteObject(wnd, OBJ_TYPE_BUTTON, id);
-end;
-
-function UG_ButtonShow(const wnd: UG_WINDOW; id: UG_U8): UG_RESULT;
-var
-  obj: PUG_OBJECT;
-begin
-  obj := nil;
-  obj := _UG_SearchObject(wnd, OBJ_TYPE_BUTTON, id);
-  if obj = nil then
-  begin
-    UG_ButtonShow := UG_RESULT_FAIL;
-    exit;
-  end;
-  obj^.state := obj^.state or OBJ_STATE_VISIBLE;
-  obj^.state := obj^.state or OBJ_STATE_UPDATE or OBJ_STATE_REDRAW;
-  UG_ButtonShow := UG_RESULT_OK;
-end;
-
-function UG_ButtonHide(const wnd: UG_WINDOW; id: UG_U8): UG_RESULT;
-var
-  obj: pUG_OBJECT;
-  btn: pUG_BUTTON;
-begin
-  obj := nil;
-  btn := nil;
-  obj := _UG_SearchObject(wnd, OBJ_TYPE_BUTTON, id);
-  if obj = nil then
-  begin
-    UG_ButtonHide := UG_RESULT_FAIL;
-    exit;
-  end;
-  btn := pUG_BUTTON(obj^.Data);
-  btn^.state := btn^.state and (not BTN_STATE_PRESSED);
-  obj^.touch_state := OBJ_TOUCH_STATE_INIT;
-  obj^.event := OBJ_EVENT_NONE;
-  obj^.state := obj^.state and (not OBJ_STATE_VISIBLE);
-  obj^.state := obj^.state or OBJ_STATE_UPDATE;
-  UG_ButtonHide := UG_RESULT_OK;
-end;
-
-(* Button setters *)
-
-function UG_ButtonSetForeColor(const wnd: UG_WINDOW; id: UG_U8;
-  fc: UG_COLOR): UG_RESULT;
-var
-  obj: pUG_OBJECT;
-  btn: pUG_BUTTON;
-begin
-  obj := nil;
-  btn := nil;
-  obj := _UG_SearchObject(wnd, OBJ_TYPE_BUTTON, id);
-  if obj = nil then
-  begin
-    UG_ButtonSetForeColor := UG_RESULT_FAIL;
-    exit;
-  end;
-  btn := pUG_BUTTON(obj^.Data);
-  btn^.fc := fc;
-  obj^.state := obj^.state or OBJ_STATE_UPDATE or OBJ_STATE_REDRAW;
-  UG_ButtonSetForeColor := UG_RESULT_OK;
-end;
-
-function UG_ButtonSetBackColor(const wnd: UG_WINDOW; id: UG_U8;
-  bc: UG_COLOR): UG_RESULT;
-var
-  obj: pUG_OBJECT;
-  btn: pUG_BUTTON;
-begin
-  obj := nil;
-  btn := nil;
-  obj := _UG_SearchObject(wnd, OBJ_TYPE_BUTTON, id);
-  if obj = nil then
-  begin
-    UG_ButtonSetBackColor := UG_RESULT_FAIL;
-    exit;
-  end;
-  btn := pUG_BUTTON(obj^.Data);
-  btn^.bc := bc;
-  obj^.state := obj^.state or OBJ_STATE_UPDATE or OBJ_STATE_REDRAW;
-  UG_ButtonSetBackColor := UG_RESULT_OK;
-end;
-
-function UG_ButtonSetAlternateForeColor(const wnd: UG_WINDOW; id: UG_U8;
-  afc: UG_COLOR): UG_RESULT;
-var
-  obj: pUG_OBJECT;
-  btn: pUG_BUTTON;
-begin
-  obj := nil;
-  btn := nil;
-  obj := _UG_SearchObject(wnd, OBJ_TYPE_BUTTON, id);
-  if obj = nil then
-  begin
-    UG_ButtonSetAlternateForeColor := UG_RESULT_FAIL;
-    exit;
-  end;
-  btn := pUG_BUTTON(obj^.Data);
-  btn^.afc := afc;
-  obj^.state := obj^.state or OBJ_STATE_UPDATE or OBJ_STATE_REDRAW;
-  UG_ButtonSetAlternateForeColor := UG_RESULT_OK;
-end;
-
-function UG_ButtonSetAlternateBackColor(const wnd: UG_WINDOW; id: UG_U8;
-  abc: UG_COLOR): UG_RESULT;
-var
-  obj: pUG_OBJECT;
-  btn: pUG_BUTTON;
-begin
-  obj := nil;
-  btn := nil;
-  obj := _UG_SearchObject(wnd, OBJ_TYPE_BUTTON, id);
-  if obj = nil then
-  begin
-    UG_ButtonSetAlternateBackColor := UG_RESULT_FAIL;
-    exit;
-
-  end;
-  btn := pUG_BUTTON(obj^.Data);
-  btn^.abc := abc;
-  obj^.state := obj^.state or OBJ_STATE_UPDATE or OBJ_STATE_REDRAW;
-  UG_ButtonSetAlternateBackColor := UG_RESULT_OK;
-end;
-
-function UG_ButtonSetText(const wnd: UG_WINDOW; id: UG_U8; str: PChar): UG_RESULT;
-var
-  obj: PUG_OBJECT;
-  btn: PUG_BUTTON;
-begin
-  obj := nil;
-  btn := nil;
-  obj := _UG_SearchObject(wnd, OBJ_TYPE_BUTTON, id);
-  if obj = nil then
-  begin
-    UG_ButtonSetText := UG_RESULT_FAIL;
-    exit;
-  end;
-  btn := PUG_BUTTON(obj^.Data);
-  btn^.str := str;
-  obj^.state := obj^.state or OBJ_STATE_UPDATE or OBJ_STATE_REDRAW;
-  UG_ButtonSetText := UG_RESULT_OK;
-end;
-
-function UG_ButtonSetFont(const wnd: UG_WINDOW; id: UG_U8; font: PUG_FONT): UG_RESULT;
-var
-  obj: PUG_OBJECT;
-  btn: PUG_BUTTON;
-begin
-  obj := nil;
-  btn := nil;
-  obj := _UG_SearchObject(wnd, OBJ_TYPE_BUTTON, id);
-  if obj = nil then
-  begin
-    UG_ButtonSetFont := UG_RESULT_FAIL;
-    exit;
-  end;
-  btn := PUG_BUTTON(obj^.Data);
-  btn^.font := font;
-  obj^.state := obj^.state or OBJ_STATE_UPDATE or OBJ_STATE_REDRAW;
-  UG_ButtonSetFont := UG_RESULT_OK;
-end;
-
-function UG_ButtonSetStyle(const wnd: UG_WINDOW; id: UG_U8; style: UG_U8): UG_RESULT;
-var
-  obj: PUG_OBJECT;
-  btn: PUG_BUTTON;
-begin
-  obj := nil;
-  btn := nil;
-  obj := _UG_SearchObject(wnd, OBJ_TYPE_BUTTON, id);
-  if obj = nil then
-  begin
-    UG_ButtonSetStyle := UG_RESULT_FAIL;
-    exit;
-  end;
-  btn := PUG_BUTTON(obj^.Data);
-  btn^.style := btn^.style and (not (BTN_STYLE_USE_ALTERNATE_COLORS or
-    BTN_STYLE_TOGGLE_COLORS or BTN_STYLE_NO_BORDERS or BTN_STYLE_NO_FILL));
-  btn^.state := btn^.state or BTN_STATE_ALWAYS_REDRAW;
-
-  (* Select color scheme *)
-  if (style and BTN_STYLE_NO_BORDERS) <> 0 then
-    btn^.style := btn^.style or BTN_STYLE_NO_BORDERS;
-  if (style and BTN_STYLE_NO_FILL) <> 0 then
-    btn^.style := btn^.style or BTN_STYLE_NO_FILL;
-  if (style and BTN_STYLE_TOGGLE_COLORS) <> 0 then
-    btn^.style := btn^.style or BTN_STYLE_TOGGLE_COLORS
-  else
-  if (style and BTN_STYLE_USE_ALTERNATE_COLORS) <> 0 then
-    btn^.style := btn^.style or BTN_STYLE_USE_ALTERNATE_COLORS
-  else
-    btn^.state := btn^.state and (not BTN_STATE_ALWAYS_REDRAW);
-
-  (* 3D or 2D *)
-  if (style and BTN_STYLE_3D) <> 0 then
-    btn^.style := btn^.style or BTN_STYLE_3D
-  else
-    btn^.style := btn^.style and (not BTN_STYLE_3D);
-  obj^.state := obj^.state or OBJ_STATE_UPDATE or OBJ_STATE_REDRAW;
-  UG_ButtonSetStyle := UG_RESULT_OK;
-end;
-
-function UG_ButtonSetHSpace(const wnd: UG_WINDOW; id: UG_U8; hs: UG_S8): UG_RESULT;
-var
-  obj: PUG_OBJECT;
-  btn: PUG_BUTTON;
-begin
-  obj := nil;
-  btn := nil;
-  obj := _UG_SearchObject(wnd, OBJ_TYPE_BUTTON, id);
-  if obj = nil then
-  begin
-    UG_ButtonSetHSpace := UG_RESULT_FAIL;
-    exit;
-  end;
-  btn := PUG_BUTTON(obj^.Data);
-  btn^.h_space := hs;
-  obj^.state := obj^.state or OBJ_STATE_UPDATE or OBJ_STATE_REDRAW;
-  UG_ButtonSetHSpace := UG_RESULT_OK;
-end;
-
-function UG_ButtonSetVSpace(const wnd: UG_WINDOW; id: UG_U8; vs: UG_S8): UG_RESULT;
-var
-  obj: PUG_OBJECT;
-  btn: PUG_BUTTON;
-begin
-  obj := nil;
-  btn := nil;
-  obj := _UG_SearchObject(wnd, OBJ_TYPE_BUTTON, id);
-  if obj = nil then
-  begin
-    UG_ButtonSetVSpace := UG_RESULT_FAIL;
-    exit;
-  end;
-  btn := PUG_BUTTON(obj^.Data);
-  btn^.v_space := vs;
-  obj^.state := obj^.state or OBJ_STATE_UPDATE or OBJ_STATE_REDRAW;
-  UG_ButtonSetVSpace := UG_RESULT_OK;
-end;
-
-function UG_ButtonSetAlignment(const wnd: UG_WINDOW; id: UG_U8;
-  align: UG_U8): UG_RESULT;
-var
-  obj: PUG_OBJECT;
-  btn: PUG_BUTTON;
-begin
-  obj := nil;
-  btn := nil;
-  obj := _UG_SearchObject(wnd, OBJ_TYPE_BUTTON, id);
-  if obj = nil then
-  begin
-    UG_ButtonSetAlignment := UG_RESULT_FAIL;
-    exit;
-  end;
-  btn := PUG_BUTTON(obj^.Data);
-  btn^.align := align;
-  obj^.state := obj^.state or OBJ_STATE_UPDATE or OBJ_STATE_REDRAW;
-  UG_ButtonSetAlignment := UG_RESULT_OK;
-end;
-
-(* Button getters *)
-
-function UG_ButtonGetForeColor(const wnd: UG_WINDOW; id: UG_U8): UG_COLOR;
-var
-  obj: PUG_OBJECT;
-  btn: PUG_BUTTON;
-  c: UG_COLOR;
-begin
-  obj := nil;
-  btn := nil;
-  c := C_BLACK;
-  obj := _UG_SearchObject(wnd, OBJ_TYPE_BUTTON, id);
-  if obj <> nil then
-  begin
-    btn := PUG_BUTTON(obj^.Data);
-    c := btn^.fc;
-  end;
-  UG_ButtonGetForeColor := c;
-end;
-
-function UG_ButtonGetBackColor(const wnd: UG_WINDOW; id: UG_U8): UG_COLOR;
-var
-  obj: PUG_OBJECT;
-  btn: PUG_BUTTON;
-  c: UG_COLOR;
-begin
-  obj := nil;
-  btn := nil;
-  c := C_BLACK;
-  obj := _UG_SearchObject(wnd, OBJ_TYPE_BUTTON, id);
-  if obj <> nil then
-  begin
-    btn := PUG_BUTTON(obj^.Data);
-    c := btn^.bc;
-  end;
-  UG_ButtonGetBackColor := c;
-end;
-
-function UG_ButtonGetAlternateForeColor(const wnd: UG_WINDOW; id: UG_U8): UG_COLOR;
-var
-  obj: PUG_OBJECT;
-  btn: PUG_BUTTON;
-  c: UG_COLOR;
-begin
-  obj := nil;
-  btn := nil;
-  c := C_BLACK;
-  obj := _UG_SearchObject(wnd, OBJ_TYPE_BUTTON, id);
-  if obj <> nil then
-  begin
-    btn := PUG_BUTTON(obj^.Data);
-    c := btn^.afc;
-  end;
-  UG_ButtonGetAlternateForeColor := c;
-end;
-
-function UG_ButtonGetAlternateBackColor(const wnd: UG_WINDOW; id: UG_U8): UG_COLOR;
-var
-  obj: PUG_OBJECT;
-  btn: PUG_BUTTON;
-  c: UG_COLOR;
-begin
-  obj := nil;
-  btn := nil;
-  c := C_BLACK;
-  obj := _UG_SearchObject(wnd, OBJ_TYPE_BUTTON, id);
-  if obj <> nil then
-  begin
-    btn := PUG_BUTTON(obj^.Data);
-    c := btn^.abc;
-  end;
-  UG_ButtonGetAlternateBackColor := c;
-end;
-
-function UG_ButtonGetText(const wnd: UG_WINDOW; id: UG_U8): PChar;
-var
-  obj: PUG_OBJECT;
-  btn: PUG_BUTTON;
-  str: PChar;
-begin
-  obj := nil;
-  btn := nil;
-  str := nil;
-  obj := _UG_SearchObject(wnd, OBJ_TYPE_BUTTON, id);
-  if obj <> nil then
-  begin
-    btn := PUG_BUTTON(obj^.Data);
-    str := btn^.str;
-  end;
-  UG_ButtonGetText := str;
-end;
-
-function UG_ButtonGetFont(const wnd: UG_WINDOW; id: UG_U8): PUG_FONT;
-var
-  obj: PUG_OBJECT;
-  btn: PUG_BUTTON;
-  font: PUG_FONT;
-begin
-  obj := nil;
-  btn := nil;
-  font := nil;
-  obj := _UG_SearchObject(wnd, OBJ_TYPE_BUTTON, id);
-  if obj <> nil then
-  begin
-    btn := PUG_BUTTON(obj^.Data);
-    font := btn^.font;
-  end;
-  UG_ButtonGetFont := font;
-end;
-
-function UG_ButtonGetStyle(const wnd: UG_WINDOW; id: UG_U8): UG_U8;
-var
-  obj: PUG_OBJECT;
-  btn: PUG_BUTTON;
-  style: UG_U8;
-begin
-  obj := nil;
-  btn := nil;
-  style := 0;
-  obj := _UG_SearchObject(wnd, OBJ_TYPE_BUTTON, id);
-  if obj <> nil then
-  begin
-    btn := PUG_BUTTON(obj^.Data);
-    style := btn^.style;
-  end;
-  UG_ButtonGetStyle := style;
-end;
-
-function UG_ButtonGetHSpace(const wnd: UG_WINDOW; id: UG_U8): UG_S8;
-var
-  obj: PUG_OBJECT;
-  btn: PUG_BUTTON;
-  hs: UG_S8;
-begin
-  obj := nil;
-  btn := nil;
-  hs := 0;
-  obj := _UG_SearchObject(wnd, OBJ_TYPE_BUTTON, id);
-  if obj <> nil then
-  begin
-    btn := PUG_BUTTON(obj^.Data);
-    hs := btn^.h_space;
-  end;
-  UG_ButtonGetHSpace := hs;
-end;
-
-function UG_ButtonGetVSpace(const wnd: UG_WINDOW; id: UG_U8): UG_S8;
-var
-  obj: PUG_OBJECT;
-  btn: PUG_BUTTON;
-  vs: UG_S8;
-begin
-  obj := nil;
-  btn := nil;
-  vs := 0;
-  obj := _UG_SearchObject(wnd, OBJ_TYPE_BUTTON, id);
-  if obj <> nil then
-  begin
-    btn := PUG_BUTTON(obj^.Data);
-    vs := btn^.v_space;
-  end;
-  UG_ButtonGetVSpace := vs;
-end;
-
-function UG_ButtonGetAlignment(const wnd: UG_WINDOW; id: UG_U8): UG_U8;
-var
-  obj: PUG_OBJECT;
-  btn: PUG_BUTTON;
-  align: UG_U8;
-begin
-  obj := nil;
-  btn := nil;
-  align := 0;
-  obj := _UG_SearchObject(wnd, OBJ_TYPE_BUTTON, id);
-  if obj <> nil then
-  begin
-    btn := PUG_BUTTON(obj^.Data);
-    align := btn^.align;
-  end;
-  UG_ButtonGetAlignment := align;
-end;
-
+{$I UG_BTN.INC}
 
 (* -------------------------------------------------------------------------- *)
 (* -- MISCELLANEOUS FUNCTIONS                                              -- *)
