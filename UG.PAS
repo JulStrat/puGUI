@@ -379,64 +379,7 @@ type
   end;
   UG_WINDOW = S_WINDOW;
 
-(* -------------------------------------------------------------------------- *)
-(* -- CHECKBOX OBJECT                                                      -- *)
-(* -------------------------------------------------------------------------- *)
-(* Checkbox structure *)
-type
-  UG_CHECKBOX = record
-    state: UG_U8;
-    style: UG_U8;
-    fc: UG_COLOR;
-    bc: UG_COLOR;
-    afc: UG_COLOR;
-    abc: UG_COLOR;
-    font: PUG_FONT;
-    align: UG_U8;
-    h_space: UG_S8;
-    v_space: UG_S8;
-    str: PChar;
-    Checked: UG_U8;
-  end;
 
-(* Default checkbox IDs *)
-const
-  CHB_ID_0 = OBJ_ID_0;
-  CHB_ID_1 = OBJ_ID_1;
-  CHB_ID_2 = OBJ_ID_2;
-  CHB_ID_3 = OBJ_ID_3;
-  CHB_ID_4 = OBJ_ID_4;
-  CHB_ID_5 = OBJ_ID_5;
-  CHB_ID_6 = OBJ_ID_6;
-  CHB_ID_7 = OBJ_ID_7;
-  CHB_ID_8 = OBJ_ID_8;
-  CHB_ID_9 = OBJ_ID_9;
-  CHB_ID_10 = OBJ_ID_10;
-  CHB_ID_11 = OBJ_ID_11;
-  CHB_ID_12 = OBJ_ID_12;
-  CHB_ID_13 = OBJ_ID_13;
-  CHB_ID_14 = OBJ_ID_14;
-  CHB_ID_15 = OBJ_ID_15;
-  CHB_ID_16 = OBJ_ID_16;
-  CHB_ID_17 = OBJ_ID_17;
-  CHB_ID_18 = OBJ_ID_18;
-  CHB_ID_19 = OBJ_ID_19;
-
-  (* Checkbox states *)
-  CHB_STATE_RELEASED = 0 shl 0;
-  CHB_STATE_PRESSED = 1 shl 0;
-  CHB_STATE_ALWAYS_REDRAW = 1 shl 1;
-
-  (* Checkbox style *)
-  CHB_STYLE_2D = 0 shl 0;
-  CHB_STYLE_3D = 1 shl 0;
-  CHB_STYLE_TOGGLE_COLORS = 1 shl 1;
-  CHB_STYLE_USE_ALTERNATE_COLORS = 1 shl 2;
-  CHB_STYLE_NO_BORDERS = 1 shl 3;
-  CHB_STYLE_NO_FILL = 1 shl 4;
-
-  (* Checkbox events *)
-  CHB_EVENT_CLICKED = OBJ_EVENT_CLICKED;
 
 (* -------------------------------------------------------------------------- *)
 (* -- TEXTBOX OBJECT                                                       -- *)
@@ -695,6 +638,100 @@ function UG_ButtonGetHSpace(const wnd: UG_WINDOW; id: UG_U8): UG_S8;
 function UG_ButtonGetVSpace(const wnd: UG_WINDOW; id: UG_U8): UG_S8;
 function UG_ButtonGetAlignment(const wnd: UG_WINDOW; id: UG_U8): UG_U8;
 
+(* -------------------------------------------------------------------------- *)
+(* -- CHECKBOX OBJECT                                                      -- *)
+(* -------------------------------------------------------------------------- *)
+(* Checkbox structure *)
+type
+  PUG_CHECKBOX = ^UG_CHECKBOX;
+
+  UG_CHECKBOX = record
+    state: UG_U8;
+    style: UG_U8;
+    fc: UG_COLOR;
+    bc: UG_COLOR;
+    afc: UG_COLOR;
+    abc: UG_COLOR;
+    font: PUG_FONT;
+    align: UG_U8;
+    h_space: UG_S8;
+    v_space: UG_S8;
+    str: PChar;
+    Checked: UG_U8;
+  end;
+
+(* Default checkbox IDs *)
+const
+  CHB_ID_0 = OBJ_ID_0;
+  CHB_ID_1 = OBJ_ID_1;
+  CHB_ID_2 = OBJ_ID_2;
+  CHB_ID_3 = OBJ_ID_3;
+  CHB_ID_4 = OBJ_ID_4;
+  CHB_ID_5 = OBJ_ID_5;
+  CHB_ID_6 = OBJ_ID_6;
+  CHB_ID_7 = OBJ_ID_7;
+  CHB_ID_8 = OBJ_ID_8;
+  CHB_ID_9 = OBJ_ID_9;
+  CHB_ID_10 = OBJ_ID_10;
+  CHB_ID_11 = OBJ_ID_11;
+  CHB_ID_12 = OBJ_ID_12;
+  CHB_ID_13 = OBJ_ID_13;
+  CHB_ID_14 = OBJ_ID_14;
+  CHB_ID_15 = OBJ_ID_15;
+  CHB_ID_16 = OBJ_ID_16;
+  CHB_ID_17 = OBJ_ID_17;
+  CHB_ID_18 = OBJ_ID_18;
+  CHB_ID_19 = OBJ_ID_19;
+
+  (* Checkbox states *)
+  CHB_STATE_RELEASED = 0 shl 0;
+  CHB_STATE_PRESSED = 1 shl 0;
+  CHB_STATE_ALWAYS_REDRAW = 1 shl 1;
+
+  (* Checkbox style *)
+  CHB_STYLE_2D = 0 shl 0;
+  CHB_STYLE_3D = 1 shl 0;
+  CHB_STYLE_TOGGLE_COLORS = 1 shl 1;
+  CHB_STYLE_USE_ALTERNATE_COLORS = 1 shl 2;
+  CHB_STYLE_NO_BORDERS = 1 shl 3;
+  CHB_STYLE_NO_FILL = 1 shl 4;
+
+  (* Checkbox events *)
+  CHB_EVENT_CLICKED = OBJ_EVENT_CLICKED;
+
+(* Checkbox functions *)
+(*
+function UG_CheckboxCreate(const wnd: UG_WINDOW;  var btn: UG_CHECKBOX;  id: UG_U8;  xs, ys: UG_S16;  xe, ye: UG_S16): UG_RESULT;
+function UG_CheckboxDelete(const wnd: UG_WINDOW;  id: UG_U8): UG_RESULT;
+function UG_CheckboxShow(const wnd: UG_WINDOW;  id: UG_U8): UG_RESULT;
+function UG_CheckboxHide(const wnd: UG_WINDOW;  id: UG_U8): UG_RESULT;
+
+function UG_CheckboxSetCheched(const wnd: UG_WINDOW;  id: UG_U8;  ch: UG_U8): UG_RESULT;
+function UG_CheckboxSetForeColor(const wnd: UG_WINDOW;  id: UG_U8;  fc: UG_COLOR): UG_RESULT;
+function UG_CheckboxSetBackColor(const wnd: UG_WINDOW;  id: UG_U8;  bc: UG_COLOR): UG_RESULT;
+function UG_CheckboxSetAlternateForeColor(const wnd: UG_WINDOW;  id: UG_U8;  afc: UG_COLOR): UG_RESULT;
+function UG_CheckboxSetAlternateBackColor(const wnd: UG_WINDOW;  id: UG_U8;  abc: UG_COLOR): UG_RESULT;
+function UG_CheckboxSetText(const wnd: UG_WINDOW;  id: UG_U8;  str: pchar): UG_RESULT;
+
+function UG_CheckboxSetFont(const wnd: UG_WINDOW;  id: UG_U8;  font: pUG_FONT): UG_RESULT;
+function UG_CheckboxSetStyle(const wnd: UG_WINDOW;  id: UG_U8;  style: UG_U8): UG_RESULT;
+function UG_CheckboxSetHSpace(const wnd: UG_WINDOW;  id: UG_U8;  hs: UG_S8): UG_RESULT;
+function UG_CheckboxSetVSpace(const wnd: UG_WINDOW;  id: UG_U8;  vs: UG_S8): UG_RESULT;
+function UG_CheckboxSetAlignment(const wnd: UG_WINDOW;  id: UG_U8;  align: UG_U8): UG_RESULT;
+
+function UG_CheckboxGetChecked(const wnd: UG_WINDOW;  id: UG_U8): UG_U8;
+function UG_CheckboxGetForeColor(const wnd: UG_WINDOW;  id: UG_U8): UG_COLOR;
+function UG_CheckboxGetBackColor(const wnd: UG_WINDOW;  id: UG_U8): UG_COLOR;
+function UG_CheckboxGetAlternateForeColor(const wnd: UG_WINDOW;  id: UG_U8): UG_COLOR;
+function UG_CheckboxGetAlternateBackColor(const wnd: UG_WINDOW;  id: UG_U8): UG_COLOR;
+function UG_CheckboxGetText(const wnd: UG_WINDOW;  id: UG_U8): pchar;
+function UG_CheckboxGetFont(const wnd: UG_WINDOW;  id: UG_U8): pUG_FONT;
+function UG_CheckboxGetStyle(const wnd: UG_WINDOW;  id: UG_U8): UG_U8;
+function UG_CheckboxGetHSpace(const wnd: UG_WINDOW;  id: UG_U8): UG_S8;
+function UG_CheckboxGetVSpace(const wnd: UG_WINDOW;  id: UG_U8): UG_S8;
+function UG_CheckboxGetAlignment(const wnd: UG_WINDOW;  id: UG_U8): UG_U8;
+*)
+
 (* Miscellaneous functions *)
 procedure UG_WaitForUpdate;
 procedure UG_Update;
@@ -707,39 +744,21 @@ procedure UG_DriverDisable(t: UG_U8);
 
 implementation
 
-var
-  gui: PUG_GUI;
-
 const
-  {$ifdef USE_COLOR_RGB888}
-  (* Frame 0 *)
-  (* Frame 1 *)
-  (* Frame 2 *)
+{$ifdef USE_COLOR_RGB888}
   pal_window: array [0..11] of UG_COLOR =
-    ($646464, $646464, $646464, $646464, $FFFFFF, $FFFFFF, $696969, $696969,
-    $E3E3E3, $E3E3E3, $A0A0A0, $A0A0A0);
-  (* Frame 0 *)
-  (* Frame 1 *)
-  (* Frame 2 *)
-  pal_checkbox_pressed: array [0..11] of UG_COLOR =
-    ($646464, $646464, $646464, $646464, $A0A0A0, $A0A0A0, $A0A0A0,
-    $A0A0A0, $F0F0F0, $F0F0F0, $F0F0F0, $F0F0F0);
-  (* Frame 0 *)
-  (* Frame 1 *)
-  (* Frame 2 *)
-  pal_checkbox_released: array [0..11] of UG_COLOR =
-    ($646464, $646464, $646464, $646464, $FFFFFF, $FFFFFF, $696969,
-    $696969, $E3E3E3, $E3E3E3, $A0A0A0, $A0A0A0);
+    ($646464, $646464, $646464, $646464, (* Frame 0 *)
+    $FFFFFF, $FFFFFF, $696969, $696969,  (* Frame 1 *)
+    $E3E3E3, $E3E3E3, $A0A0A0, $A0A0A0); (* Frame 2 *)
 {$endif}
 {$ifdef USE_COLOR_RGB565}
   pal_window: array [0..11] of UG_COLOR =
     ($632C, $632C, $632C, $632C, $FFFF, $FFFF, $6B4D, $6B4D, $E71C, $E71C, $9D13, $9D13);
-  pal_checkbox_pressed: array [0..11] of UG_COLOR =
-    ($632C, $632C, $632C, $632C, $9D13, $9D13, $9D13, $9D13, $EF7D, $EF7D, $EF7D, $EF7D);
-  pal_checkbox_released: array [0..11] of UG_COLOR =
-    ($632C, $632C, $632C, $632C, $FFFF, $FFFF, $6B4D, $6B4D, $E71C, $E71C, $9D13, $9D13);
-
 {$endif}
+
+var
+  gui: PUG_GUI;
+  msg: UG_MESSAGE;
 
 (* -------------------------------------------------------------------------------- *)
 (* -- INTERNAL FUNCTIONS                                                         -- *)
@@ -1208,8 +1227,8 @@ begin
       begin
         if (objtouch and OBJ_TOUCH_STATE_IS_PRESSED) = 0 then
         begin
-          objtouch := objtouch or OBJ_TOUCH_STATE_PRESSED_OUTSIDE_OBJECT or
-            OBJ_TOUCH_STATE_CHANGED;
+          objtouch := objtouch or (OBJ_TOUCH_STATE_PRESSED_OUTSIDE_OBJECT or
+            OBJ_TOUCH_STATE_CHANGED);
           objtouch := objtouch and
             (not (OBJ_TOUCH_STATE_RELEASED_ON_OBJECT or
             OBJ_TOUCH_STATE_RELEASED_OUTSIDE_OBJECT or OBJ_TOUCH_STATE_CLICK_ON_OBJECT));
@@ -1283,9 +1302,6 @@ begin
     Inc(obj);
   end;
 end;
-
-var
-  msg: UG_MESSAGE;
 
 procedure _UG_HandleEvents(var wnd: UG_WINDOW);
 var
@@ -1995,7 +2011,7 @@ end;
 function UG_WindowShow(var wnd: UG_WINDOW): UG_RESULT;
 begin
   (* Force an update, even if this is the active window! *)
-  wnd.state := wnd.state or WND_STATE_VISIBLE or WND_STATE_UPDATE;
+  wnd.state := wnd.state or (WND_STATE_VISIBLE or WND_STATE_UPDATE);
   wnd.state := wnd.state and (not WND_STATE_REDRAW_TITLE);
   gui^.next_window := @wnd;
   UG_WindowShow := UG_RESULT_OK;
@@ -2091,7 +2107,7 @@ begin
       if pos <= xmax then
         UG_FillFrame(pos, wnd.ys, xmax, wnd.ye, gui^.desktop_color);
       wnd.state := wnd.state and (not WND_STATE_REDRAW_TITLE);
-      wnd.state := wnd.state or (WND_STATE_UPDATE);
+      wnd.state := wnd.state or WND_STATE_UPDATE;
     end;
     UG_WindowResize := UG_RESULT_OK;
   end
@@ -2117,8 +2133,8 @@ begin
   UG_WindowAlert := UG_RESULT_OK;
 end;
 
-(* Windows setters >>> *)
-(* PACK *)
+(* Windows setters *)
+(* PACK ! CHECK SetX/Y Logic ! *)
 function UG_WindowSetForeColor(var wnd: UG_WINDOW; fc: UG_COLOR): UG_RESULT;
 begin
   if (wnd.state and WND_STATE_VALID) <> 0 then
@@ -2148,7 +2164,7 @@ begin
   if (wnd.state and WND_STATE_VALID) <> 0 then
   begin
     wnd.title.fc := c;
-    wnd.state := wnd.state or WND_STATE_UPDATE or WND_STATE_REDRAW_TITLE;
+    wnd.state := wnd.state or (WND_STATE_UPDATE or WND_STATE_REDRAW_TITLE);
     UG_WindowSetTitleTextColor := UG_RESULT_OK;
   end
   else
@@ -2160,7 +2176,7 @@ begin
   if (wnd.state and WND_STATE_VALID) <> 0 then
   begin
     wnd.title.bc := c;
-    wnd.state := wnd.state or WND_STATE_UPDATE or WND_STATE_REDRAW_TITLE;
+    wnd.state := wnd.state or (WND_STATE_UPDATE or WND_STATE_REDRAW_TITLE);
     UG_WindowSetTitleColor := UG_RESULT_OK;
   end
   else
@@ -2172,7 +2188,7 @@ begin
   if (wnd.state and WND_STATE_VALID) <> 0 then
   begin
     wnd.title.ifc := c;
-    wnd.state := wnd.state or WND_STATE_UPDATE or WND_STATE_REDRAW_TITLE;
+    wnd.state := wnd.state or (WND_STATE_UPDATE or WND_STATE_REDRAW_TITLE);
     UG_WindowSetTitleInactiveTextColor := UG_RESULT_OK;
   end
   else
@@ -2184,7 +2200,7 @@ begin
   if (wnd.state and WND_STATE_VALID) <> 0 then
   begin
     wnd.title.ibc := c;
-    wnd.state := wnd.state or WND_STATE_UPDATE or WND_STATE_REDRAW_TITLE;
+    wnd.state := wnd.state or (WND_STATE_UPDATE or WND_STATE_REDRAW_TITLE);
     UG_WindowSetTitleInactiveColor := UG_RESULT_OK;
   end
   else
@@ -2196,7 +2212,7 @@ begin
   if (wnd.state and WND_STATE_VALID) <> 0 then
   begin
     wnd.title.str := str;
-    wnd.state := wnd.state or WND_STATE_UPDATE or WND_STATE_REDRAW_TITLE;
+    wnd.state := wnd.state or (WND_STATE_UPDATE or WND_STATE_REDRAW_TITLE);
     UG_WindowSetTitleText := UG_RESULT_OK;
   end
   else
@@ -2225,7 +2241,7 @@ begin
   if (wnd.state and WND_STATE_VALID) <> 0 then
   begin
     wnd.title.h_space := hs;
-    wnd.state := wnd.state or WND_STATE_UPDATE or WND_STATE_REDRAW_TITLE;
+    wnd.state := wnd.state or (WND_STATE_UPDATE or WND_STATE_REDRAW_TITLE);
     UG_WindowSetTitleTextHSpace := UG_RESULT_OK;
   end
   else
@@ -2237,7 +2253,7 @@ begin
   if (wnd.state and WND_STATE_VALID) <> 0 then
   begin
     wnd.title.v_space := vs;
-    wnd.state := wnd.state or WND_STATE_UPDATE or WND_STATE_REDRAW_TITLE;
+    wnd.state := wnd.state or (WND_STATE_UPDATE or WND_STATE_REDRAW_TITLE);
     UG_WindowSetTitleTextVSpace := UG_RESULT_OK;
   end
   else
@@ -2249,7 +2265,7 @@ begin
   if (wnd.state and WND_STATE_VALID) <> 0 then
   begin
     wnd.title.align := align;
-    wnd.state := wnd.state or WND_STATE_UPDATE or WND_STATE_REDRAW_TITLE;
+    wnd.state := wnd.state or (WND_STATE_UPDATE or WND_STATE_REDRAW_TITLE);
     UG_WindowSetTitleTextAlignment := UG_RESULT_OK;
   end
   else
@@ -2345,9 +2361,7 @@ begin
     UG_WindowSetStyle := UG_RESULT_FAIL;
 end;
 
-(* <<< Window setters *)
-
-(* Window getters >>> *)
+(* Window getters *)
 (* PACK *)
 function UG_WindowGetForeColor(const wnd: UG_WINDOW): UG_COLOR;
 begin
@@ -2573,9 +2587,29 @@ begin
   UG_WindowGetOuterHeight := h;
 end;
 
-(* <<< Window getters *)
-
 {$I UG_BTN.INC}
+
+(* -------------------------------------------------------------------------- *)
+(* -- Checkbox FUNCTIONS ! TO DO !                                         -- *)
+(* -------------------------------------------------------------------------- *)
+const
+{$ifdef USE_COLOR_RGB888}
+  pal_checkbox_pressed: array [0..11] of UG_COLOR =
+    ($646464, $646464, $646464, $646464,  (* Frame 0 *)
+    $A0A0A0, $A0A0A0, $A0A0A0, $A0A0A0,   (* Frame 1 *)
+    $F0F0F0, $F0F0F0, $F0F0F0, $F0F0F0);  (* Frame 2 *)
+  pal_checkbox_released: array [0..11] of UG_COLOR =
+    ($646464, $646464, $646464, $646464,  (* Frame 0 *)
+    $FFFFFF, $FFFFFF, $696969, $696969,   (* Frame 1 *)
+    $E3E3E3, $E3E3E3, $A0A0A0, $A0A0A0);  (* Frame 2 *)
+{$endif}
+{$ifdef USE_COLOR_RGB565}
+  pal_checkbox_pressed: array [0..11] of UG_COLOR =
+    ($632C, $632C, $632C, $632C, $9D13, $9D13, $9D13, $9D13, $EF7D, $EF7D, $EF7D, $EF7D);
+  pal_checkbox_released: array [0..11] of UG_COLOR =
+    ($632C, $632C, $632C, $632C, $FFFF, $FFFF, $6B4D, $6B4D, $E71C, $E71C, $9D13, $9D13);
+
+{$endif}
 
 (* -------------------------------------------------------------------------- *)
 (* -- MISCELLANEOUS FUNCTIONS                                              -- *)

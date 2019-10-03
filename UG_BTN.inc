@@ -3,18 +3,14 @@
 (* -------------------------------------------------------------------------- *)
 const
 {$ifdef USE_COLOR_RGB888}
-  (* Frame 0 *)
-  (* Frame 1 *)
-  (* Frame 2 *)
   pal_button_pressed: array [0..11] of UG_COLOR =
-    ($646464, $646464, $646464, $646464, $A0A0A0, $A0A0A0, $A0A0A0,
-    $A0A0A0, $F0F0F0, $F0F0F0, $F0F0F0, $F0F0F0);
-  (* Frame 0 *)
-  (* Frame 1 *)
-  (* Frame 2 *)
+    ($646464, $646464, $646464, $646464, (* Frame 0 *)
+    $A0A0A0, $A0A0A0, $A0A0A0, $A0A0A0,  (* Frame 1 *)
+    $F0F0F0, $F0F0F0, $F0F0F0, $F0F0F0); (* Frame 2 *)
   pal_button_released: array [0..11] of UG_COLOR =
-    ($646464, $646464, $646464, $646464, $FFFFFF, $FFFFFF, $696969,
-    $696969, $E3E3E3, $E3E3E3, $A0A0A0, $A0A0A0);
+    ($646464, $646464, $646464, $646464, (* Frame 0 *)
+    $FFFFFF, $FFFFFF, $696969, $696969,  (* Frame 1 *)
+    $E3E3E3, $E3E3E3, $A0A0A0, $A0A0A0); (* Frame 2 *)
 {$endif}
 {$ifdef USE_COLOR_RGB565}
   pal_button_pressed: array [0..11] of UG_COLOR =
@@ -78,9 +74,7 @@ begin
         obj^.a_abs.ys := obj^.a_rel.ys + a.ys;
         obj^.a_abs.xe := obj^.a_rel.xe + a.xs;
         obj^.a_abs.ye := obj^.a_rel.ye + a.ys;
-        if obj^.a_abs.ye > wnd^.ye then
-          exit;
-        if obj^.a_abs.xe > wnd^.xe then
+        if (obj^.a_abs.ye > wnd^.ye) or (obj^.a_abs.xe > wnd^.xe) then
           exit;
         {$ifdef USE_PRERENDER_EVENT}
         _UG_SendObjectPrerenderEvent(wnd, obj);
@@ -196,8 +190,8 @@ begin
   obj^.a_abs.xe := -1;
   obj^.a_abs.ye := -1;
   obj^.id := id;
-  obj^.state := obj^.state or OBJ_STATE_VISIBLE or OBJ_STATE_REDRAW or
-    OBJ_STATE_VALID or OBJ_STATE_TOUCH_ENABLE;
+  obj^.state := obj^.state or (OBJ_STATE_VISIBLE or OBJ_STATE_REDRAW or
+    OBJ_STATE_VALID or OBJ_STATE_TOUCH_ENABLE);
   obj^.Data := @btn;
 
   (* Update function: Do your thing! *)
@@ -214,42 +208,34 @@ function UG_ButtonShow(const wnd: UG_WINDOW; id: UG_U8): UG_RESULT;
 var
   obj: PUG_OBJECT;
 begin
-{
-  obj := nil;
-}  
   obj := _UG_SearchObject(wnd, OBJ_TYPE_BUTTON, id);
-  if obj = nil then
-    UG_ButtonShow := UG_RESULT_FAIL
-  else
+  if obj <> nil then
   begin
-  obj^.state := obj^.state or OBJ_STATE_VISIBLE;
-  obj^.state := obj^.state or OBJ_STATE_UPDATE or OBJ_STATE_REDRAW;
-  UG_ButtonShow := UG_RESULT_OK;
+    obj^.state := obj^.state or (OBJ_STATE_VISIBLE or OBJ_STATE_UPDATE or OBJ_STATE_REDRAW);
+    UG_ButtonShow := UG_RESULT_OK;
   end
+  else
+    UG_ButtonShow := UG_RESULT_FAIL
 end;
 
 function UG_ButtonHide(const wnd: UG_WINDOW; id: UG_U8): UG_RESULT;
 var
-  obj: pUG_OBJECT;
-  btn: pUG_BUTTON;
+  obj: PUG_OBJECT;
+  btn: PUG_BUTTON;
 begin
-{
-  obj := nil;
-  btn := nil;
-}  
   obj := _UG_SearchObject(wnd, OBJ_TYPE_BUTTON, id);
-  if obj = nil then
-    UG_ButtonHide := UG_RESULT_FAIL
-  else
+  if obj <> nil then
   begin
-  btn := pUG_BUTTON(obj^.Data);
-  btn^.state := btn^.state and (not BTN_STATE_PRESSED);
-  obj^.touch_state := OBJ_TOUCH_STATE_INIT;
-  obj^.event := OBJ_EVENT_NONE;
-  obj^.state := obj^.state and (not OBJ_STATE_VISIBLE);
-  obj^.state := obj^.state or OBJ_STATE_UPDATE;
-  UG_ButtonHide := UG_RESULT_OK;
+    btn := PUG_BUTTON(obj^.Data);
+    btn^.state := btn^.state and (not BTN_STATE_PRESSED);
+    obj^.touch_state := OBJ_TOUCH_STATE_INIT;
+    obj^.event := OBJ_EVENT_NONE;
+    obj^.state := obj^.state and (not OBJ_STATE_VISIBLE);
+    obj^.state := obj^.state or OBJ_STATE_UPDATE;
+    UG_ButtonHide := UG_RESULT_OK;
   end
+  else
+    UG_ButtonHide := UG_RESULT_FAIL
 end;
 
 (* Button setters *)
@@ -257,89 +243,73 @@ end;
 function UG_ButtonSetForeColor(const wnd: UG_WINDOW; id: UG_U8;
   fc: UG_COLOR): UG_RESULT;
 var
-  obj: pUG_OBJECT;
-  btn: pUG_BUTTON;
+  obj: PUG_OBJECT;
+  btn: PUG_BUTTON;
 begin
-{
-  obj := nil;
-  btn := nil;
-}
   obj := _UG_SearchObject(wnd, OBJ_TYPE_BUTTON, id);
-  if obj = nil then
-    UG_ButtonSetForeColor := UG_RESULT_FAIL
-  else
+  if obj <> nil then
   begin
-    btn := pUG_BUTTON(obj^.Data);
+    btn := PUG_BUTTON(obj^.Data);
     btn^.fc := fc;
-    obj^.state := obj^.state or OBJ_STATE_UPDATE or OBJ_STATE_REDRAW;
+    obj^.state := obj^.state or (OBJ_STATE_UPDATE or OBJ_STATE_REDRAW);
     UG_ButtonSetForeColor := UG_RESULT_OK;
-  end;
+  end
+  else
+    UG_ButtonSetForeColor := UG_RESULT_FAIL
 end;
 
 function UG_ButtonSetBackColor(const wnd: UG_WINDOW; id: UG_U8;
   bc: UG_COLOR): UG_RESULT;
 var
-  obj: pUG_OBJECT;
-  btn: pUG_BUTTON;
+  obj: PUG_OBJECT;
+  btn: PUG_BUTTON;
 begin
-{
-  obj := nil;
-  btn := nil;
-}
   obj := _UG_SearchObject(wnd, OBJ_TYPE_BUTTON, id);
-  if obj = nil then
-    UG_ButtonSetBackColor := UG_RESULT_FAIL
-  else
+  if obj <> nil then
   begin
-    btn := pUG_BUTTON(obj^.Data);
+    btn := PUG_BUTTON(obj^.Data);
     btn^.bc := bc;
-    obj^.state := obj^.state or OBJ_STATE_UPDATE or OBJ_STATE_REDRAW;
+    obj^.state := obj^.state or (OBJ_STATE_UPDATE or OBJ_STATE_REDRAW);
     UG_ButtonSetBackColor := UG_RESULT_OK;
-  end;
+  end
+  else
+    UG_ButtonSetBackColor := UG_RESULT_FAIL
 end;
 
 function UG_ButtonSetAlternateForeColor(const wnd: UG_WINDOW; id: UG_U8;
   afc: UG_COLOR): UG_RESULT;
 var
-  obj: pUG_OBJECT;
-  btn: pUG_BUTTON;
+  obj: PUG_OBJECT;
+  btn: PUG_BUTTON;
 begin
-{
-  obj := nil;
-  btn := nil;
-}
   obj := _UG_SearchObject(wnd, OBJ_TYPE_BUTTON, id);
-  if obj = nil then
-    UG_ButtonSetAlternateForeColor := UG_RESULT_FAIL
-  else
+  if obj <> nil then
   begin
-    btn := pUG_BUTTON(obj^.Data);
+    btn := PUG_BUTTON(obj^.Data);
     btn^.afc := afc;
-    obj^.state := obj^.state or OBJ_STATE_UPDATE or OBJ_STATE_REDRAW;
+    obj^.state := obj^.state or (OBJ_STATE_UPDATE or OBJ_STATE_REDRAW);
     UG_ButtonSetAlternateForeColor := UG_RESULT_OK;
-  end;
+  end
+  else
+    UG_ButtonSetAlternateForeColor := UG_RESULT_FAIL
 end;
 
 function UG_ButtonSetAlternateBackColor(const wnd: UG_WINDOW; id: UG_U8;
   abc: UG_COLOR): UG_RESULT;
 var
-  obj: pUG_OBJECT;
-  btn: pUG_BUTTON;
+  obj: PUG_OBJECT;
+  btn: PUG_BUTTON;
 begin
-{
-  obj := nil;
-  btn := nil;
-}
   obj := _UG_SearchObject(wnd, OBJ_TYPE_BUTTON, id);
-  if obj = nil then
-    UG_ButtonSetAlternateBackColor := UG_RESULT_FAIL
-  else
+  if obj <> nil then
   begin
-    btn := pUG_BUTTON(obj^.Data);
+    btn := PUG_BUTTON(obj^.Data);
     btn^.abc := abc;
-    obj^.state := obj^.state or OBJ_STATE_UPDATE or OBJ_STATE_REDRAW;
+    obj^.state := obj^.state or (OBJ_STATE_UPDATE or OBJ_STATE_REDRAW);
     UG_ButtonSetAlternateBackColor := UG_RESULT_OK;
-  end;
+  end
+  else
+    UG_ButtonSetAlternateBackColor := UG_RESULT_FAIL
 end;
 
 function UG_ButtonSetText(const wnd: UG_WINDOW; id: UG_U8; str: PChar): UG_RESULT;
@@ -347,20 +317,16 @@ var
   obj: PUG_OBJECT;
   btn: PUG_BUTTON;
 begin
-{
-  obj := nil;
-  btn := nil;
-}
   obj := _UG_SearchObject(wnd, OBJ_TYPE_BUTTON, id);
-  if obj = nil then
-    UG_ButtonSetText := UG_RESULT_FAIL
-  else
+  if obj <> nil then
   begin
     btn := PUG_BUTTON(obj^.Data);
     btn^.str := str;
-    obj^.state := obj^.state or OBJ_STATE_UPDATE or OBJ_STATE_REDRAW;
+    obj^.state := obj^.state or (OBJ_STATE_UPDATE or OBJ_STATE_REDRAW);
     UG_ButtonSetText := UG_RESULT_OK;
-  end;
+  end
+  else
+    UG_ButtonSetText := UG_RESULT_FAIL
 end;
 
 function UG_ButtonSetFont(const wnd: UG_WINDOW; id: UG_U8; font: PUG_FONT): UG_RESULT;
@@ -368,20 +334,16 @@ var
   obj: PUG_OBJECT;
   btn: PUG_BUTTON;
 begin
-{
-  obj := nil;
-  btn := nil;
-}
   obj := _UG_SearchObject(wnd, OBJ_TYPE_BUTTON, id);
-  if obj = nil then
-    UG_ButtonSetFont := UG_RESULT_FAIL
-  else
+  if obj <> nil then
   begin
     btn := PUG_BUTTON(obj^.Data);
     btn^.font := font;
-    obj^.state := obj^.state or OBJ_STATE_UPDATE or OBJ_STATE_REDRAW;
+    obj^.state := obj^.state or (OBJ_STATE_UPDATE or OBJ_STATE_REDRAW);
     UG_ButtonSetFont := UG_RESULT_OK;
-  end;
+  end
+  else
+    UG_ButtonSetFont := UG_RESULT_FAIL
 end;
 
 function UG_ButtonSetStyle(const wnd: UG_WINDOW; id: UG_U8; style: UG_U8): UG_RESULT;
@@ -389,18 +351,10 @@ var
   obj: PUG_OBJECT;
   btn: PUG_BUTTON;
 begin
-{
-  obj := nil;
-  btn := nil;
-}
   obj := _UG_SearchObject(wnd, OBJ_TYPE_BUTTON, id);
-  if obj = nil then
-    UG_ButtonSetStyle := UG_RESULT_FAIL
-  else
+  if obj <> nil then
   begin
-
     btn := PUG_BUTTON(obj^.Data);
-
     (* Select color scheme *)
     btn^.style := btn^.style and (not (BTN_STYLE_USE_ALTERNATE_COLORS or
       BTN_STYLE_TOGGLE_COLORS or BTN_STYLE_NO_BORDERS or BTN_STYLE_NO_FILL));
@@ -423,9 +377,11 @@ begin
       btn^.style := btn^.style or BTN_STYLE_3D
     else
       btn^.style := btn^.style and (not BTN_STYLE_3D);
-    obj^.state := obj^.state or OBJ_STATE_UPDATE or OBJ_STATE_REDRAW;
+    obj^.state := obj^.state or (OBJ_STATE_UPDATE or OBJ_STATE_REDRAW);
     UG_ButtonSetStyle := UG_RESULT_OK;
-  end;
+  end
+  else
+    UG_ButtonSetStyle := UG_RESULT_FAIL
 end;
 
 function UG_ButtonSetHSpace(const wnd: UG_WINDOW; id: UG_U8; hs: UG_S8): UG_RESULT;
@@ -433,20 +389,16 @@ var
   obj: PUG_OBJECT;
   btn: PUG_BUTTON;
 begin
-{
-  obj := nil;
-  btn := nil;
-}
   obj := _UG_SearchObject(wnd, OBJ_TYPE_BUTTON, id);
-  if obj = nil then
-    UG_ButtonSetHSpace := UG_RESULT_FAIL
-  else
+  if obj <> nil then
   begin
     btn := PUG_BUTTON(obj^.Data);
     btn^.h_space := hs;
-    obj^.state := obj^.state or OBJ_STATE_UPDATE or OBJ_STATE_REDRAW;
+    obj^.state := obj^.state or (OBJ_STATE_UPDATE or OBJ_STATE_REDRAW);
     UG_ButtonSetHSpace := UG_RESULT_OK;
-  end;
+  end
+  else
+    UG_ButtonSetHSpace := UG_RESULT_FAIL
 end;
 
 function UG_ButtonSetVSpace(const wnd: UG_WINDOW; id: UG_U8; vs: UG_S8): UG_RESULT;
@@ -454,20 +406,16 @@ var
   obj: PUG_OBJECT;
   btn: PUG_BUTTON;
 begin
-{
-  obj := nil;
-  btn := nil;
-}
   obj := _UG_SearchObject(wnd, OBJ_TYPE_BUTTON, id);
-  if obj = nil then
-    UG_ButtonSetVSpace := UG_RESULT_FAIL
-  else
+  if obj <> nil then
   begin
     btn := PUG_BUTTON(obj^.Data);
     btn^.v_space := vs;
-    obj^.state := obj^.state or OBJ_STATE_UPDATE or OBJ_STATE_REDRAW;
+    obj^.state := obj^.state or (OBJ_STATE_UPDATE or OBJ_STATE_REDRAW);
     UG_ButtonSetVSpace := UG_RESULT_OK;
-  end;
+  end
+  else
+    UG_ButtonSetVSpace := UG_RESULT_FAIL
 end;
 
 function UG_ButtonSetAlignment(const wnd: UG_WINDOW; id: UG_U8;
@@ -476,35 +424,25 @@ var
   obj: PUG_OBJECT;
   btn: PUG_BUTTON;
 begin
-{
-  obj := nil;
-  btn := nil;
-}
   obj := _UG_SearchObject(wnd, OBJ_TYPE_BUTTON, id);
-  if obj = nil then
-    UG_ButtonSetAlignment := UG_RESULT_FAIL
-  else
+  if obj <> nil then
   begin
     btn := PUG_BUTTON(obj^.Data);
     btn^.align := align;
-    obj^.state := obj^.state or OBJ_STATE_UPDATE or OBJ_STATE_REDRAW;
+    obj^.state := obj^.state or (OBJ_STATE_UPDATE or OBJ_STATE_REDRAW);
     UG_ButtonSetAlignment := UG_RESULT_OK;
-  end;
+  end
+  else
+    UG_ButtonSetAlignment := UG_RESULT_FAIL
 end;
 
 (* Button getters *)
-
+(* PACK *)
 function UG_ButtonGetForeColor(const wnd: UG_WINDOW; id: UG_U8): UG_COLOR;
 var
   obj: PUG_OBJECT;
   btn: PUG_BUTTON;
-  {  c: UG_COLOR; }
 begin
-{
-  obj := nil;
-  btn := nil;
-  c := C_BLACK;
-}
   obj := _UG_SearchObject(wnd, OBJ_TYPE_BUTTON, id);
   if obj <> nil then
   begin
@@ -519,12 +457,7 @@ function UG_ButtonGetBackColor(const wnd: UG_WINDOW; id: UG_U8): UG_COLOR;
 var
   obj: PUG_OBJECT;
   btn: PUG_BUTTON;
-  {  c: UG_COLOR; }
 begin
-{  obj := nil;
-  btn := nil;
-  c := C_BLACK;
-}
   obj := _UG_SearchObject(wnd, OBJ_TYPE_BUTTON, id);
   if obj <> nil then
   begin
@@ -539,12 +472,7 @@ function UG_ButtonGetAlternateForeColor(const wnd: UG_WINDOW; id: UG_U8): UG_COL
 var
   obj: PUG_OBJECT;
   btn: PUG_BUTTON;
-  {  c: UG_COLOR; }
 begin
-{  obj := nil;
-  btn := nil;
-  c := C_BLACK;
-}
   obj := _UG_SearchObject(wnd, OBJ_TYPE_BUTTON, id);
   if obj <> nil then
   begin
@@ -559,13 +487,7 @@ function UG_ButtonGetAlternateBackColor(const wnd: UG_WINDOW; id: UG_U8): UG_COL
 var
   obj: PUG_OBJECT;
   btn: PUG_BUTTON;
-  {  c: UG_COLOR; }
 begin
-{
-  obj := nil;
-  btn := nil;
-  c := C_BLACK;
-}
   obj := _UG_SearchObject(wnd, OBJ_TYPE_BUTTON, id);
   if obj <> nil then
   begin
@@ -580,13 +502,7 @@ function UG_ButtonGetText(const wnd: UG_WINDOW; id: UG_U8): PChar;
 var
   obj: PUG_OBJECT;
   btn: PUG_BUTTON;
-  {  str: PChar; }
 begin
-{
-  obj := nil;
-  btn := nil;
-  str := nil;
-}
   obj := _UG_SearchObject(wnd, OBJ_TYPE_BUTTON, id);
   if obj <> nil then
   begin
@@ -601,13 +517,7 @@ function UG_ButtonGetFont(const wnd: UG_WINDOW; id: UG_U8): PUG_FONT;
 var
   obj: PUG_OBJECT;
   btn: PUG_BUTTON;
-  {  font: PUG_FONT; }
 begin
-{
-  obj := nil;
-  btn := nil;
-  font := nil;
-}
   obj := _UG_SearchObject(wnd, OBJ_TYPE_BUTTON, id);
   if obj <> nil then
   begin
@@ -622,13 +532,7 @@ function UG_ButtonGetStyle(const wnd: UG_WINDOW; id: UG_U8): UG_U8;
 var
   obj: PUG_OBJECT;
   btn: PUG_BUTTON;
-  {  style: UG_U8; }
 begin
-{
-  obj := nil;
-  btn := nil;
-  style := 0;
-}
   obj := _UG_SearchObject(wnd, OBJ_TYPE_BUTTON, id);
   if obj <> nil then
   begin
@@ -643,13 +547,7 @@ function UG_ButtonGetHSpace(const wnd: UG_WINDOW; id: UG_U8): UG_S8;
 var
   obj: PUG_OBJECT;
   btn: PUG_BUTTON;
-  {  hs: UG_S8; }
 begin
-{
-  obj := nil;
-  btn := nil;
-  hs := 0;
-}
   obj := _UG_SearchObject(wnd, OBJ_TYPE_BUTTON, id);
   if obj <> nil then
   begin
@@ -664,13 +562,7 @@ function UG_ButtonGetVSpace(const wnd: UG_WINDOW; id: UG_U8): UG_S8;
 var
   obj: PUG_OBJECT;
   btn: PUG_BUTTON;
-  {  vs: UG_S8; }
 begin
-{
-  obj := nil;
-  btn := nil;
-  vs := 0;
-}
   obj := _UG_SearchObject(wnd, OBJ_TYPE_BUTTON, id);
   if obj <> nil then
   begin
@@ -685,13 +577,7 @@ function UG_ButtonGetAlignment(const wnd: UG_WINDOW; id: UG_U8): UG_U8;
 var
   obj: PUG_OBJECT;
   btn: PUG_BUTTON;
-  {  align: UG_U8; }
 begin
-{
-  obj := nil;
-  btn := nil;
-  align := 0;
-}
   obj := _UG_SearchObject(wnd, OBJ_TYPE_BUTTON, id);
   if obj <> nil then
   begin
@@ -701,3 +587,4 @@ begin
   else
     UG_ButtonGetAlignment := 0;
 end;
+

@@ -14,6 +14,7 @@ var
   gui: UG_GUI;
   grmode, grdriver: integer;
   x, y: integer;
+  palSize: SmallInt;
 
   ugWnd: UG_WINDOW;
   ugBtn: UG_BUTTON;
@@ -27,17 +28,17 @@ var
 
   procedure pset(x: UG_S16; y: UG_S16; c: UG_COLOR);
   begin
-    PutPixel(x, y, byte(c));
+    PutPixel(x, y, c);
   end;
 
   function DrawLine(x1, y1: UG_S16; x2, y2: UG_S16; c: UG_COLOR): UG_RESULT;
   var
     clr: byte;
   begin
-    clr := GetColor;
-    SetColor(byte(c));
+    (* clr := GetColor; *)
+    SetColor(c);
     Line(x1, y1, x2, y2);
-    SetColor(clr);
+    (* SetColor(clr); *)
     DrawLine := UG_RESULT_OK;
   end;
 
@@ -45,27 +46,33 @@ var
   var
     clr: byte;
   begin
-    clr := GetColor;
-    setfillstyle(12, byte(c));
-    SetColor(byte(c));
+    (* clr := GetColor; *)
+    Setfillstyle(SolidFill, c);
+    (* SetColor(c); *)
     Bar(x1, y1, x2, y2);
-    SetColor(clr);
+    (* SetColor(clr); *)
     FillFrame := UG_RESULT_OK;
   end;
 
 begin
   grdriver := DETECT;
+  { DetectGraph(grdriver, grdriver); }
 {$ifdef FPC}
-  initgraph(grdriver, grmode, ' ');
+  initgraph(grdriver, grmode, '.');
 {$endif}
 {$ifdef VER70}
   initgraph(grdriver, grmode, 'C:\TP7\BGI');
 {$endif}
+  SetWriteMode(CopyPut);
+  palSize := GetPaletteSize;
+  WriteLn('Palette size - ', palSize);
+  
   UG_Init(gui, pset, getmaxx + 1, getmaxy + 1);
   UG_DriverRegister(0, @DrawLine);
   UG_DriverRegister(1, @FillFrame);
+  UG_SetForecolor(white);
   UG_SetBackcolor(black);
-  UG_SetForecolor(blue);
+
   UG_FontSelect(@FONT_8X14);
   UG_PutString(100, 100, 'Hello, Pascal!');
   UG_FontSelect(@FONT_16X26);
@@ -77,8 +84,10 @@ begin
   UG_FillCircle(250, 400, 80, white);
 *)
   UG_ConsoleSetArea(getmaxx div 2, getmaxy div 2, getmaxx - 2, getmaxy - 2);
-  UG_ConsoleSetForecolor(blue);
-  UG_ConsoleSetBackcolor(white);
+
+  UG_ConsoleSetForecolor(white);
+  UG_ConsoleSetBackcolor(black);
+
   UG_ConsolePutString('High Voltage' + #10);
   UG_ConsolePutString('Rebooting...' + #10);
   UG_ConsolePutString('Please, wait...');
@@ -88,16 +97,19 @@ begin
   begin
     UG_WindowSetTitleText(ugWnd, 'uGUI Demo Window');
     UG_WindowSetTitleTextFont(ugWnd, @FONT_8X14);
+
     UG_WindowSetForeColor(ugWnd, black);
     UG_WindowSetBackColor(ugWnd, green);
     UG_WindowSetTitleTextColor(ugWnd, blue);
     UG_WindowSetTitleColor(ugWnd, white);
+
     UG_WindowSetTitleTextHSpace(ugWnd, 10);
     UG_WindowResize(ugWnd, 40, 40, getmaxx - 40, getmaxy - 40);
     UG_WindowShow(ugWnd);
+    
     UG_ButtonCreate(ugWnd, ugBtn, BTN_ID_0, 10, 50, 200, 100);
     UG_ButtonSetText(ugWnd, BTN_ID_0, 'Button');
-    UG_ButtonShow(ugWnd, BTN_ID_0);
+    (* UG_ButtonShow(ugWnd, BTN_ID_0); *)
   end;
   UG_Update;
   ReadLn;
@@ -106,10 +118,12 @@ begin
   begin
     UG_WindowSetTitleText(ugWndReg, 'Registers Window');
     UG_WindowSetTitleTextFont(ugWndReg, @FONT_8X14);
+
     UG_WindowSetForeColor(ugWndReg, black);
     UG_WindowSetBackColor(ugWndReg, white);
     UG_WindowSetTitleTextColor(ugWndReg, blue);
     UG_WindowSetTitleColor(ugWndReg, white);
+
     UG_WindowResize(ugWndReg, 140, 140, getmaxx - 140, getmaxy - 140);
     UG_WindowShow(ugWndReg);
   end;
@@ -128,8 +142,6 @@ begin
   UG_WindowShow(ugWndReg);
   UG_WindowAlert(ugWndReg);
   UG_Update;
-  ReadLn;
-
 
   ReadLn;
   CloseGraph;

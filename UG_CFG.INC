@@ -21,10 +21,11 @@
 {$define  USE_FONT_24X40}
 {$define  USE_FONT_32X53}
 *)
-{$define USE_COLOR_RGB888}
 (*
 {$define USE_COLOR_RGB888}
 *)
+{$define USE_COLOR_RGB565}
+
 
 (*
 {$define USE_PRERENDER_EVENT}
