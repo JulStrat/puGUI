@@ -10,17 +10,20 @@ uses
   GRAPH,
   CRT;
 
+{$I logo.inc}
+
 var
   gui: UG_GUI;
   grmode, grdriver: integer;
   x, y: integer;
-  palSize: SmallInt;
+  palSize: smallint;
 
   ugWnd: UG_WINDOW;
   ugBtn: UG_BUTTON;
   ugObj: array[0..19] of UG_OBJECT;
   ugWndReg: UG_WINDOW;
   ugObjReg: array[0..19] of UG_OBJECT;
+  ugImg: UG_IMAGE;
 
   procedure WndCallBack(msg: PUG_MESSAGE);
   begin
@@ -66,7 +69,7 @@ begin
   SetWriteMode(CopyPut);
   palSize := GetPaletteSize;
   WriteLn('Palette size - ', palSize);
-  
+
   UG_Init(gui, pset, getmaxx + 1, getmaxy + 1);
   UG_DriverRegister(0, @DrawLine);
   UG_DriverRegister(1, @FillFrame);
@@ -106,10 +109,13 @@ begin
     UG_WindowSetTitleTextHSpace(ugWnd, 10);
     UG_WindowResize(ugWnd, 40, 40, getmaxx - 40, getmaxy - 40);
     UG_WindowShow(ugWnd);
-    
+
     UG_ButtonCreate(ugWnd, ugBtn, BTN_ID_0, 10, 50, 200, 100);
     UG_ButtonSetText(ugWnd, BTN_ID_0, 'Button');
     (* UG_ButtonShow(ugWnd, BTN_ID_0); *)
+    UG_ImageCreate(ugWnd, ugImg, IMG_ID_0, 300, 40, 0, 0);
+    UG_ImageSetBMP(ugWnd, IMG_ID_0, @logo);
+
   end;
   UG_Update;
   ReadLn;

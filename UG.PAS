@@ -108,16 +108,6 @@ const
   UG_RESULT_FAIL = -1;
   UG_RESULT_OK = 0;
 
-  BMP_BPP_1 = 1 shl 0;
-  BMP_BPP_2 = 1 shl 1;
-  BMP_BPP_4 = 1 shl 2;
-  BMP_BPP_8 = 1 shl 3;
-  BMP_BPP_16 = 1 shl 4;
-  BMP_BPP_32 = 1 shl 5;
-  BMP_RGB888 = 1 shl 0;
-  BMP_RGB565 = 1 shl 1;
-  BMP_RGB555 = 1 shl 2;
-
   MSG_TYPE_NONE = 0;
   MSG_TYPE_WINDOW = 1;
   MSG_TYPE_OBJECT = 2;
@@ -181,30 +171,6 @@ const
   WND_STYLE_HIDE_TITLE = 0 shl 1;
   WND_STYLE_SHOW_TITLE = 1 shl 1;
 
-  (* Default image IDs *)
-  IMG_ID_0 = OBJ_ID_0;
-  IMG_ID_1 = OBJ_ID_1;
-  IMG_ID_2 = OBJ_ID_2;
-  IMG_ID_3 = OBJ_ID_3;
-  IMG_ID_4 = OBJ_ID_4;
-  IMG_ID_5 = OBJ_ID_5;
-  IMG_ID_6 = OBJ_ID_6;
-  IMG_ID_7 = OBJ_ID_7;
-  IMG_ID_8 = OBJ_ID_8;
-  IMG_ID_9 = OBJ_ID_9;
-  IMG_ID_10 = OBJ_ID_10;
-  IMG_ID_11 = OBJ_ID_11;
-  IMG_ID_12 = OBJ_ID_12;
-  IMG_ID_13 = OBJ_ID_13;
-  IMG_ID_14 = OBJ_ID_14;
-  IMG_ID_15 = OBJ_ID_15;
-  IMG_ID_16 = OBJ_ID_16;
-  IMG_ID_17 = OBJ_ID_17;
-  IMG_ID_18 = OBJ_ID_18;
-  IMG_ID_19 = OBJ_ID_19;
-
-  (* Image types *)
-  IMG_TYPE_BMP = 1 shl 0;
 
   (* Default textbox IDs *)
   TXB_ID_0 = OBJ_ID_0;
@@ -252,12 +218,13 @@ type
   UG_RESULT = UG_S8;
 
   PUG_COLOR = ^UG_COLOR;
-{$ifdef USE_COLOR_RGB888}
+  {$ifdef USE_COLOR_RGB888}
   UG_COLOR = UG_U32;
-{$endif}
-{$ifdef USE_COLOR_RGB565}
+  {$endif}
+  {$ifdef USE_COLOR_RGB565}
   UG_COLOR = UG_U16;
-{$endif}
+  {$endif}
+
 
   (* -------------------------------------------------------------------------- *)
   (* -- UNIVERSAL STRUCTURES                                                 -- *)
@@ -283,17 +250,6 @@ type
     align: UG_U8;
     h_space: UG_S16;
     v_space: UG_S16;
-  end;
-
-  (* -------------------------------------------------------------------------------- *)
-  (* -- BITMAP                                                                     -- *)
-  (* -------------------------------------------------------------------------------- *)
-  UG_BMP = record
-    p: PUG_U8;
-    Width: UG_U16;
-    Height: UG_U16;
-    bpp: UG_U8;
-    colors: UG_U8;
   end;
 
   (* -------------------------------------------------------------------------------- *)
@@ -397,15 +353,6 @@ type
     v_space: UG_S8;
   end;
 
-  (* ------------------------------------------------------------------------ *)
-  (* -- IMAGE OBJECT                                                       -- *)
-  (* ------------------------------------------------------------------------ *)
-  (* Image structure *)
-
-  UG_IMAGE = record
-    img: PUG_U8;
-    itype: UG_U8;
-  end;
 
 (* -------------------------------------------------------------------------- *)
 (* -- µGUI DRIVER                                                          -- *)
@@ -501,7 +448,7 @@ function UG_WindowHide(var wnd: UG_WINDOW): UG_RESULT;
 function UG_WindowResize(var wnd: UG_WINDOW; xs, ys: UG_S16; xe, ye: UG_S16): UG_RESULT;
 function UG_WindowAlert(var wnd: UG_WINDOW): UG_RESULT;
 
-(* Window setters >>> *)
+(* Window setters *)
 function UG_WindowSetForeColor(var wnd: UG_WINDOW; fc: UG_COLOR): UG_RESULT;
 function UG_WindowSetBackColor(var wnd: UG_WINDOW; bc: UG_COLOR): UG_RESULT;
 function UG_WindowSetTitleTextColor(var wnd: UG_WINDOW; c: UG_COLOR): UG_RESULT;
@@ -519,9 +466,8 @@ function UG_WindowSetYStart(var wnd: UG_WINDOW; ys: UG_S16): UG_RESULT;
 function UG_WindowSetXEnd(var wnd: UG_WINDOW; xe: UG_S16): UG_RESULT;
 function UG_WindowSetYEnd(var wnd: UG_WINDOW; ye: UG_S16): UG_RESULT;
 function UG_WindowSetStyle(var wnd: UG_WINDOW; style: UG_U8): UG_RESULT;
-(* Window setters <<< *)
 
-(* Window getters >>> *)
+(* Window getters *)
 function UG_WindowGetForeColor(const wnd: UG_WINDOW): UG_COLOR;
 function UG_WindowGetBackColor(const wnd: UG_WINDOW): UG_COLOR;
 function UG_WindowGetTitleTextColor(const wnd: UG_WINDOW): UG_COLOR;
@@ -544,7 +490,6 @@ function UG_WindowGetInnerWidth(const wnd: UG_WINDOW): UG_S16;
 function UG_WindowGetOuterWidth(const wnd: UG_WINDOW): UG_S16;
 function UG_WindowGetInnerHeight(const wnd: UG_WINDOW): UG_S16;
 function UG_WindowGetOuterHeight(const wnd: UG_WINDOW): UG_S16;
-(* <<< Window getters *)
 
 (* -------------------------------------------------------------------------- *)
 (* -- BUTTON OBJECT                                                        -- *)
@@ -701,36 +646,108 @@ const
 
 (* Checkbox functions *)
 (*
-function UG_CheckboxCreate(const wnd: UG_WINDOW;  var btn: UG_CHECKBOX;  id: UG_U8;  xs, ys: UG_S16;  xe, ye: UG_S16): UG_RESULT;
-function UG_CheckboxDelete(const wnd: UG_WINDOW;  id: UG_U8): UG_RESULT;
-function UG_CheckboxShow(const wnd: UG_WINDOW;  id: UG_U8): UG_RESULT;
-function UG_CheckboxHide(const wnd: UG_WINDOW;  id: UG_U8): UG_RESULT;
+function UG_CheckboxCreate(const wnd: UG_WINDOW; var btn: UG_CHECKBOX; id: UG_U8; xs, ys: UG_S16; xe, ye: UG_S16): UG_RESULT;
+function UG_CheckboxDelete(const wnd: UG_WINDOW; id: UG_U8): UG_RESULT;
+function UG_CheckboxShow(const wnd: UG_WINDOW; id: UG_U8): UG_RESULT;
+function UG_CheckboxHide(const wnd: UG_WINDOW; id: UG_U8): UG_RESULT;
 
-function UG_CheckboxSetCheched(const wnd: UG_WINDOW;  id: UG_U8;  ch: UG_U8): UG_RESULT;
-function UG_CheckboxSetForeColor(const wnd: UG_WINDOW;  id: UG_U8;  fc: UG_COLOR): UG_RESULT;
-function UG_CheckboxSetBackColor(const wnd: UG_WINDOW;  id: UG_U8;  bc: UG_COLOR): UG_RESULT;
-function UG_CheckboxSetAlternateForeColor(const wnd: UG_WINDOW;  id: UG_U8;  afc: UG_COLOR): UG_RESULT;
-function UG_CheckboxSetAlternateBackColor(const wnd: UG_WINDOW;  id: UG_U8;  abc: UG_COLOR): UG_RESULT;
-function UG_CheckboxSetText(const wnd: UG_WINDOW;  id: UG_U8;  str: pchar): UG_RESULT;
+function UG_CheckboxSetCheched(const wnd: UG_WINDOW; id: UG_U8; ch: UG_U8): UG_RESULT;
+function UG_CheckboxSetForeColor(const wnd: UG_WINDOW; id: UG_U8; fc: UG_COLOR): UG_RESULT;
+function UG_CheckboxSetBackColor(const wnd: UG_WINDOW; id: UG_U8; bc: UG_COLOR): UG_RESULT;
+function UG_CheckboxSetAlternateForeColor(const wnd: UG_WINDOW; id: UG_U8; afc: UG_COLOR): UG_RESULT;
+function UG_CheckboxSetAlternateBackColor(const wnd: UG_WINDOW; id: UG_U8; abc: UG_COLOR): UG_RESULT;
+function UG_CheckboxSetText(const wnd: UG_WINDOW; id: UG_U8; str: pchar): UG_RESULT;
 
-function UG_CheckboxSetFont(const wnd: UG_WINDOW;  id: UG_U8;  font: pUG_FONT): UG_RESULT;
-function UG_CheckboxSetStyle(const wnd: UG_WINDOW;  id: UG_U8;  style: UG_U8): UG_RESULT;
-function UG_CheckboxSetHSpace(const wnd: UG_WINDOW;  id: UG_U8;  hs: UG_S8): UG_RESULT;
-function UG_CheckboxSetVSpace(const wnd: UG_WINDOW;  id: UG_U8;  vs: UG_S8): UG_RESULT;
-function UG_CheckboxSetAlignment(const wnd: UG_WINDOW;  id: UG_U8;  align: UG_U8): UG_RESULT;
+function UG_CheckboxSetFont(const wnd: UG_WINDOW; id: UG_U8; font: PUG_FONT): UG_RESULT;
+function UG_CheckboxSetStyle(const wnd: UG_WINDOW; id: UG_U8; style: UG_U8): UG_RESULT;
+function UG_CheckboxSetHSpace(const wnd: UG_WINDOW; id: UG_U8; hs: UG_S8): UG_RESULT;
+function UG_CheckboxSetVSpace(const wnd: UG_WINDOW; id: UG_U8; vs: UG_S8): UG_RESULT;
+function UG_CheckboxSetAlignment(const wnd: UG_WINDOW; id: UG_U8; align: UG_U8): UG_RESULT;
 
-function UG_CheckboxGetChecked(const wnd: UG_WINDOW;  id: UG_U8): UG_U8;
-function UG_CheckboxGetForeColor(const wnd: UG_WINDOW;  id: UG_U8): UG_COLOR;
-function UG_CheckboxGetBackColor(const wnd: UG_WINDOW;  id: UG_U8): UG_COLOR;
-function UG_CheckboxGetAlternateForeColor(const wnd: UG_WINDOW;  id: UG_U8): UG_COLOR;
-function UG_CheckboxGetAlternateBackColor(const wnd: UG_WINDOW;  id: UG_U8): UG_COLOR;
-function UG_CheckboxGetText(const wnd: UG_WINDOW;  id: UG_U8): pchar;
-function UG_CheckboxGetFont(const wnd: UG_WINDOW;  id: UG_U8): pUG_FONT;
-function UG_CheckboxGetStyle(const wnd: UG_WINDOW;  id: UG_U8): UG_U8;
-function UG_CheckboxGetHSpace(const wnd: UG_WINDOW;  id: UG_U8): UG_S8;
-function UG_CheckboxGetVSpace(const wnd: UG_WINDOW;  id: UG_U8): UG_S8;
-function UG_CheckboxGetAlignment(const wnd: UG_WINDOW;  id: UG_U8): UG_U8;
+function UG_CheckboxGetChecked(const wnd: UG_WINDOW; id: UG_U8): UG_U8;
+function UG_CheckboxGetForeColor(const wnd: UG_WINDOW; id: UG_U8): UG_COLOR;
+function UG_CheckboxGetBackColor(const wnd: UG_WINDOW; id: UG_U8): UG_COLOR;
+function UG_CheckboxGetAlternateForeColor(const wnd: UG_WINDOW; id: UG_U8): UG_COLOR;
+function UG_CheckboxGetAlternateBackColor(const wnd: UG_WINDOW; id: UG_U8): UG_COLOR;
+function UG_CheckboxGetText(const wnd: UG_WINDOW; id: UG_U8): pchar;
+function UG_CheckboxGetFont(const wnd: UG_WINDOW; id: UG_U8): PUG_FONT;
+function UG_CheckboxGetStyle(const wnd: UG_WINDOW; id: UG_U8): UG_U8;
+function UG_CheckboxGetHSpace(const wnd: UG_WINDOW; id: UG_U8): UG_S8;
+function UG_CheckboxGetVSpace(const wnd: UG_WINDOW; id: UG_U8): UG_S8;
+function UG_CheckboxGetAlignment(const wnd: UG_WINDOW; id: UG_U8): UG_U8;
 *)
+
+(* -------------------------------------------------------------------------- *)
+(* -- IMAGE OBJECT                                                         -- *)
+(* -------------------------------------------------------------------------- *)
+const
+  (* Default image IDs *)
+  IMG_ID_0 = OBJ_ID_0;
+  IMG_ID_1 = OBJ_ID_1;
+  IMG_ID_2 = OBJ_ID_2;
+  IMG_ID_3 = OBJ_ID_3;
+  IMG_ID_4 = OBJ_ID_4;
+  IMG_ID_5 = OBJ_ID_5;
+  IMG_ID_6 = OBJ_ID_6;
+  IMG_ID_7 = OBJ_ID_7;
+  IMG_ID_8 = OBJ_ID_8;
+  IMG_ID_9 = OBJ_ID_9;
+  IMG_ID_10 = OBJ_ID_10;
+  IMG_ID_11 = OBJ_ID_11;
+  IMG_ID_12 = OBJ_ID_12;
+  IMG_ID_13 = OBJ_ID_13;
+  IMG_ID_14 = OBJ_ID_14;
+  IMG_ID_15 = OBJ_ID_15;
+  IMG_ID_16 = OBJ_ID_16;
+  IMG_ID_17 = OBJ_ID_17;
+  IMG_ID_18 = OBJ_ID_18;
+  IMG_ID_19 = OBJ_ID_19;
+
+  (* Image types *)
+  IMG_TYPE_BMP = 1 shl 0;
+
+  (* BMP constants *)
+  BMP_BPP_1 = 1 shl 0;
+  BMP_BPP_2 = 1 shl 1;
+  BMP_BPP_4 = 1 shl 2;
+  BMP_BPP_8 = 1 shl 3;
+  BMP_BPP_16 = 1 shl 4;
+  BMP_BPP_32 = 1 shl 5;
+  BMP_RGB888 = 1 shl 0;
+  BMP_RGB565 = 1 shl 1;
+  BMP_RGB555 = 1 shl 2;
+
+(* Image structure *)
+type
+  PUG_IMAGE = ^UG_IMAGE;
+
+  UG_IMAGE = record
+    img: PUG_U8;
+    itype: UG_U8;
+  end;
+
+  (* BMP structure *)
+  PUG_BMP = ^UG_BMP;
+
+  UG_BMP = record
+    p: PUG_U8;
+    Width: UG_U16;
+    Height: UG_U16;
+    bpp: UG_U8;
+    colors: UG_U8;
+  end;
+
+(* Image functions *)
+function UG_ImageCreate(const wnd: UG_WINDOW; var img: UG_IMAGE;
+  id: UG_U8; xs, ys: UG_S16; xe, ye: UG_S16): UG_RESULT;
+function UG_ImageDelete(const wnd: UG_WINDOW; id: UG_U8): UG_RESULT;
+function UG_ImageShow(const wnd: UG_WINDOW; id: UG_U8): UG_RESULT;
+function UG_ImageHide(const wnd: UG_WINDOW; id: UG_U8): UG_RESULT;
+function UG_ImageSetBMP(const wnd: UG_WINDOW; id: UG_U8; bmp: PUG_BMP): UG_RESULT;
+
+(* ------------------------------------------------- *)
+(* ------------------------------------------------- *)
+(* ------------------------------------------------- *)
 
 (* Miscellaneous functions *)
 procedure UG_WaitForUpdate;
@@ -760,9 +777,9 @@ var
   gui: PUG_GUI;
   msg: UG_MESSAGE;
 
-(* -------------------------------------------------------------------------------- *)
-(* -- INTERNAL FUNCTIONS                                                         -- *)
-(* -------------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
+(* -- INTERNAL FUNCTIONS                                                   -- *)
+(* -------------------------------------------------------------------------- *)
 procedure _UG_PutChar(chr: char; x, y: UG_S16; fc: UG_COLOR; bc: UG_COLOR;
   const font: UG_FONT);
 var
@@ -2610,6 +2627,183 @@ const
     ($632C, $632C, $632C, $632C, $FFFF, $FFFF, $6B4D, $6B4D, $E71C, $E71C, $9D13, $9D13);
 
 {$endif}
+
+(* -------------------------------------------------------------------------- *)
+(* -- Image functions                                                      -- *)
+(* -------------------------------------------------------------------------- *)
+
+(* ? Internal ? *)
+procedure UG_DrawBMP(xp, yp: UG_S16; bmp: PUG_BMP);
+var
+  x, y, xs: UG_S16;
+  r, g, b: UG_U8;
+  p: PUG_U16;
+  tmp: UG_U16;
+  c: UG_COLOR;
+begin
+  if bmp^.p = nil then
+    exit;
+
+  (* Only support 16 BPP so  *)
+  if bmp^.bpp = BMP_BPP_16 then
+    p := PUG_U16(bmp^.p)
+  else
+    exit;
+
+  xs := xp;
+  for y := 0 to Pred(bmp^.Height) do
+  begin
+    xp := xs;
+    for x := 0 to Pred(bmp^.Width) do
+    begin
+      tmp := p^;
+      Inc(p);
+      (* Convert RGB565 to RGB888 *)
+      r := (tmp shr 11) and $1F;
+      r := r shl (3);
+      g := (tmp shr 5) and $3F;
+      g := g shl (2);
+      b := (tmp) and $1F;
+      b := b shl (3);
+      c := UG_COLOR(r shl 16) or UG_COLOR(g shl 8) or UG_COLOR(b);
+      UG_DrawPixel(xp, yp, c);
+      Inc(xp);
+    end;
+    Inc(yp);
+  end;
+end;
+
+procedure _UG_ImageUpdate(wnd: PUG_WINDOW; obj: PUG_OBJECT);
+var
+  img: PUG_IMAGE;
+  a: UG_AREA;
+begin
+  (* Get object-specific data *)
+  img := PUG_IMAGE(obj^.Data);
+  (* -------------------------------------------------- *)
+  (* Object touch section                               *)
+  (* -------------------------------------------------- *)
+
+  (* Image doesn't support touch *)
+
+  (* -------------------------------------------------- *)
+  (* Object update section                              *)
+  (* -------------------------------------------------- *)
+  if (obj^.state and OBJ_STATE_UPDATE) <> 0 then
+  begin
+    if (obj^.state and OBJ_STATE_VISIBLE) <> 0 then
+    begin
+      (* Full redraw necessary? *)
+      if (obj^.state and OBJ_STATE_REDRAW) <> 0 then
+      begin
+        UG_WindowGetArea(wnd^, a);
+        (* ToDo: more/better image features *)
+        obj^.a_abs.xs := obj^.a_rel.xs + a.xs;
+        obj^.a_abs.ys := obj^.a_rel.ys + a.ys;
+        obj^.a_abs.xe := obj^.a_rel.xs + PUG_BMP(img^.img)^.Width + a.xs;
+        obj^.a_abs.ye := obj^.a_rel.ys + PUG_BMP(img^.img)^.Height + a.ys;
+        if (obj^.a_abs.ye >= wnd^.ye) or (obj^.a_abs.xe >= wnd^.xe) then
+          exit;
+
+        (* Draw Image *)
+        if (img^.img <> nil) and ((img^.itype and IMG_TYPE_BMP) <> 0) then
+          UG_DrawBMP(obj^.a_abs.xs, obj^.a_abs.ys, PUG_BMP(img^.img));
+        obj^.state := obj^.state and (not OBJ_STATE_REDRAW);
+      end;
+    end
+    else
+      UG_FillFrame(obj^.a_abs.xs, obj^.a_abs.ys, obj^.a_abs.xe, obj^.a_abs.ye, wnd^.bc);
+    obj^.state := obj^.state and (not OBJ_STATE_UPDATE);
+  end;
+end;
+
+function UG_ImageCreate(const wnd: UG_WINDOW; var img: UG_IMAGE;
+  id: UG_U8; xs, ys: UG_S16; xe, ye: UG_S16): UG_RESULT;
+var
+  obj: PUG_OBJECT;
+begin
+  obj := _UG_GetFreeObject(wnd);
+  if obj = nil then
+  begin
+    UG_ImageCreate := UG_RESULT_FAIL;
+    exit;
+  end;
+  (* Initialize object-specific parameters *)
+  img.img := nil;
+  img.itype := IMG_TYPE_BMP;
+  (* Initialize standard object parameters *)
+  obj^.update := _UG_ImageUpdate;
+  obj^.touch_state := OBJ_TOUCH_STATE_INIT;
+  obj^.otype := OBJ_TYPE_IMAGE;
+  obj^.event := OBJ_EVENT_NONE;
+  obj^.a_rel.xs := xs;
+  obj^.a_rel.ys := ys;
+  obj^.a_rel.xe := xe;
+  obj^.a_rel.ye := ye;
+  obj^.a_abs.xs := -1;
+  obj^.a_abs.ys := -1;
+  obj^.a_abs.xe := -1;
+  obj^.a_abs.ye := -1;
+  obj^.id := id;
+  obj^.state := obj^.state or (OBJ_STATE_VISIBLE or OBJ_STATE_REDRAW or OBJ_STATE_VALID);
+  obj^.Data := @img;
+  (* Update function: Do your thing! *)
+  obj^.state := obj^.state and (not OBJ_STATE_FREE);
+  UG_ImageCreate := UG_RESULT_OK;
+end;
+
+function UG_ImageDelete(const wnd: UG_WINDOW; id: UG_U8): UG_RESULT;
+begin
+  UG_ImageDelete := _UG_DeleteObject(wnd, OBJ_TYPE_IMAGE, id);
+end;
+
+function UG_ImageShow(const wnd: UG_WINDOW; id: UG_U8): UG_RESULT;
+var
+  obj: PUG_OBJECT;
+begin
+  obj := _UG_SearchObject(wnd, OBJ_TYPE_IMAGE, id);
+  if obj = nil then
+  begin
+    UG_ImageShow := UG_RESULT_FAIL;
+    exit;
+  end;
+  obj^.state := obj^.state or (OBJ_STATE_VISIBLE);
+  obj^.state := obj^.state or (OBJ_STATE_UPDATE or OBJ_STATE_REDRAW);
+  UG_ImageShow := UG_RESULT_OK;
+end;
+
+function UG_ImageHide(const wnd: UG_WINDOW; id: UG_U8): UG_RESULT;
+var
+  obj: PUG_OBJECT;
+begin
+  obj := _UG_SearchObject(wnd, OBJ_TYPE_IMAGE, id);
+  if obj = nil then
+  begin
+    UG_ImageHide := UG_RESULT_FAIL;
+    exit;
+  end;
+  obj^.state := obj^.state and (not OBJ_STATE_VISIBLE);
+  obj^.state := obj^.state or (OBJ_STATE_UPDATE);
+  UG_ImageHide := UG_RESULT_OK;
+end;
+
+function UG_ImageSetBMP(const wnd: UG_WINDOW; id: UG_U8; bmp: PUG_BMP): UG_RESULT;
+var
+  obj: PUG_OBJECT;
+  img: PUG_IMAGE;
+begin
+  obj := _UG_SearchObject(wnd, OBJ_TYPE_IMAGE, id);
+  if obj = nil then
+  begin
+    UG_ImageSetBMP := UG_RESULT_FAIL;
+    exit;
+  end;
+  img := PUG_IMAGE(obj^.Data);
+  img^.img := PUG_U8(bmp);
+  img^.itype := IMG_TYPE_BMP;
+  obj^.state := obj^.state or (OBJ_STATE_UPDATE or OBJ_STATE_REDRAW);
+  UG_ImageSetBMP := UG_RESULT_OK;
+end;
 
 (* -------------------------------------------------------------------------- *)
 (* -- MISCELLANEOUS FUNCTIONS                                              -- *)
