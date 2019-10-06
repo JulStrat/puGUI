@@ -2080,32 +2080,13 @@ begin
       UG_WindowResize := UG_RESULT_FAIL;
       exit;
     end;
-    (*
-    if (xe > xmax) or (ye > ymax) then
-    begin
-      UG_WindowResize := UG_RESULT_FAIL;
-      exit;
-    end;
-    *)
-    pos := xe - xs;
+
     if ((xe - xs) < 10) or ((ye - ys) < 10) then
     begin
       UG_WindowResize := UG_RESULT_FAIL;
       exit;
     end;
-    (*
-    if pos < 10 then
-    begin
-      UG_WindowResize := UG_RESULT_FAIL;
-      exit;
-    end;
-    pos := ye - ys;
-    if pos < 10 then
-    begin
-      UG_WindowResize := UG_RESULT_FAIL;
-      exit;
-    end;
-    *)
+
     (* ... and if everything is OK move the window! *)
     wnd.xs := xs;
     wnd.ys := ys;
@@ -2307,10 +2288,7 @@ begin
   if (wnd.state and WND_STATE_VALID) <> 0 then
   begin
     wnd.xs := xs;
-    if UG_WindowResize(wnd, wnd.xs, wnd.ys, wnd.xe, wnd.ye) = UG_RESULT_FAIL then
-      UG_WindowSetXStart := UG_RESULT_FAIL
-    else
-      UG_WindowSetXStart := UG_RESULT_OK;
+    UG_WindowSetXStart := UG_WindowResize(wnd, wnd.xs, wnd.ys, wnd.xe, wnd.ye);
   end
   else
     UG_WindowSetXStart := UG_RESULT_FAIL;
@@ -2321,10 +2299,7 @@ begin
   if (wnd.state and WND_STATE_VALID) <> 0 then
   begin
     wnd.ys := ys;
-    if UG_WindowResize(wnd, wnd.xs, wnd.ys, wnd.xe, wnd.ye) = UG_RESULT_FAIL then
-      UG_WindowSetYStart := UG_RESULT_FAIL
-    else
-      UG_WindowSetYStart := UG_RESULT_OK;
+    UG_WindowSetYStart := UG_WindowResize(wnd, wnd.xs, wnd.ys, wnd.xe, wnd.ye);
   end
   else
     UG_WindowSetYStart := UG_RESULT_FAIL;
@@ -2335,10 +2310,7 @@ begin
   if (wnd.state and WND_STATE_VALID) <> 0 then
   begin
     wnd.xe := xe;
-    if UG_WindowResize(wnd, wnd.xs, wnd.ys, wnd.xe, wnd.ye) = UG_RESULT_FAIL then
-      UG_WindowSetXEnd := UG_RESULT_FAIL
-    else
-      UG_WindowSetXEnd := UG_RESULT_OK;
+    UG_WindowSetXEnd := UG_WindowResize(wnd, wnd.xs, wnd.ys, wnd.xe, wnd.ye);
   end
   else
     UG_WindowSetXEnd := UG_RESULT_FAIL;
@@ -2349,10 +2321,7 @@ begin
   if (wnd.state and WND_STATE_VALID) <> 0 then
   begin
     wnd.ye := ye;
-    if UG_WindowResize(wnd, wnd.xs, wnd.ys, wnd.xe, wnd.ye) = UG_RESULT_FAIL then
-      UG_WindowSetYEnd := UG_RESULT_FAIL
-    else
-      UG_WindowSetYEnd := UG_RESULT_OK;
+    UG_WindowSetYEnd := UG_WindowResize(wnd, wnd.xs, wnd.ys, wnd.xe, wnd.ye);
   end
   else
     UG_WindowSetYEnd := UG_RESULT_FAIL;
