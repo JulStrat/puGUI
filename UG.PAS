@@ -1342,7 +1342,7 @@ begin
       ((objstate and OBJ_STATE_VALID) <> 0) then
     begin
       if (objstate and OBJ_STATE_UPDATE) <> 0 then
-        obj^.update(@wnd, obj);
+        obj^.update(wnd, obj);
       if ((objstate and OBJ_STATE_VISIBLE) <> 0) and
         ((objstate and OBJ_STATE_TOUCH_ENABLE) <> 0) then
         if (objtouch and (OBJ_TOUCH_STATE_CHANGED or
@@ -2699,7 +2699,7 @@ begin
   txb.h_space:= 0; 
   txb.v_space:= 0; 
   (* Initialize standard object parameters *)  
-  { obj.update:= _UG_TextboxUpdate; }
+  obj^.update:= _UG_TextboxUpdate;
   obj^.touch_state:= OBJ_TOUCH_STATE_INIT; 
   obj^.otype:= OBJ_TYPE_TEXTBOX; 
   obj^.event:= OBJ_EVENT_NONE; 
