@@ -60,7 +60,10 @@ unit UG;
 interface
 
 uses UG_FONTS, UG_TYPES
-{$ifdef FPC}, SysUtils (* Delay func *){$endif};
+{$ifndef EMBEDDED}
+{$ifdef FPC}, SysUtils (* Delay func *){$endif}
+{$endif}
+;
 
 const
   UG_VERSION = 1;
@@ -170,29 +173,6 @@ const
   WND_STYLE_3D = 1 shl 0;
   WND_STYLE_HIDE_TITLE = 0 shl 1;
   WND_STYLE_SHOW_TITLE = 1 shl 1;
-
-
-  (* Default textbox IDs *)
-  TXB_ID_0 = OBJ_ID_0;
-  TXB_ID_1 = OBJ_ID_1;
-  TXB_ID_2 = OBJ_ID_2;
-  TXB_ID_3 = OBJ_ID_3;
-  TXB_ID_4 = OBJ_ID_4;
-  TXB_ID_5 = OBJ_ID_5;
-  TXB_ID_6 = OBJ_ID_6;
-  TXB_ID_7 = OBJ_ID_7;
-  TXB_ID_8 = OBJ_ID_8;
-  TXB_ID_9 = OBJ_ID_9;
-  TXB_ID_10 = OBJ_ID_10;
-  TXB_ID_11 = OBJ_ID_11;
-  TXB_ID_12 = OBJ_ID_12;
-  TXB_ID_13 = OBJ_ID_13;
-  TXB_ID_14 = OBJ_ID_14;
-  TXB_ID_15 = OBJ_ID_15;
-  TXB_ID_16 = OBJ_ID_16;
-  TXB_ID_17 = OBJ_ID_17;
-  TXB_ID_18 = OBJ_ID_18;
-  TXB_ID_19 = OBJ_ID_19;
 
   UG_SATUS_WAIT_FOR_UPDATE = 1 shl 0;
 
@@ -334,25 +314,6 @@ type
     cb: UG_WINDOW_CB;
   end;
   UG_WINDOW = S_WINDOW;
-
-
-
-(* -------------------------------------------------------------------------- *)
-(* -- TEXTBOX OBJECT                                                       -- *)
-(* -------------------------------------------------------------------------- *)
-(* Textbox structure *)
-type
-  UG_TEXTBOX = record
-    str: PChar;
-    font: PUG_FONT;
-    style: UG_U8;
-    fc: UG_COLOR;
-    bc: UG_COLOR;
-    align: UG_U8;
-    h_space: UG_S8;
-    v_space: UG_S8;
-  end;
-
 
 (* -------------------------------------------------------------------------- *)
 (* -- µGUI DRIVER                                                          -- *)
@@ -676,6 +637,78 @@ function UG_CheckboxGetHSpace(const wnd: UG_WINDOW; id: UG_U8): UG_S8;
 function UG_CheckboxGetVSpace(const wnd: UG_WINDOW; id: UG_U8): UG_S8;
 function UG_CheckboxGetAlignment(const wnd: UG_WINDOW; id: UG_U8): UG_U8;
 *)
+
+
+
+(* -------------------------------------------------------------------------- *)
+(* -- TEXTBOX OBJECT                                                       -- *)
+(* -------------------------------------------------------------------------- *)
+(* Textbox structure *)
+type
+  PUG_TEXTBOX = ^UG_TEXTBOX;
+  UG_TEXTBOX = record
+    str: PChar;
+    font: PUG_FONT;
+    style: UG_U8;
+    fc: UG_COLOR;
+    bc: UG_COLOR;
+    align: UG_U8;
+    h_space: UG_S8;
+    v_space: UG_S8;
+  end;
+
+const
+  (* Default textbox IDs *)
+  TXB_ID_0 = OBJ_ID_0;
+  TXB_ID_1 = OBJ_ID_1;
+  TXB_ID_2 = OBJ_ID_2;
+  TXB_ID_3 = OBJ_ID_3;
+  TXB_ID_4 = OBJ_ID_4;
+  TXB_ID_5 = OBJ_ID_5;
+  TXB_ID_6 = OBJ_ID_6;
+  TXB_ID_7 = OBJ_ID_7;
+  TXB_ID_8 = OBJ_ID_8;
+  TXB_ID_9 = OBJ_ID_9;
+  TXB_ID_10 = OBJ_ID_10;
+  TXB_ID_11 = OBJ_ID_11;
+  TXB_ID_12 = OBJ_ID_12;
+  TXB_ID_13 = OBJ_ID_13;
+  TXB_ID_14 = OBJ_ID_14;
+  TXB_ID_15 = OBJ_ID_15;
+  TXB_ID_16 = OBJ_ID_16;
+  TXB_ID_17 = OBJ_ID_17;
+  TXB_ID_18 = OBJ_ID_18;
+  TXB_ID_19 = OBJ_ID_19;
+
+(* Textbox functions *)
+
+function UG_TextboxCreate(const wnd: UG_WINDOW; var txb: UG_TEXTBOX; id: UG_U8; 
+  xs, ys: UG_S16; xe, ye: UG_S16): UG_RESULT; 
+(*
+function UG_TextboxDelete(wnd: pUG_WINDOW;  id: UG_U8): UG_RESULT; 
+*)
+function UG_TextboxShow(const wnd: UG_WINDOW; id: UG_U8): UG_RESULT; 
+(*
+function UG_TextboxHide(wnd: pUG_WINDOW;  id: UG_U8): UG_RESULT; 
+function UG_TextboxSetForeColor(wnd: pUG_WINDOW;  id: UG_U8;  fc: UG_COLOR): UG_RESULT; 
+function UG_TextboxSetBackColor(wnd: pUG_WINDOW;  id: UG_U8;  bc: UG_COLOR): UG_RESULT; 
+function UG_TextboxSetText(wnd: pUG_WINDOW;  id: UG_U8;  str: pchar): UG_RESULT; 
+function UG_TextboxSetFont(wnd: pUG_WINDOW;  id: UG_U8;  font: pUG_FONT): UG_RESULT; 
+function UG_TextboxSetHSpace(wnd: pUG_WINDOW;  id: UG_U8;  hs: UG_S8): UG_RESULT; 
+function UG_TextboxSetVSpace(wnd: pUG_WINDOW;  id: UG_U8;  vs: UG_S8): UG_RESULT; 
+function UG_TextboxSetAlignment(wnd: pUG_WINDOW;  id: UG_U8;  align: UG_U8): UG_RESULT; 
+
+function UG_TextboxGetForeColor(wnd: pUG_WINDOW;  id: UG_U8): UG_COLOR; 
+function UG_TextboxGetBackColor(wnd: pUG_WINDOW;  id: UG_U8): UG_COLOR; 
+function UG_TextboxGetText(wnd: pUG_WINDOW;  id: UG_U8): pchar; 
+function UG_TextboxGetFont(wnd: pUG_WINDOW;  id: UG_U8): pUG_FONT; 
+function UG_TextboxGetHSpace(wnd: pUG_WINDOW;  id: UG_U8): UG_S8; 
+function UG_TextboxGetVSpace(wnd: pUG_WINDOW;  id: UG_U8): UG_S8; 
+function UG_TextboxGetAlignment(wnd: pUG_WINDOW;  id: UG_U8): UG_U8; 
+*)
+
+
+
 
 (* -------------------------------------------------------------------------- *)
 (* -- IMAGE OBJECT                                                         -- *)
@@ -1213,7 +1246,7 @@ begin
     _UG_DeleteObject := UG_RESULT_FAIL;
 end;
 
-procedure _UG_ProcessTouchData(var wnd: UG_WINDOW);
+procedure _UG_ProcessTouchData(wnd: PUG_WINDOW);
 var
   xp, yp: UG_S16;
   i: UG_U16;
@@ -1226,8 +1259,8 @@ begin
   xp := gui^.touch.xp;
   yp := gui^.touch.yp;
   tchstate := gui^.touch.state;
-  objcnt := wnd.objcnt;
-  obj := wnd.objlst;
+  objcnt := wnd^.objcnt;
+  obj := wnd^.objlst;
   for i := 0 to Pred(objcnt) do
   begin
     (* obj := wnd.objlst[i]; *)
@@ -1290,7 +1323,7 @@ begin
   end;
 end;
 
-procedure _UG_UpdateObjects(var wnd: UG_WINDOW);
+procedure _UG_UpdateObjects(wnd: PUG_WINDOW);
 var
   i: UG_U16;
   objcnt: UG_U16;
@@ -1298,8 +1331,8 @@ var
   objstate: UG_U8;
   objtouch: UG_U8;
 begin
-  objcnt := wnd.objcnt;
-  obj := wnd.objlst;
+  objcnt := wnd^.objcnt;
+  obj := wnd^.objlst;
   (* Check each object, if it needs to be updated? *)
   for i := 0 to Pred(objcnt) do
   begin
@@ -1314,13 +1347,13 @@ begin
         ((objstate and OBJ_STATE_TOUCH_ENABLE) <> 0) then
         if (objtouch and (OBJ_TOUCH_STATE_CHANGED or
           OBJ_TOUCH_STATE_IS_PRESSED)) <> 0 then
-          obj^.update(@wnd, obj);
+          obj^.update(wnd, obj);
     end;
     Inc(obj);
   end;
 end;
 
-procedure _UG_HandleEvents(var wnd: UG_WINDOW);
+procedure _UG_HandleEvents(wnd: PUG_WINDOW);
 var
   i: UG_U16;
   objcnt: UG_U16;
@@ -1329,8 +1362,8 @@ var
 begin
   msg.src := nil;
   msg.mtype := MSG_TYPE_OBJECT;
-  objcnt := wnd.objcnt;
-  obj := wnd.objlst;
+  objcnt := wnd^.objcnt;
+  obj := wnd^.objlst;
 
   (* Handle window-related events *)
   (*ToDo*)
@@ -1348,7 +1381,7 @@ begin
         msg.id := obj^.otype;
         msg.sub_id := obj^.id;
         msg.event := obj^.event;
-        wnd.cb(@msg);
+        wnd^.cb(@msg);
         obj^.event := OBJ_EVENT_NONE;
       end;
     end;
@@ -2575,6 +2608,139 @@ end;
 
 {$I UG_BTN.INC}
 
+
+(* -------------------------------------------------------------------------------- *)
+(* -- TEXTBOX FUNCTIONS                                                          -- *)
+(* -------------------------------------------------------------------------------- *)
+
+procedure _UG_TextboxUpdate(wnd: pUG_WINDOW; obj: pUG_OBJECT); 
+var
+txb: pUG_TEXTBOX; 
+a: UG_AREA; 
+txt: UG_TEXT; 
+(* Get object-specific data *)
+begin
+  txb:= pUG_TEXTBOX(obj^.data); 
+  (* -------------------------------------------------- *)
+  (* Object touch section                               *)
+  (* -------------------------------------------------- *)
+  
+  (* Textbox doesn't support touch *)
+  
+  (* -------------------------------------------------- *)
+  (* Object update section                              *)
+  (* -------------------------------------------------- *)
+  if (obj^.state and OBJ_STATE_UPDATE) <> 0 then
+  begin 
+    if (obj^.state and OBJ_STATE_VISIBLE) <> 0 then
+    begin 
+      (* Full redraw necessary? *)
+      if (obj^.state and OBJ_STATE_REDRAW) <> 0 then
+      begin 
+        { UG_WindowGetArea(wnd, a); }
+        obj^.a_abs.xs:= obj^.a_rel.xs+a.xs; 
+        obj^.a_abs.ys:= obj^.a_rel.ys+a.ys; 
+        obj^.a_abs.xe:= obj^.a_rel.xe+a.xs; 
+        obj^.a_abs.ye:= obj^.a_rel.ye+a.ys; 
+        if obj^.a_abs.ye>=wnd^.ye then exit;
+        if obj^.a_abs.xe>=wnd^.xe then exit;
+        {$ifdef USE_PRERENDER_EVENT}        
+        _UG_SendObjectPrerenderEvent(wnd,obj); 
+        {$endif}
+        txt.bc:= txb^.bc; 
+        txt.fc:= txb^.fc; 
+        UG_FillFrame(obj^.a_abs.xs, obj^.a_abs.ys, obj^.a_abs.xe, obj^.a_abs.ye, txt.bc); 
+        txt.a.xs:= obj^.a_abs.xs; 
+        txt.a.ys:= obj^.a_abs.ys; 
+        txt.a.xe:= obj^.a_abs.xe; 
+        txt.a.ye:= obj^.a_abs.ye; 
+        txt.align:= txb^.align; 
+        txt.font:= txb^.font; 
+        txt.h_space:= txb^.h_space; 
+        txt.v_space:= txb^.v_space; 
+        txt.str:= txb^.str; 
+        _UG_PutText(txt);
+        (* Draw Textbox text *)
+        obj^.state:= obj^.state and (not OBJ_STATE_REDRAW); 
+        {$ifdef USE_POSTRENDER_EVENT}
+        _UG_SendObjectPostrenderEvent(wnd,obj); 
+        {$endif}
+      end;
+    end
+    else
+    begin 
+      UG_FillFrame(obj^.a_abs.xs, obj^.a_abs.ys, obj^.a_abs.xe, obj^.a_abs.ye, wnd^.bc); 
+    end;
+    obj^.state:= obj^.state and (not OBJ_STATE_UPDATE); 
+  end;
+end;
+
+function UG_TextboxCreate(const wnd: UG_WINDOW; var txb: UG_TEXTBOX; id: UG_U8;
+  xs, ys: UG_S16; xe, ye: UG_S16): UG_RESULT; 
+var
+obj: pUG_OBJECT; 
+begin
+  obj:= _UG_GetFreeObject(wnd); 
+  if obj=nil then
+  begin
+    UG_TextboxCreate:= UG_RESULT_FAIL; 
+    exit;
+  end;
+  (* Initialize object-specific parameters *)  
+  txb.str:= nil; 
+  if gui<>nil then
+    txb.font:= @(gui^.font)
+  else
+    txb.font:= nil; 
+  txb.style:= 0; 
+  txb.fc:= wnd.fc; 
+  txb.bc:= wnd.bc; 
+  txb.align:= ALIGN_CENTER; 
+  txb.h_space:= 0; 
+  txb.v_space:= 0; 
+  (* Initialize standard object parameters *)  
+  { obj.update:= _UG_TextboxUpdate; }
+  obj^.touch_state:= OBJ_TOUCH_STATE_INIT; 
+  obj^.otype:= OBJ_TYPE_TEXTBOX; 
+  obj^.event:= OBJ_EVENT_NONE; 
+  obj^.a_rel.xs:= xs; 
+  obj^.a_rel.ys:= ys; 
+  obj^.a_rel.xe:= xe; 
+  obj^.a_rel.ye:= ye; 
+  obj^.a_abs.xs:= -1; 
+  obj^.a_abs.ys:= -1; 
+  obj^.a_abs.xe:= -1; 
+  obj^.a_abs.ye:= -1; 
+  obj^.id:= id; 
+  obj^.state:= obj^.state or (OBJ_STATE_VISIBLE or OBJ_STATE_REDRAW or OBJ_STATE_VALID); 
+  obj^.data:= @txb; 
+  obj^.state:= obj^.state and (not OBJ_STATE_FREE);
+  (* Update function: Do your thing! *)
+  UG_TextboxCreate:= UG_RESULT_OK; 
+end;
+
+function UG_TextboxDelete(const wnd: UG_WINDOW; id: UG_U8): UG_RESULT; 
+begin
+    UG_TextboxDelete:= _UG_DeleteObject(wnd, OBJ_TYPE_TEXTBOX,id); 
+end;
+
+function UG_TextboxShow(const wnd: UG_WINDOW; id: UG_U8): UG_RESULT; 
+var
+obj: pUG_OBJECT;
+begin
+  obj:= _UG_SearchObject(wnd,OBJ_TYPE_TEXTBOX,id); 
+  if obj <> nil then 
+  begin
+    obj^.state:= obj^.state or (OBJ_STATE_VISIBLE); 
+    obj^.state:= obj^.state or (OBJ_STATE_UPDATE or OBJ_STATE_REDRAW); 
+    UG_TextboxShow:= UG_RESULT_OK; 
+  end
+  else 
+    UG_TextboxShow:= UG_RESULT_FAIL;   
+end;
+
+
+
 (* -------------------------------------------------------------------------- *)
 (* -- Checkbox FUNCTIONS ! TO DO !                                         -- *)
 (* -------------------------------------------------------------------------- *)
@@ -2826,9 +2992,9 @@ begin
     (* Is the window visible? *)
     if (wnd^.state and WND_STATE_VISIBLE) <> 0 then
     begin
-      _UG_ProcessTouchData(wnd^);
-      _UG_UpdateObjects(wnd^);
-      _UG_HandleEvents(wnd^);
+      _UG_ProcessTouchData(wnd);
+      _UG_UpdateObjects(wnd);
+      _UG_HandleEvents(wnd);
     end;
   end;
 end;
@@ -2840,9 +3006,11 @@ begin
   (* TO REV *)
   while (gui^.state and UG_SATUS_WAIT_FOR_UPDATE) <> 0 do
   begin
+{$ifndef EMBEDDED}  
     {$ifdef FPC}
     Sleep(10);
     {$endif}
+{$endif}
     ;
   end;
 end;
