@@ -697,17 +697,14 @@ function UG_TextboxSetFont(wnd: pUG_WINDOW;  id: UG_U8;  font: pUG_FONT): UG_RES
 function UG_TextboxSetHSpace(wnd: pUG_WINDOW;  id: UG_U8;  hs: UG_S8): UG_RESULT; 
 function UG_TextboxSetVSpace(wnd: pUG_WINDOW;  id: UG_U8;  vs: UG_S8): UG_RESULT; 
 function UG_TextboxSetAlignment(wnd: pUG_WINDOW;  id: UG_U8;  align: UG_U8): UG_RESULT; 
-
-function UG_TextboxGetForeColor(wnd: pUG_WINDOW;  id: UG_U8): UG_COLOR; 
-function UG_TextboxGetBackColor(wnd: pUG_WINDOW;  id: UG_U8): UG_COLOR; 
-function UG_TextboxGetText(wnd: pUG_WINDOW;  id: UG_U8): pchar; 
-function UG_TextboxGetFont(wnd: pUG_WINDOW;  id: UG_U8): pUG_FONT; 
-function UG_TextboxGetHSpace(wnd: pUG_WINDOW;  id: UG_U8): UG_S8; 
-function UG_TextboxGetVSpace(wnd: pUG_WINDOW;  id: UG_U8): UG_S8; 
-function UG_TextboxGetAlignment(wnd: pUG_WINDOW;  id: UG_U8): UG_U8; 
 *)
-
-
+function UG_TextboxGetForeColor(const wnd: UG_WINDOW; id: UG_U8): UG_COLOR; 
+function UG_TextboxGetBackColor(const wnd: UG_WINDOW; id: UG_U8): UG_COLOR; 
+function UG_TextboxGetText(const wnd: UG_WINDOW; id: UG_U8): pchar; 
+function UG_TextboxGetFont(const wnd: UG_WINDOW; id: UG_U8): pUG_FONT; 
+function UG_TextboxGetHSpace(const wnd: UG_WINDOW; id: UG_U8): UG_S8; 
+function UG_TextboxGetVSpace(const wnd: UG_WINDOW; id: UG_U8): UG_S8; 
+function UG_TextboxGetAlignment(const wnd: UG_WINDOW; id: UG_U8): UG_U8; 
 
 
 (* -------------------------------------------------------------------------- *)
@@ -2739,6 +2736,111 @@ begin
     UG_TextboxShow:= UG_RESULT_FAIL;   
 end;
 
+(* Text box getters *)
+function UG_TextboxGetForeColor(const wnd: UG_WINDOW; id: UG_U8): UG_COLOR; 
+var
+obj: pUG_OBJECT;
+txb: pUG_TEXTBOX;
+begin
+  obj:= _UG_SearchObject(wnd,OBJ_TYPE_TEXTBOX, id); 
+  if obj <> nil then
+  begin 
+    txb := pUG_TEXTBOX(obj^.data); 
+    UG_TextboxGetForeColor := txb^.fc; 
+  end
+  else 
+    UG_TextboxGetForeColor:= C_BLACK; 
+end;
+
+function UG_TextboxGetBackColor(const wnd: UG_WINDOW;  id: UG_U8): UG_COLOR; 
+var
+obj: pUG_OBJECT;
+txb: pUG_TEXTBOX;
+begin
+  obj:= _UG_SearchObject(wnd,OBJ_TYPE_TEXTBOX,id); 
+  if obj<>nil then
+  begin 
+    txb:= pUG_TEXTBOX(obj^.data); 
+    UG_TextboxGetBackColor:= txb^.bc; 
+  end
+  else
+    UG_TextboxGetBackColor:= C_BLACK; 
+end;
+
+function UG_TextboxGetText(const wnd: UG_WINDOW;  id: UG_U8): pchar; 
+var
+obj: pUG_OBJECT;
+txb: pUG_TEXTBOX;
+begin
+  obj:= _UG_SearchObject(wnd,OBJ_TYPE_TEXTBOX,id); 
+  if obj<> nil then
+  begin 
+    txb:= pUG_TEXTBOX(obj^.data); 
+    UG_TextboxGetText:= txb^.str; 
+  end
+  else
+    UG_TextboxGetText:= nil; 
+end;
+
+function UG_TextboxGetFont(const wnd: UG_WINDOW;  id: UG_U8): pUG_FONT; 
+var
+obj: pUG_OBJECT;
+txb: pUG_TEXTBOX;
+begin
+  obj:= _UG_SearchObject(wnd,OBJ_TYPE_TEXTBOX,id); 
+  if obj<>nil then
+  begin 
+    txb:= pUG_TEXTBOX(obj^.data); 
+    UG_TextboxGetFont:= txb^.font; 
+  end
+  else
+    UG_TextboxGetFont:= nil; 
+end;
+
+function UG_TextboxGetHSpace(const wnd: UG_WINDOW;  id: UG_U8): UG_S8; 
+var
+obj: pUG_OBJECT;
+txb: pUG_TEXTBOX;
+begin
+  obj:= _UG_SearchObject(wnd,OBJ_TYPE_TEXTBOX,id); 
+  if obj<>nil then
+  begin 
+    txb:= pUG_TEXTBOX(obj^.data); 
+    UG_TextboxGetHSpace:= txb^.h_space; 
+  end
+  else
+    UG_TextboxGetHSpace:= 0; 
+end;
+
+function UG_TextboxGetVSpace(const wnd: UG_WINDOW;  id: UG_U8): UG_S8; 
+var
+obj: pUG_OBJECT;
+txb: pUG_TEXTBOX;
+begin
+  obj:= _UG_SearchObject(wnd,OBJ_TYPE_TEXTBOX,id); 
+  if obj<>nil  then
+  begin 
+    txb:= pUG_TEXTBOX(obj^.data); 
+    UG_TextboxGetVSpace:= txb^.v_space; 
+  end
+  else
+    UG_TextboxGetVSpace:= 0; 
+end;
+
+function UG_TextboxGetAlignment(const wnd: UG_WINDOW;  id: UG_U8): UG_U8; 
+var
+obj: pUG_OBJECT;
+txb: pUG_TEXTBOX;
+begin
+  obj:= _UG_SearchObject(wnd,OBJ_TYPE_TEXTBOX,id); 
+  if obj<>nil  then
+  begin 
+    txb:= pUG_TEXTBOX(obj^.data); 
+    UG_TextboxGetAlignment:= txb^.align; 
+  end
+  else
+    UG_TextboxGetAlignment:= 0; 
+end;
 
 
 (* -------------------------------------------------------------------------- *)
