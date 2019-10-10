@@ -684,13 +684,10 @@ const
 
 function UG_TextboxCreate(const wnd: UG_WINDOW; var txb: UG_TEXTBOX;
   id: UG_U8; xs, ys: UG_S16; xe, ye: UG_S16): UG_RESULT;
-(*
-function UG_TextboxDelete(wnd: pUG_WINDOW;  id: UG_U8): UG_RESULT; 
-*)
+function UG_TextboxDelete(const wnd: UG_WINDOW; id: UG_U8): UG_RESULT;
 function UG_TextboxShow(const wnd: UG_WINDOW; id: UG_U8): UG_RESULT;
-(*
-function UG_TextboxHide(wnd: pUG_WINDOW;  id: UG_U8): UG_RESULT; 
-*)
+function UG_TextboxHide(const wnd: UG_WINDOW; id: UG_U8): UG_RESULT;
+
 function UG_TextboxSetForeColor(const wnd: UG_WINDOW; id: UG_U8;
   fc: UG_COLOR): UG_RESULT;
 function UG_TextboxSetBackColor(const wnd: UG_WINDOW; id: UG_U8;
@@ -710,10 +707,10 @@ function UG_TextboxGetHSpace(const wnd: UG_WINDOW; id: UG_U8): UG_S8;
 function UG_TextboxGetVSpace(const wnd: UG_WINDOW; id: UG_U8): UG_S8;
 function UG_TextboxGetAlignment(const wnd: UG_WINDOW; id: UG_U8): UG_U8;
 
-
 (* -------------------------------------------------------------------------- *)
 (* -- IMAGE OBJECT                                                         -- *)
 (* -------------------------------------------------------------------------- *)
+
 const
   (* Default image IDs *)
   IMG_ID_0 = OBJ_ID_0;
@@ -2738,6 +2735,21 @@ begin
   end
   else
     UG_TextboxShow := UG_RESULT_FAIL;
+end;
+
+function UG_TextboxHide(const wnd: UG_WINDOW; id: UG_U8): UG_RESULT;
+var
+  obj: pUG_OBJECT;
+begin
+  obj := _UG_SearchObject(wnd, OBJ_TYPE_TEXTBOX, id);
+  if obj <> nil then
+  begin
+    obj^.state := obj^.state and (not OBJ_STATE_VISIBLE);
+    obj^.state := obj^.state or OBJ_STATE_UPDATE;
+    UG_TextboxHide := UG_RESULT_OK;
+  end
+  else
+    UG_TextboxHide := UG_RESULT_FAIL;
 end;
 
 (* Text box setters *)
