@@ -2,6 +2,7 @@ program mgtest;
 
 {$ifdef FPC}{$mode tp}{$endif}
 {$ifdef VER70}{$X+}{$F+}{$endif}
+{$I UG_CFG.inc}
 
 uses
   UG_TYPES, UG_FONTS, UG,
@@ -16,14 +17,18 @@ uses
 
 var
   gui: UG_GUI;
-  grmode, grdriver: smallint;
+  grmode, grdriver: integer;
   x, y: integer;
-  palSize: smallint;
+  palSize: integer;
   ch: Char;
 
   ugWnd: UG_WINDOW;
+  {$ifdef UG_USE_BTN}
   ugBtn: UG_BUTTON;
+  {$endif}
+  {$ifdef UG_USE_TXB}
   ugTbox: UG_TEXTBOX;
+  {$endif}
   ugObj: array[0..19] of UG_OBJECT;
 
   ugWndReg: UG_WINDOW;
@@ -95,8 +100,8 @@ begin
 *)
   UG_ConsoleSetArea(getmaxx div 2, getmaxy div 2, getmaxx - 2, getmaxy - 2);
 
-  UG_ConsoleSetForecolor(white);
-  UG_ConsoleSetBackcolor(black);
+  UG_ConsoleSetForecolor(black);
+  UG_ConsoleSetBackcolor(white);
 
   UG_ConsolePutString('High Voltage' + #10);
   UG_ConsolePutString('Rebooting...' + #10);
@@ -106,11 +111,10 @@ begin
   ch := ReadKey();
   {$endif}
   {$ifdef VER70}
-  Read(ch);
+  ReadLn;
   {$endif}
 
-  if UG_WindowCreate(ugWnd, @ugObj[0], 20, WndCallBack) = UG_RESULT_FAIL then
-    halt;
+  UG_WindowCreate(ugWnd, @ugObj[0], 20, WndCallBack);
   UG_WindowSetTitleText(ugWnd, 'uGUI Demo Window');
   UG_WindowSetTitleTextFont(ugWnd, @FONT_8X14);
 
@@ -123,17 +127,20 @@ begin
   UG_WindowResize(ugWnd, 40, 40, getmaxx - 40, getmaxy - 40);
   UG_WindowShow(ugWnd);
 
+{$ifdef UG_USE_BTN}
   UG_ButtonCreate(ugWnd, ugBtn, BTN_ID_0, 10, 50, 300, 100);
   UG_ButtonSetText(ugWnd, BTN_ID_0, 'Button');
   UG_ButtonSetForeColor(ugWnd, BTN_ID_0, white);
   UG_ButtonSetBackColor(ugWnd, BTN_ID_0, blue);
   (* UG_ButtonShow(ugWnd, BTN_ID_0); *)
+{$endif}
 
+{$ifdef UG_USE_TXB}
   UG_TextboxCreate(ugWnd, ugTbox, TXB_ID_0, 10, 200, 600, 300);
   UG_TextboxSetForeColor(ugWnd, TXB_ID_0, blue);
   UG_TextboxSetBackColor(ugWnd, TXB_ID_0, white);
   UG_TextboxSetText(ugWnd, TXB_ID_0, 'UG Text Box');
-
+{$endif}
   UG_WindowShow(ugWnd);
   UG_Update;
 
@@ -141,11 +148,10 @@ begin
   ch := ReadKey();
   {$endif}
   {$ifdef VER70}
-  Read(ch);
+  ReadLn;
   {$endif}
 
-  if UG_WindowCreate(ugWndReg, @ugObjReg[0], 20, WndCallBack) = UG_RESULT_FAIL then
-    Halt;
+  UG_WindowCreate(ugWndReg, @ugObjReg[0], 20, WndCallBack);
   UG_WindowSetTitleText(ugWndReg, 'Registers Window');
   UG_WindowSetTitleTextFont(ugWndReg, @FONT_8X14);
 
@@ -165,34 +171,34 @@ begin
   WriteLn(UG_WindowGetXStart(ugWnd), ',', UG_WindowGetYStart(ugWnd), ',',
     UG_WindowGetXEnd(ugWnd), ',', UG_WindowGetYEnd(ugWnd));
   *)
-  {$ifdef FPC}
+{$ifdef FPC}
   ch := ReadKey();
-  {$endif}
-  {$ifdef VER70}
-  Read(ch);
-  {$endif}
+{$endif}
+{$ifdef VER70}
+  ReadLn;
+{$endif}
 
   UG_WindowShow(ugWnd);
   UG_WindowAlert(ugWnd);
   UG_Update;
 
-  {$ifdef FPC}
+{$ifdef FPC}
   ch := ReadKey();
-  {$endif}
-  {$ifdef VER70}
-  Read(ch);
-  {$endif}
+{$endif}
+{$ifdef VER70}
+  ReadLn;
+{$endif}
 
   UG_WindowShow(ugWndReg);
   UG_WindowAlert(ugWndReg);
   UG_Update;
 
-  {$ifdef FPC}
+{$ifdef FPC}
   ch := ReadKey();
-  {$endif}
-  {$ifdef VER70}
-  Read(ch);
-  {$endif}
+{$endif}
+{$ifdef VER70}
+  ReadLn;
+{$endif}
 
   CloseGraph;
 end.

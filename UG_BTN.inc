@@ -1,6 +1,11 @@
-(* -------------------------------------------------------------------------- *)
-(* -- BUTTON FUNCTIONS                                                     -- *)
-(* -------------------------------------------------------------------------- *)
+(*
+unit UG_BUTTONS;
+
+interface
+
+implementation
+*)
+
 const
 {$ifdef USE_COLOR_RGB888}
   pal_button_pressed: array [0..11] of UG_COLOR =
@@ -17,6 +22,7 @@ const
     ($632C, $632C, $632C, $632C, $9D13, $9D13, $9D13, $9D13, $EF7D, $EF7D, $EF7D, $EF7D);
   pal_button_released: array [0..11] of UG_COLOR =
     ($632C, $632C, $632C, $632C, $FFFF, $FFFF, $6B4D, $6B4D, $E71C, $E71C, $9D13, $9D13);
+
 {$endif}
 
 procedure _UG_ButtonUpdate(wnd: PUG_WINDOW; obj: PUG_OBJECT);
@@ -129,10 +135,10 @@ begin
           (* 3D *)
           if (btn^.state and BTN_STATE_PRESSED) <> 0 then
             _UG_DrawObjectFrame(obj^.a_abs.xs, obj^.a_abs.ys, obj^.a_abs.xe,
-              obj^.a_abs.ye, pal_button_pressed)
+              obj^.a_abs.ye, @pal_button_pressed)
           else
             _UG_DrawObjectFrame(obj^.a_abs.xs, obj^.a_abs.ys, obj^.a_abs.xe,
-              obj^.a_abs.ye, pal_button_released)
+              obj^.a_abs.ye, @pal_button_released)
         else
         (* 2D *)
         if (btn^.state and BTN_STATE_PRESSED) <> 0 then
@@ -161,7 +167,7 @@ begin
     UG_ButtonCreate := UG_RESULT_FAIL;
     exit;
   end;
-  
+
   (* Initialize object-specific parameters *)
   btn.state := BTN_STATE_RELEASED;
   btn.bc := wnd.bc;
@@ -175,7 +181,7 @@ begin
   else
     btn.font := nil;
   btn.str := '-';
-  
+
   (* Initialize standard object parameters *)
   obj^.update := _UG_ButtonUpdate;
   obj^.touch_state := OBJ_TOUCH_STATE_INIT;
@@ -211,11 +217,12 @@ begin
   obj := _UG_SearchObject(wnd, OBJ_TYPE_BUTTON, id);
   if obj <> nil then
   begin
-    obj^.state := obj^.state or (OBJ_STATE_VISIBLE or OBJ_STATE_UPDATE or OBJ_STATE_REDRAW);
+    obj^.state := obj^.state or (OBJ_STATE_VISIBLE or OBJ_STATE_UPDATE or
+      OBJ_STATE_REDRAW);
     UG_ButtonShow := UG_RESULT_OK;
   end
   else
-    UG_ButtonShow := UG_RESULT_FAIL
+    UG_ButtonShow := UG_RESULT_FAIL;
 end;
 
 function UG_ButtonHide(const wnd: UG_WINDOW; id: UG_U8): UG_RESULT;
@@ -235,7 +242,7 @@ begin
     UG_ButtonHide := UG_RESULT_OK;
   end
   else
-    UG_ButtonHide := UG_RESULT_FAIL
+    UG_ButtonHide := UG_RESULT_FAIL;
 end;
 
 (* Button setters *)
@@ -255,7 +262,7 @@ begin
     UG_ButtonSetForeColor := UG_RESULT_OK;
   end
   else
-    UG_ButtonSetForeColor := UG_RESULT_FAIL
+    UG_ButtonSetForeColor := UG_RESULT_FAIL;
 end;
 
 function UG_ButtonSetBackColor(const wnd: UG_WINDOW; id: UG_U8;
@@ -273,7 +280,7 @@ begin
     UG_ButtonSetBackColor := UG_RESULT_OK;
   end
   else
-    UG_ButtonSetBackColor := UG_RESULT_FAIL
+    UG_ButtonSetBackColor := UG_RESULT_FAIL;
 end;
 
 function UG_ButtonSetAlternateForeColor(const wnd: UG_WINDOW; id: UG_U8;
@@ -291,7 +298,7 @@ begin
     UG_ButtonSetAlternateForeColor := UG_RESULT_OK;
   end
   else
-    UG_ButtonSetAlternateForeColor := UG_RESULT_FAIL
+    UG_ButtonSetAlternateForeColor := UG_RESULT_FAIL;
 end;
 
 function UG_ButtonSetAlternateBackColor(const wnd: UG_WINDOW; id: UG_U8;
@@ -309,7 +316,7 @@ begin
     UG_ButtonSetAlternateBackColor := UG_RESULT_OK;
   end
   else
-    UG_ButtonSetAlternateBackColor := UG_RESULT_FAIL
+    UG_ButtonSetAlternateBackColor := UG_RESULT_FAIL;
 end;
 
 function UG_ButtonSetText(const wnd: UG_WINDOW; id: UG_U8; str: PChar): UG_RESULT;
@@ -326,7 +333,7 @@ begin
     UG_ButtonSetText := UG_RESULT_OK;
   end
   else
-    UG_ButtonSetText := UG_RESULT_FAIL
+    UG_ButtonSetText := UG_RESULT_FAIL;
 end;
 
 function UG_ButtonSetFont(const wnd: UG_WINDOW; id: UG_U8; font: PUG_FONT): UG_RESULT;
@@ -343,7 +350,7 @@ begin
     UG_ButtonSetFont := UG_RESULT_OK;
   end
   else
-    UG_ButtonSetFont := UG_RESULT_FAIL
+    UG_ButtonSetFont := UG_RESULT_FAIL;
 end;
 
 function UG_ButtonSetStyle(const wnd: UG_WINDOW; id: UG_U8; style: UG_U8): UG_RESULT;
@@ -356,8 +363,9 @@ begin
   begin
     btn := PUG_BUTTON(obj^.Data);
     (* Select color scheme *)
-    btn^.style := btn^.style and (not (BTN_STYLE_USE_ALTERNATE_COLORS or
-      BTN_STYLE_TOGGLE_COLORS or BTN_STYLE_NO_BORDERS or BTN_STYLE_NO_FILL));
+    btn^.style := btn^.style and
+      (not (BTN_STYLE_USE_ALTERNATE_COLORS or BTN_STYLE_TOGGLE_COLORS or
+      BTN_STYLE_NO_BORDERS or BTN_STYLE_NO_FILL));
     btn^.state := btn^.state or BTN_STATE_ALWAYS_REDRAW;
     if (style and BTN_STYLE_NO_BORDERS) <> 0 then
       btn^.style := btn^.style or BTN_STYLE_NO_BORDERS;
@@ -381,7 +389,7 @@ begin
     UG_ButtonSetStyle := UG_RESULT_OK;
   end
   else
-    UG_ButtonSetStyle := UG_RESULT_FAIL
+    UG_ButtonSetStyle := UG_RESULT_FAIL;
 end;
 
 function UG_ButtonSetHSpace(const wnd: UG_WINDOW; id: UG_U8; hs: UG_S8): UG_RESULT;
@@ -398,7 +406,7 @@ begin
     UG_ButtonSetHSpace := UG_RESULT_OK;
   end
   else
-    UG_ButtonSetHSpace := UG_RESULT_FAIL
+    UG_ButtonSetHSpace := UG_RESULT_FAIL;
 end;
 
 function UG_ButtonSetVSpace(const wnd: UG_WINDOW; id: UG_U8; vs: UG_S8): UG_RESULT;
@@ -415,7 +423,7 @@ begin
     UG_ButtonSetVSpace := UG_RESULT_OK;
   end
   else
-    UG_ButtonSetVSpace := UG_RESULT_FAIL
+    UG_ButtonSetVSpace := UG_RESULT_FAIL;
 end;
 
 function UG_ButtonSetAlignment(const wnd: UG_WINDOW; id: UG_U8;
@@ -433,7 +441,7 @@ begin
     UG_ButtonSetAlignment := UG_RESULT_OK;
   end
   else
-    UG_ButtonSetAlignment := UG_RESULT_FAIL
+    UG_ButtonSetAlignment := UG_RESULT_FAIL;
 end;
 
 (* Button getters *)
@@ -588,3 +596,6 @@ begin
     UG_ButtonGetAlignment := 0;
 end;
 
+(*
+end.
+*)

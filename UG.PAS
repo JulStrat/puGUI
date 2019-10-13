@@ -450,11 +450,7 @@ function UG_WindowGetInnerWidth(const wnd: UG_WINDOW): UG_S16;
 function UG_WindowGetOuterWidth(const wnd: UG_WINDOW): UG_S16;
 function UG_WindowGetInnerHeight(const wnd: UG_WINDOW): UG_S16;
 function UG_WindowGetOuterHeight(const wnd: UG_WINDOW): UG_S16;
-
-(* -------------------------------------------------------------------------- *)
-(* -- BUTTON OBJECT                                                        -- *)
-(* -------------------------------------------------------------------------- *)
-(* Button structure *)
+{$ifdef UG_USE_BTN}
 type
   PUG_BUTTON = ^UG_BUTTON;
 
@@ -511,7 +507,6 @@ const
   (* Button events *)
   BTN_EVENT_CLICKED = OBJ_EVENT_CLICKED;
 
-(* Button functions *)
 function UG_ButtonCreate(const wnd: UG_WINDOW; var btn: UG_BUTTON;
   id: UG_U8; xs, ys: UG_S16; xe, ye: UG_S16): UG_RESULT;
 function UG_ButtonDelete(const wnd: UG_WINDOW; id: UG_U8): UG_RESULT;
@@ -542,106 +537,9 @@ function UG_ButtonGetStyle(const wnd: UG_WINDOW; id: UG_U8): UG_U8;
 function UG_ButtonGetHSpace(const wnd: UG_WINDOW; id: UG_U8): UG_S8;
 function UG_ButtonGetVSpace(const wnd: UG_WINDOW; id: UG_U8): UG_S8;
 function UG_ButtonGetAlignment(const wnd: UG_WINDOW; id: UG_U8): UG_U8;
+{$endif}
 
-(* -------------------------------------------------------------------------- *)
-(* -- CHECKBOX OBJECT                                                      -- *)
-(* -------------------------------------------------------------------------- *)
-(* Checkbox structure *)
-type
-  PUG_CHECKBOX = ^UG_CHECKBOX;
-
-  UG_CHECKBOX = record
-    state: UG_U8;
-    style: UG_U8;
-    fc: UG_COLOR;
-    bc: UG_COLOR;
-    afc: UG_COLOR;
-    abc: UG_COLOR;
-    font: PUG_FONT;
-    align: UG_U8;
-    h_space: UG_S8;
-    v_space: UG_S8;
-    str: PChar;
-    Checked: UG_U8;
-  end;
-
-(* Default checkbox IDs *)
-const
-  CHB_ID_0 = OBJ_ID_0;
-  CHB_ID_1 = OBJ_ID_1;
-  CHB_ID_2 = OBJ_ID_2;
-  CHB_ID_3 = OBJ_ID_3;
-  CHB_ID_4 = OBJ_ID_4;
-  CHB_ID_5 = OBJ_ID_5;
-  CHB_ID_6 = OBJ_ID_6;
-  CHB_ID_7 = OBJ_ID_7;
-  CHB_ID_8 = OBJ_ID_8;
-  CHB_ID_9 = OBJ_ID_9;
-  CHB_ID_10 = OBJ_ID_10;
-  CHB_ID_11 = OBJ_ID_11;
-  CHB_ID_12 = OBJ_ID_12;
-  CHB_ID_13 = OBJ_ID_13;
-  CHB_ID_14 = OBJ_ID_14;
-  CHB_ID_15 = OBJ_ID_15;
-  CHB_ID_16 = OBJ_ID_16;
-  CHB_ID_17 = OBJ_ID_17;
-  CHB_ID_18 = OBJ_ID_18;
-  CHB_ID_19 = OBJ_ID_19;
-
-  (* Checkbox states *)
-  CHB_STATE_RELEASED = 0 shl 0;
-  CHB_STATE_PRESSED = 1 shl 0;
-  CHB_STATE_ALWAYS_REDRAW = 1 shl 1;
-
-  (* Checkbox style *)
-  CHB_STYLE_2D = 0 shl 0;
-  CHB_STYLE_3D = 1 shl 0;
-  CHB_STYLE_TOGGLE_COLORS = 1 shl 1;
-  CHB_STYLE_USE_ALTERNATE_COLORS = 1 shl 2;
-  CHB_STYLE_NO_BORDERS = 1 shl 3;
-  CHB_STYLE_NO_FILL = 1 shl 4;
-
-  (* Checkbox events *)
-  CHB_EVENT_CLICKED = OBJ_EVENT_CLICKED;
-
-(* Checkbox functions *)
-(*
-function UG_CheckboxCreate(const wnd: UG_WINDOW; var btn: UG_CHECKBOX; id: UG_U8; xs, ys: UG_S16; xe, ye: UG_S16): UG_RESULT;
-function UG_CheckboxDelete(const wnd: UG_WINDOW; id: UG_U8): UG_RESULT;
-function UG_CheckboxShow(const wnd: UG_WINDOW; id: UG_U8): UG_RESULT;
-function UG_CheckboxHide(const wnd: UG_WINDOW; id: UG_U8): UG_RESULT;
-
-function UG_CheckboxSetCheched(const wnd: UG_WINDOW; id: UG_U8; ch: UG_U8): UG_RESULT;
-function UG_CheckboxSetForeColor(const wnd: UG_WINDOW; id: UG_U8; fc: UG_COLOR): UG_RESULT;
-function UG_CheckboxSetBackColor(const wnd: UG_WINDOW; id: UG_U8; bc: UG_COLOR): UG_RESULT;
-function UG_CheckboxSetAlternateForeColor(const wnd: UG_WINDOW; id: UG_U8; afc: UG_COLOR): UG_RESULT;
-function UG_CheckboxSetAlternateBackColor(const wnd: UG_WINDOW; id: UG_U8; abc: UG_COLOR): UG_RESULT;
-function UG_CheckboxSetText(const wnd: UG_WINDOW; id: UG_U8; str: pchar): UG_RESULT;
-
-function UG_CheckboxSetFont(const wnd: UG_WINDOW; id: UG_U8; font: PUG_FONT): UG_RESULT;
-function UG_CheckboxSetStyle(const wnd: UG_WINDOW; id: UG_U8; style: UG_U8): UG_RESULT;
-function UG_CheckboxSetHSpace(const wnd: UG_WINDOW; id: UG_U8; hs: UG_S8): UG_RESULT;
-function UG_CheckboxSetVSpace(const wnd: UG_WINDOW; id: UG_U8; vs: UG_S8): UG_RESULT;
-function UG_CheckboxSetAlignment(const wnd: UG_WINDOW; id: UG_U8; align: UG_U8): UG_RESULT;
-
-function UG_CheckboxGetChecked(const wnd: UG_WINDOW; id: UG_U8): UG_U8;
-function UG_CheckboxGetForeColor(const wnd: UG_WINDOW; id: UG_U8): UG_COLOR;
-function UG_CheckboxGetBackColor(const wnd: UG_WINDOW; id: UG_U8): UG_COLOR;
-function UG_CheckboxGetAlternateForeColor(const wnd: UG_WINDOW; id: UG_U8): UG_COLOR;
-function UG_CheckboxGetAlternateBackColor(const wnd: UG_WINDOW; id: UG_U8): UG_COLOR;
-function UG_CheckboxGetText(const wnd: UG_WINDOW; id: UG_U8): pchar;
-function UG_CheckboxGetFont(const wnd: UG_WINDOW; id: UG_U8): PUG_FONT;
-function UG_CheckboxGetStyle(const wnd: UG_WINDOW; id: UG_U8): UG_U8;
-function UG_CheckboxGetHSpace(const wnd: UG_WINDOW; id: UG_U8): UG_S8;
-function UG_CheckboxGetVSpace(const wnd: UG_WINDOW; id: UG_U8): UG_S8;
-function UG_CheckboxGetAlignment(const wnd: UG_WINDOW; id: UG_U8): UG_U8;
-*)
-
-
-
-(* -------------------------------------------------------------------------- *)
-(* -- TEXTBOX OBJECT                                                       -- *)
-(* -------------------------------------------------------------------------- *)
+{$ifdef UG_USE_TXB}
 (* Textbox structure *)
 type
   PUG_TEXTBOX = ^UG_TEXTBOX;
@@ -680,8 +578,6 @@ const
   TXB_ID_18 = OBJ_ID_18;
   TXB_ID_19 = OBJ_ID_19;
 
-(* Textbox functions *)
-
 function UG_TextboxCreate(const wnd: UG_WINDOW; var txb: UG_TEXTBOX;
   id: UG_U8; xs, ys: UG_S16; xe, ye: UG_S16): UG_RESULT;
 function UG_TextboxDelete(const wnd: UG_WINDOW; id: UG_U8): UG_RESULT;
@@ -706,6 +602,8 @@ function UG_TextboxGetFont(const wnd: UG_WINDOW; id: UG_U8): pUG_FONT;
 function UG_TextboxGetHSpace(const wnd: UG_WINDOW; id: UG_U8): UG_S8;
 function UG_TextboxGetVSpace(const wnd: UG_WINDOW; id: UG_U8): UG_S8;
 function UG_TextboxGetAlignment(const wnd: UG_WINDOW; id: UG_U8): UG_U8;
+
+{$endif}
 
 (* -------------------------------------------------------------------------- *)
 (* -- IMAGE OBJECT                                                         -- *)
@@ -2604,410 +2502,12 @@ begin
   UG_WindowGetOuterHeight := h;
 end;
 
+{$ifdef UG_USE_BTN}
 {$I UG_BTN.INC}
-
-(* -------------------------------------------------------------------------- *)
-(* -- TEXTBOX FUNCTIONS                                                    -- *)
-(* -------------------------------------------------------------------------- *)
-
-procedure _UG_TextboxUpdate(wnd: pUG_WINDOW; obj: pUG_OBJECT);
-var
-  txb: pUG_TEXTBOX;
-  a: UG_AREA;
-  txt: UG_TEXT;
-  (* Get object-specific data *)
-begin
-  txb := pUG_TEXTBOX(obj^.Data);
-  (* -------------------------------------------------- *)
-  (* Object touch section                               *)
-  (* -------------------------------------------------- *)
-
-  (* Textbox doesn't support touch *)
-
-  (* -------------------------------------------------- *)
-  (* Object update section                              *)
-  (* -------------------------------------------------- *)
-  if (obj^.state and OBJ_STATE_UPDATE) <> 0 then
-  begin
-    if (obj^.state and OBJ_STATE_VISIBLE) <> 0 then
-    begin
-      (* Full redraw necessary? *)
-      if (obj^.state and OBJ_STATE_REDRAW) <> 0 then
-      begin
-        UG_WindowGetArea(wnd^, a);
-        obj^.a_abs.xs := obj^.a_rel.xs + a.xs;
-        obj^.a_abs.ys := obj^.a_rel.ys + a.ys;
-        obj^.a_abs.xe := obj^.a_rel.xe + a.xs;
-        obj^.a_abs.ye := obj^.a_rel.ye + a.ys;
-        if (obj^.a_abs.ye >= wnd^.ye) or (obj^.a_abs.xe >= wnd^.xe) then
-          exit;
-        {$ifdef USE_PRERENDER_EVENT}
-        _UG_SendObjectPrerenderEvent(wnd, obj);
-        {$endif}
-        txt.bc := txb^.bc;
-        txt.fc := txb^.fc;
-        UG_FillFrame(obj^.a_abs.xs, obj^.a_abs.ys, obj^.a_abs.xe,
-          obj^.a_abs.ye, txt.bc);
-        txt.a.xs := obj^.a_abs.xs;
-        txt.a.ys := obj^.a_abs.ys;
-        txt.a.xe := obj^.a_abs.xe;
-        txt.a.ye := obj^.a_abs.ye;
-        txt.align := txb^.align;
-        txt.font := txb^.font;
-        txt.h_space := txb^.h_space;
-        txt.v_space := txb^.v_space;
-        txt.str := txb^.str;
-        (* Draw Textbox text *)
-        _UG_PutText(txt);
-        obj^.state := obj^.state and (not OBJ_STATE_REDRAW);
-        {$ifdef USE_POSTRENDER_EVENT}
-        _UG_SendObjectPostrenderEvent(wnd, obj);
-        {$endif}
-      end;
-    end
-    else
-    begin
-      UG_FillFrame(obj^.a_abs.xs, obj^.a_abs.ys, obj^.a_abs.xe, obj^.a_abs.ye, wnd^.bc);
-    end;
-    obj^.state := obj^.state and (not OBJ_STATE_UPDATE);
-  end;
-end;
-
-function UG_TextboxCreate(const wnd: UG_WINDOW; var txb: UG_TEXTBOX;
-  id: UG_U8; xs, ys: UG_S16; xe, ye: UG_S16): UG_RESULT;
-var
-  obj: pUG_OBJECT;
-begin
-  obj := _UG_GetFreeObject(wnd);
-  if obj = nil then
-  begin
-    UG_TextboxCreate := UG_RESULT_FAIL;
-    exit;
-  end;
-  (* Initialize object-specific parameters *)
-  txb.str := nil;
-  if gui <> nil then
-    txb.font := @(gui^.font)
-  else
-    txb.font := nil;
-  txb.style := 0;
-  txb.fc := wnd.fc;
-  txb.bc := wnd.bc;
-  txb.align := ALIGN_CENTER;
-  txb.h_space := 0;
-  txb.v_space := 0;
-  (* Initialize standard object parameters *)
-  obj^.update := _UG_TextboxUpdate;
-  obj^.touch_state := OBJ_TOUCH_STATE_INIT;
-  obj^.otype := OBJ_TYPE_TEXTBOX;
-  obj^.event := OBJ_EVENT_NONE;
-  obj^.a_rel.xs := xs;
-  obj^.a_rel.ys := ys;
-  obj^.a_rel.xe := xe;
-  obj^.a_rel.ye := ye;
-  obj^.a_abs.xs := -1;
-  obj^.a_abs.ys := -1;
-  obj^.a_abs.xe := -1;
-  obj^.a_abs.ye := -1;
-  obj^.id := id;
-  obj^.state := obj^.state or (OBJ_STATE_VISIBLE or OBJ_STATE_REDRAW or OBJ_STATE_VALID);
-  obj^.Data := @txb;
-  obj^.state := obj^.state and (not OBJ_STATE_FREE);
-  (* Update function: Do your thing! *)
-  UG_TextboxCreate := UG_RESULT_OK;
-end;
-
-function UG_TextboxDelete(const wnd: UG_WINDOW; id: UG_U8): UG_RESULT;
-begin
-  UG_TextboxDelete := _UG_DeleteObject(wnd, OBJ_TYPE_TEXTBOX, id);
-end;
-
-function UG_TextboxShow(const wnd: UG_WINDOW; id: UG_U8): UG_RESULT;
-var
-  obj: pUG_OBJECT;
-begin
-  obj := _UG_SearchObject(wnd, OBJ_TYPE_TEXTBOX, id);
-  if obj <> nil then
-  begin
-    obj^.state := obj^.state or (OBJ_STATE_VISIBLE);
-    obj^.state := obj^.state or (OBJ_STATE_UPDATE or OBJ_STATE_REDRAW);
-    UG_TextboxShow := UG_RESULT_OK;
-  end
-  else
-    UG_TextboxShow := UG_RESULT_FAIL;
-end;
-
-function UG_TextboxHide(const wnd: UG_WINDOW; id: UG_U8): UG_RESULT;
-var
-  obj: pUG_OBJECT;
-begin
-  obj := _UG_SearchObject(wnd, OBJ_TYPE_TEXTBOX, id);
-  if obj <> nil then
-  begin
-    obj^.state := obj^.state and (not OBJ_STATE_VISIBLE);
-    obj^.state := obj^.state or OBJ_STATE_UPDATE;
-    UG_TextboxHide := UG_RESULT_OK;
-  end
-  else
-    UG_TextboxHide := UG_RESULT_FAIL;
-end;
-
-(* Text box setters *)
-function UG_TextboxSetForeColor(const wnd: UG_WINDOW; id: UG_U8;
-  fc: UG_COLOR): UG_RESULT;
-var
-  obj: pUG_OBJECT;
-  txb: pUG_TEXTBOX;
-begin
-  obj := _UG_SearchObject(wnd, OBJ_TYPE_TEXTBOX, id);
-  if obj <> nil then
-  begin
-    txb := pUG_TEXTBOX(obj^.Data);
-    txb^.fc := fc;
-    obj^.state := obj^.state or (OBJ_STATE_UPDATE or OBJ_STATE_REDRAW);
-    UG_TextboxSetForeColor := UG_RESULT_OK;
-  end
-  else
-    UG_TextboxSetForeColor := UG_RESULT_FAIL;
-end;
-
-function UG_TextboxSetBackColor(const wnd: UG_WINDOW; id: UG_U8;
-  bc: UG_COLOR): UG_RESULT;
-var
-  obj: pUG_OBJECT;
-  txb: pUG_TEXTBOX;
-begin
-  obj := _UG_SearchObject(wnd, OBJ_TYPE_TEXTBOX, id);
-  if obj <> nil then
-  begin
-    txb := pUG_TEXTBOX(obj^.Data);
-    txb^.bc := bc;
-    obj^.state := obj^.state or (OBJ_STATE_UPDATE or OBJ_STATE_REDRAW);
-    UG_TextboxSetBackColor := UG_RESULT_OK;
-  end
-  else
-    UG_TextboxSetBackColor := UG_RESULT_FAIL;
-end;
-
-function UG_TextboxSetText(const wnd: UG_WINDOW; id: UG_U8; str: PChar): UG_RESULT;
-var
-  obj: pUG_OBJECT;
-  txb: pUG_TEXTBOX;
-begin
-  obj := _UG_SearchObject(wnd, OBJ_TYPE_TEXTBOX, id);
-  if obj <> nil then
-  begin
-    txb := pUG_TEXTBOX(obj^.Data);
-    txb^.str := str;
-    obj^.state := obj^.state or (OBJ_STATE_UPDATE or OBJ_STATE_REDRAW);
-    UG_TextboxSetText := UG_RESULT_OK;
-  end
-  else
-    UG_TextboxSetText := UG_RESULT_FAIL;
-end;
-
-
-function UG_TextboxSetFont(const wnd: UG_WINDOW; id: UG_U8; font: pUG_FONT): UG_RESULT;
-
-
-var
-  obj: pUG_OBJECT;
-  txb: pUG_TEXTBOX;
-begin
-  obj := _UG_SearchObject(wnd, OBJ_TYPE_TEXTBOX, id);
-  if obj <> nil then
-  begin
-    txb := pUG_TEXTBOX(obj^.Data);
-    txb^.font := font;
-    obj^.state := obj^.state or (OBJ_STATE_UPDATE or OBJ_STATE_REDRAW);
-    UG_TextboxSetFont := UG_RESULT_OK;
-  end
-  else
-    UG_TextboxSetFont := UG_RESULT_FAIL;
-end;
-
-
-function UG_TextboxSetHSpace(const wnd: UG_WINDOW; id: UG_U8; hs: UG_S8): UG_RESULT;
-var
-  obj: pUG_OBJECT;
-  txb: pUG_TEXTBOX;
-begin
-  obj := _UG_SearchObject(wnd, OBJ_TYPE_TEXTBOX, id);
-  if obj <> nil then
-  begin
-    txb := pUG_TEXTBOX(obj^.Data);
-    txb^.h_space := hs;
-    obj^.state := obj^.state or (OBJ_STATE_UPDATE or OBJ_STATE_REDRAW);
-    UG_TextboxSetHSpace := UG_RESULT_OK;
-  end
-  else
-    UG_TextboxSetHSpace := UG_RESULT_FAIL;
-end;
-
-
-function UG_TextboxSetVSpace(const wnd: UG_WINDOW; id: UG_U8; vs: UG_S8): UG_RESULT;
-var
-  obj: pUG_OBJECT;
-  txb: pUG_TEXTBOX;
-begin
-  obj := _UG_SearchObject(wnd, OBJ_TYPE_TEXTBOX, id);
-  if obj <> nil then
-  begin
-    txb := pUG_TEXTBOX(obj^.Data);
-    txb^.v_space := vs;
-    obj^.state := obj^.state or (OBJ_STATE_UPDATE or OBJ_STATE_REDRAW);
-    UG_TextboxSetVSpace := UG_RESULT_OK;
-  end
-  else
-    UG_TextboxSetVSpace := UG_RESULT_FAIL;
-end;
-
-
-function UG_TextboxSetAlignment(const wnd: UG_WINDOW; id: UG_U8;
-  align: UG_U8): UG_RESULT;
-var
-  obj: pUG_OBJECT;
-  txb: pUG_TEXTBOX;
-begin
-  obj := _UG_SearchObject(wnd, OBJ_TYPE_TEXTBOX, id);
-  if obj <> nil then
-  begin
-    txb := pUG_TEXTBOX(obj^.Data);
-    txb^.align := align;
-    obj^.state := obj^.state or (OBJ_STATE_UPDATE or OBJ_STATE_REDRAW);
-    UG_TextboxSetAlignment := UG_RESULT_OK;
-  end
-  else
-    UG_TextboxSetAlignment := UG_RESULT_FAIL;
-end;
-
-(* Text box getters *)
-function UG_TextboxGetForeColor(const wnd: UG_WINDOW; id: UG_U8): UG_COLOR;
-var
-  obj: pUG_OBJECT;
-  txb: pUG_TEXTBOX;
-begin
-  obj := _UG_SearchObject(wnd, OBJ_TYPE_TEXTBOX, id);
-  if obj <> nil then
-  begin
-    txb := pUG_TEXTBOX(obj^.Data);
-    UG_TextboxGetForeColor := txb^.fc;
-  end
-  else
-    UG_TextboxGetForeColor := C_BLACK;
-end;
-
-function UG_TextboxGetBackColor(const wnd: UG_WINDOW; id: UG_U8): UG_COLOR;
-var
-  obj: pUG_OBJECT;
-  txb: pUG_TEXTBOX;
-begin
-  obj := _UG_SearchObject(wnd, OBJ_TYPE_TEXTBOX, id);
-  if obj <> nil then
-  begin
-    txb := pUG_TEXTBOX(obj^.Data);
-    UG_TextboxGetBackColor := txb^.bc;
-  end
-  else
-    UG_TextboxGetBackColor := C_BLACK;
-end;
-
-function UG_TextboxGetText(const wnd: UG_WINDOW; id: UG_U8): PChar;
-var
-  obj: pUG_OBJECT;
-  txb: pUG_TEXTBOX;
-begin
-  obj := _UG_SearchObject(wnd, OBJ_TYPE_TEXTBOX, id);
-  if obj <> nil then
-  begin
-    txb := pUG_TEXTBOX(obj^.Data);
-    UG_TextboxGetText := txb^.str;
-  end
-  else
-    UG_TextboxGetText := nil;
-end;
-
-function UG_TextboxGetFont(const wnd: UG_WINDOW; id: UG_U8): pUG_FONT;
-var
-  obj: pUG_OBJECT;
-  txb: pUG_TEXTBOX;
-begin
-  obj := _UG_SearchObject(wnd, OBJ_TYPE_TEXTBOX, id);
-  if obj <> nil then
-  begin
-    txb := pUG_TEXTBOX(obj^.Data);
-    UG_TextboxGetFont := txb^.font;
-  end
-  else
-    UG_TextboxGetFont := nil;
-end;
-
-function UG_TextboxGetHSpace(const wnd: UG_WINDOW; id: UG_U8): UG_S8;
-var
-  obj: pUG_OBJECT;
-  txb: pUG_TEXTBOX;
-begin
-  obj := _UG_SearchObject(wnd, OBJ_TYPE_TEXTBOX, id);
-  if obj <> nil then
-  begin
-    txb := pUG_TEXTBOX(obj^.Data);
-    UG_TextboxGetHSpace := txb^.h_space;
-  end
-  else
-    UG_TextboxGetHSpace := 0;
-end;
-
-function UG_TextboxGetVSpace(const wnd: UG_WINDOW; id: UG_U8): UG_S8;
-var
-  obj: pUG_OBJECT;
-  txb: pUG_TEXTBOX;
-begin
-  obj := _UG_SearchObject(wnd, OBJ_TYPE_TEXTBOX, id);
-  if obj <> nil then
-  begin
-    txb := pUG_TEXTBOX(obj^.Data);
-    UG_TextboxGetVSpace := txb^.v_space;
-  end
-  else
-    UG_TextboxGetVSpace := 0;
-end;
-
-function UG_TextboxGetAlignment(const wnd: UG_WINDOW; id: UG_U8): UG_U8;
-var
-  obj: pUG_OBJECT;
-  txb: pUG_TEXTBOX;
-begin
-  obj := _UG_SearchObject(wnd, OBJ_TYPE_TEXTBOX, id);
-  if obj <> nil then
-  begin
-    txb := pUG_TEXTBOX(obj^.Data);
-    UG_TextboxGetAlignment := txb^.align;
-  end
-  else
-    UG_TextboxGetAlignment := 0;
-end;
-
-
-(* -------------------------------------------------------------------------- *)
-(* -- Checkbox FUNCTIONS ! TO DO !                                         -- *)
-(* -------------------------------------------------------------------------- *)
-const
-{$ifdef USE_COLOR_RGB888}
-  pal_checkbox_pressed: array [0..11] of UG_COLOR =
-    ($646464, $646464, $646464, $646464,  (* Frame 0 *)
-    $A0A0A0, $A0A0A0, $A0A0A0, $A0A0A0,   (* Frame 1 *)
-    $F0F0F0, $F0F0F0, $F0F0F0, $F0F0F0);  (* Frame 2 *)
-  pal_checkbox_released: array [0..11] of UG_COLOR =
-    ($646464, $646464, $646464, $646464,  (* Frame 0 *)
-    $FFFFFF, $FFFFFF, $696969, $696969,   (* Frame 1 *)
-    $E3E3E3, $E3E3E3, $A0A0A0, $A0A0A0);  (* Frame 2 *)
 {$endif}
-{$ifdef USE_COLOR_RGB565}
-  pal_checkbox_pressed: array [0..11] of UG_COLOR =
-    ($632C, $632C, $632C, $632C, $9D13, $9D13, $9D13, $9D13, $EF7D, $EF7D, $EF7D, $EF7D);
-  pal_checkbox_released: array [0..11] of UG_COLOR =
-    ($632C, $632C, $632C, $632C, $FFFF, $FFFF, $6B4D, $6B4D, $E71C, $E71C, $9D13, $9D13);
 
+{$ifdef UG_USE_TXB}
+{$I UG_TXB.INC}
 {$endif}
 
 (* -------------------------------------------------------------------------- *)
@@ -3056,6 +2556,7 @@ begin
 end;
 
 procedure _UG_ImageUpdate(wnd: PUG_WINDOW; obj: PUG_OBJECT);
+{$ifdef VER70}far;{$endif}
 var
   img: PUG_IMAGE;
   a: UG_AREA;
