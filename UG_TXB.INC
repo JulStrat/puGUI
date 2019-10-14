@@ -1,5 +1,5 @@
 (*
-unit UG_BUTTONS;
+unit UG_TXB;
 
 interface
 

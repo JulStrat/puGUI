@@ -7,7 +7,7 @@ program mgtest;
 uses
   UG_TYPES, UG_FONTS, UG,
 {$ifdef FPC}
-  PTCGRAPH, PTCCRT;
+  PTCGRAPH, PTCCRT, PTCMOUSE;
 {$endif}
 {$ifdef VER70}
   GRAPH, CRT;
@@ -18,7 +18,7 @@ uses
 var
   gui: UG_GUI;
   grmode, grdriver: integer;
-  x, y: integer;
+  mx, my, mbtn: LongInt;
   palSize: integer;
   ch: Char;
 
@@ -74,6 +74,7 @@ begin
   { DetectGraph(grdriver, grdriver); }
 {$ifdef FPC}
   initgraph(grdriver, grmode, '.');
+  if PTCMouse.InitMouse then PTCMouse.ShowMouse;
 {$endif}
 {$ifdef VER70}
   initgraph(grdriver, grmode, 'C:\TP7\BGI');
@@ -145,10 +146,23 @@ begin
   UG_Update;
 
   {$ifdef FPC}
-  ch := ReadKey();
+    while not PTCCrt.KeyPressed do
+    begin
+      //ch := PTCCrt.ReadKey();
+      //if (ch = 'q') or (ch = 'Q') then break;
+      if PTCMouse.LPressed then
+      begin
+        PTCMouse.GetMouseState(mx, my, mbtn);
+        UG_TouchUpdate(mx, my, TOUCH_STATE_PRESSED);
+      end
+      else
+        UG_TouchUpdate(-1 , -1, TOUCH_STATE_RELEASED );
+      UG_Update;
+    end;
+    ch := PTCCrt.ReadKey;
   {$endif}
   {$ifdef VER70}
-  ReadLn;
+    ReadLn;
   {$endif}
 
   UG_WindowCreate(ugWndReg, @ugObjReg[0], 20, WndCallBack);
@@ -165,19 +179,31 @@ begin
   UG_ImageCreate(ugWndReg, ugImg, IMG_ID_0, 300, 40, 0, 0);
   UG_ImageSetBMP(ugWndReg, IMG_ID_0, @logo);
   UG_WindowShow(ugWndReg);
-
   UG_Update;
+
   (*
   WriteLn(UG_WindowGetXStart(ugWnd), ',', UG_WindowGetYStart(ugWnd), ',',
     UG_WindowGetXEnd(ugWnd), ',', UG_WindowGetYEnd(ugWnd));
   *)
-{$ifdef FPC}
-  ch := ReadKey();
-{$endif}
-{$ifdef VER70}
-  ReadLn;
-{$endif}
+  {$ifdef FPC}
+    while not PTCCrt.KeyPressed do
+    begin
+      if PTCMouse.LPressed then
+      begin
+        PTCMouse.GetMouseState(mx, my, mbtn);
+        UG_TouchUpdate(mx, my, TOUCH_STATE_PRESSED);
+      end
+      else
+        UG_TouchUpdate(-1 , -1, TOUCH_STATE_RELEASED );
+      UG_Update;
+    end;
+    ch := PTCCrt.ReadKey;
+  {$endif}
+  {$ifdef VER70}
+    ReadLn;
+  {$endif}
 
+(*
   UG_WindowShow(ugWnd);
   UG_WindowAlert(ugWnd);
   UG_Update;
@@ -194,11 +220,23 @@ begin
   UG_Update;
 
 {$ifdef FPC}
-  ch := ReadKey();
+  while not PTCCrt.KeyPressed do
+  begin
+    if PTCMouse.LPressed then
+    begin
+      PTCMouse.GetMouseState(mx, my, mbtn);
+      UG_TouchUpdate(mx, my, TOUCH_STATE_PRESSED ) ;
+    end
+    else
+      UG_TouchUpdate(-1 , -1, TOUCH_STATE_RELEASED );
+
+    UG_Update;
+  end;
 {$endif}
 {$ifdef VER70}
   ReadLn;
 {$endif}
 
+*)
   CloseGraph;
 end.

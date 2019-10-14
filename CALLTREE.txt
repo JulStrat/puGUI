@@ -1,9 +1,13 @@
 UG_Update----
             |
             |---> _UG_WindowUpdate
-            |---> _UG_ProcessTouchData(var wnd: UG_WINDOW)  (Window touch processor, updates window objects touch state)
-            |---> _UG_UpdateObjects ----------> obj.update  (OBJECT CALLBACK)
-            |---> _UG_HandleEvents -----------> wnd.cb      (WINDOW CALLBACK) 
+            |
+            |---> _UG_ProcessTouchData(var wnd: UG_WINDOW)  (Window touch processor, 
+            |                                                 updates window objects touch state from gui^.touch)
+            |
+            |---> _UG_UpdateObjects ----------> obj.update  (OBJECT CALLBACK - CONTROL SPEC. INTERNAL UPDATE)
+            | 
+            |---> _UG_HandleEvents -----------> wnd.cb(msg) (USER DEFINED WINDOW CALLBACK) 
 
 UG_TouchUpdate------
 

@@ -34,4 +34,4 @@
 
 {$define UG_USE_BTN}
 {$define UG_USE_TXB}
-
+{$define UG_USE_IMG}
