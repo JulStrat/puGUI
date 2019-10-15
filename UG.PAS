@@ -1771,6 +1771,7 @@ begin
   _UG_PutChar(chr, x, y, fc, bc, gui^.font);
 end;
 
+(* ! P BUG ! CHECK ! *)
 procedure UG_ConsolePutString(str: PChar);
 var
   chr: char;

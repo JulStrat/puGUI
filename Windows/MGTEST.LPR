@@ -15,6 +15,9 @@ uses
 
 {$I logo.inc}
 
+{$I Tuffy_20X32.inc}
+{$I Tuffy_43X68.inc}
+
 var
   gui: UG_GUI;
   grmode, grdriver: integer;
@@ -73,28 +76,34 @@ begin
   grdriver := DETECT;
   { DetectGraph(grdriver, grdriver); }
 {$ifdef FPC}
+  grdriver := D16bit;
+  grmode := m800x600;
+//  grmode := m1024x768;
   initgraph(grdriver, grmode, '.');
-  if PTCMouse.InitMouse then PTCMouse.ShowMouse;
 {$endif}
 {$ifdef VER70}
   initgraph(grdriver, grmode, 'C:\TP7\BGI');
 {$endif}
-  SetWriteMode(CopyPut);
+//  SetWriteMode(CopyPut);
   palSize := GetPaletteSize;
   (* WriteLn('Palette size - ', palSize); *)
 
   UG_Init(gui, pset, getmaxx + 1, getmaxy + 1);
-  UG_DriverRegister(0, @DrawLine);
-  UG_DriverRegister(1, @FillFrame);
+//  UG_DriverRegister(0, @DrawLine);
+//  UG_DriverRegister(1, @FillFrame);
   UG_SetForecolor(white);
+  UG_SetForecolor(C_WHITE);
   UG_SetBackcolor(black);
 
   UG_FontSelect(@FONT_8X14);
   UG_PutString(100, 100, 'Hello, Pascal!');
   UG_FontSelect(@FONT_16X26);
-  UG_PutString(140, 140, 'Hello, Pascal!');
+  UG_FontSelect(@FONT_Tuffy_20X32);
+  //UG_PutString(140, 140, 'Hello, Pascal!');
+  UG_PutString(140, 140, 'Please, wait!');
+
 (*
-  UG_DrawLine(4, 10, 400, 10, white);
+  UG_DrawLine(0, 0, getmaxx, getmaxy, $F79E);
   UG_FillFrame(4, 200, 400, 300, blue);
   UG_DrawCircle(250, 400, 100, white);
   UG_FillCircle(250, 400, 80, white);
@@ -102,11 +111,15 @@ begin
   UG_ConsoleSetArea(getmaxx div 2, getmaxy div 2, getmaxx - 2, getmaxy - 2);
 
   UG_ConsoleSetForecolor(black);
-  UG_ConsoleSetBackcolor(white);
+  UG_ConsoleSetForecolor(C_BLUE);
 
-  UG_ConsolePutString('High Voltage' + #10);
-  UG_ConsolePutString('Rebooting...' + #10);
-  UG_ConsolePutString('Please, wait...');
+  UG_ConsoleSetBackcolor(white);
+  UG_ConsoleSetBackcolor(C_WHITE);
+//  UG_FontSelect(@FONT_Tuffy_20X32);
+//  UG_ConsolePutString('High Voltage' + #10);
+//  UG_ConsolePutString('Rebooting...' + #10);
+//  UG_ConsolePutString('Please, wait...');
+  UG_ConsolePutString('ai');
 
   {$ifdef FPC}
   ch := ReadKey();
@@ -120,26 +133,26 @@ begin
   UG_WindowSetTitleTextFont(ugWnd, @FONT_8X14);
 
   UG_WindowSetForeColor(ugWnd, black);
-  UG_WindowSetBackColor(ugWnd, green);
-  UG_WindowSetTitleTextColor(ugWnd, blue);
-  UG_WindowSetTitleColor(ugWnd, white);
+  UG_WindowSetBackColor(ugWnd, C_LIGHT_GRAY);
+  UG_WindowSetTitleTextColor(ugWnd, C_BLACK);
+  UG_WindowSetTitleColor(ugWnd, C_MOCCASIN);
 
   UG_WindowSetTitleTextHSpace(ugWnd, 10);
   UG_WindowResize(ugWnd, 40, 40, getmaxx - 40, getmaxy - 40);
   UG_WindowShow(ugWnd);
 
 {$ifdef UG_USE_BTN}
-  UG_ButtonCreate(ugWnd, ugBtn, BTN_ID_0, 10, 50, 300, 100);
-  UG_ButtonSetText(ugWnd, BTN_ID_0, 'Button');
-  UG_ButtonSetForeColor(ugWnd, BTN_ID_0, white);
-  UG_ButtonSetBackColor(ugWnd, BTN_ID_0, blue);
+  UG_ButtonCreate(ugWnd, ugBtn, BTN_ID_0, 10, 10, 200, 50);
+  UG_ButtonSetText(ugWnd, BTN_ID_0, 'Click Me !');
+  UG_ButtonSetForeColor(ugWnd, BTN_ID_0, C_BLACK);
+  UG_ButtonSetBackColor(ugWnd, BTN_ID_0, C_GRAY);
   (* UG_ButtonShow(ugWnd, BTN_ID_0); *)
 {$endif}
 
 {$ifdef UG_USE_TXB}
-  UG_TextboxCreate(ugWnd, ugTbox, TXB_ID_0, 10, 200, 600, 300);
-  UG_TextboxSetForeColor(ugWnd, TXB_ID_0, blue);
-  UG_TextboxSetBackColor(ugWnd, TXB_ID_0, white);
+  UG_TextboxCreate(ugWnd, ugTbox, TXB_ID_0, 10, 60, 200, 100);
+  UG_TextboxSetForeColor(ugWnd, TXB_ID_0, C_BLUE);
+  UG_TextboxSetBackColor(ugWnd, TXB_ID_0, C_GHOST_WHITE);
   UG_TextboxSetText(ugWnd, TXB_ID_0, 'UG Text Box');
 {$endif}
   UG_WindowShow(ugWnd);
@@ -170,9 +183,10 @@ begin
   UG_WindowSetTitleTextFont(ugWndReg, @FONT_8X14);
 
   UG_WindowSetForeColor(ugWndReg, black);
-  UG_WindowSetBackColor(ugWndReg, white);
-  UG_WindowSetTitleTextColor(ugWndReg, blue);
-  UG_WindowSetTitleColor(ugWndReg, white);
+  UG_WindowSetBackColor(ugWndReg, C_LIGHT_GRAY);
+
+  UG_WindowSetTitleTextColor(ugWndReg, C_BLACK);
+  UG_WindowSetTitleColor(ugWndReg, C_MOCCASIN);
 
   UG_WindowResize(ugWndReg, 140, 140, getmaxx - 140, getmaxy - 140);
 

@@ -6,11 +6,8 @@ interface
 implementation
 *)
 
-(* -------------------------------------------------------------------------- *)
-(* -- Image functions                                                      -- *)
-(* -------------------------------------------------------------------------- *)
-
 (* ? Internal ? *)
+(* ! REVIEW ! *)
 procedure UG_DrawBMP(xp, yp: UG_S16; bmp: PUG_BMP);
 var
   x, y, xs: UG_S16;
@@ -36,15 +33,19 @@ begin
     begin
       tmp := p^;
       Inc(p);
+      {
       (* Convert RGB565 to RGB888 *)
       r := (tmp shr 11) and $1F;
-      r := r shl (3);
+      r := r shl 3;
       g := (tmp shr 5) and $3F;
-      g := g shl (2);
-      b := (tmp) and $1F;
-      b := b shl (3);
-      c := UG_COLOR(r shl 16) or UG_COLOR(g shl 8) or UG_COLOR(b);
+      g := g shl 2;
+      b := tmp and $1F;
+      b := b shl 3;
+      (* c := UG_COLOR(r shl 16) or UG_COLOR(g shl 8) or UG_COLOR(b); *)
+      c := (UG_COLOR(r) shl 16) or (UG_COLOR(g) shl 8) or UG_COLOR(b);
       UG_DrawPixel(xp, yp, c);
+      }
+      UG_DrawPixel(xp, yp, tmp);
       Inc(xp);
     end;
     Inc(yp);
@@ -52,7 +53,7 @@ begin
 end;
 
 procedure _UG_ImageUpdate(wnd: PUG_WINDOW; obj: PUG_OBJECT);
-{$ifdef VER70}far;{$endif}
+{$ifdef VER70} far;{$endif}
 var
   img: PUG_IMAGE;
   a: UG_AREA;
@@ -141,14 +142,14 @@ var
   obj: PUG_OBJECT;
 begin
   obj := _UG_SearchObject(wnd, OBJ_TYPE_IMAGE, id);
-  if obj = nil then
+  if obj <> nil then
   begin
+    obj^.state := obj^.state or (OBJ_STATE_VISIBLE or OBJ_STATE_UPDATE or
+      OBJ_STATE_REDRAW);
+    UG_ImageShow := UG_RESULT_OK;
+  end
+  else
     UG_ImageShow := UG_RESULT_FAIL;
-    exit;
-  end;
-  obj^.state := obj^.state or (OBJ_STATE_VISIBLE);
-  obj^.state := obj^.state or (OBJ_STATE_UPDATE or OBJ_STATE_REDRAW);
-  UG_ImageShow := UG_RESULT_OK;
 end;
 
 function UG_ImageHide(const wnd: UG_WINDOW; id: UG_U8): UG_RESULT;
@@ -156,14 +157,14 @@ var
   obj: PUG_OBJECT;
 begin
   obj := _UG_SearchObject(wnd, OBJ_TYPE_IMAGE, id);
-  if obj = nil then
+  if obj <> nil then
   begin
+    obj^.state := obj^.state and (not OBJ_STATE_VISIBLE);
+    obj^.state := obj^.state or OBJ_STATE_UPDATE;
+    UG_ImageHide := UG_RESULT_OK;
+  end
+  else
     UG_ImageHide := UG_RESULT_FAIL;
-    exit;
-  end;
-  obj^.state := obj^.state and (not OBJ_STATE_VISIBLE);
-  obj^.state := obj^.state or (OBJ_STATE_UPDATE);
-  UG_ImageHide := UG_RESULT_OK;
 end;
 
 function UG_ImageSetBMP(const wnd: UG_WINDOW; id: UG_U8; bmp: PUG_BMP): UG_RESULT;
@@ -172,16 +173,16 @@ var
   img: PUG_IMAGE;
 begin
   obj := _UG_SearchObject(wnd, OBJ_TYPE_IMAGE, id);
-  if obj = nil then
+  if obj <> nil then
   begin
+    img := PUG_IMAGE(obj^.Data);
+    img^.img := PUG_U8(bmp);
+    img^.itype := IMG_TYPE_BMP;
+    obj^.state := obj^.state or (OBJ_STATE_UPDATE or OBJ_STATE_REDRAW);
+    UG_ImageSetBMP := UG_RESULT_OK;
+  end
+  else
     UG_ImageSetBMP := UG_RESULT_FAIL;
-    exit;
-  end;
-  img := PUG_IMAGE(obj^.Data);
-  img^.img := PUG_U8(bmp);
-  img^.itype := IMG_TYPE_BMP;
-  obj^.state := obj^.state or (OBJ_STATE_UPDATE or OBJ_STATE_REDRAW);
-  UG_ImageSetBMP := UG_RESULT_OK;
 end;
 
 (*
