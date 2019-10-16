@@ -98,9 +98,9 @@ begin
   UG_FontSelect(@FONT_8X14);
   UG_PutString(100, 100, 'Hello, Pascal!');
   UG_FontSelect(@FONT_16X26);
-  UG_FontSelect(@FONT_Tuffy_20X32);
-  //UG_PutString(140, 140, 'Hello, Pascal!');
-  UG_PutString(140, 140, 'Please, wait!');
+
+(*  UG_FontSelect(@FONT_Tuffy_20X32); *)
+  UG_PutString(140, 140, 'Hello, Pascal!');
 
 (*
   UG_DrawLine(0, 0, getmaxx, getmaxy, $F79E);
@@ -108,18 +108,17 @@ begin
   UG_DrawCircle(250, 400, 100, white);
   UG_FillCircle(250, 400, 80, white);
 *)
-  UG_ConsoleSetArea(getmaxx div 2, getmaxy div 2, getmaxx - 2, getmaxy - 2);
+  UG_ConsoleSetArea(0, 3 * (getmaxy div 4), getmaxx - 2, getmaxy - 2);
 
   UG_ConsoleSetForecolor(black);
   UG_ConsoleSetForecolor(C_BLUE);
 
   UG_ConsoleSetBackcolor(white);
   UG_ConsoleSetBackcolor(C_WHITE);
-//  UG_FontSelect(@FONT_Tuffy_20X32);
-//  UG_ConsolePutString('High Voltage' + #10);
-//  UG_ConsolePutString('Rebooting...' + #10);
-//  UG_ConsolePutString('Please, wait...');
-  UG_ConsolePutString('ai');
+  UG_FontSelect(@FONT_Tuffy_20X32);
+  UG_ConsolePutString('High Voltage' + #10);
+  UG_ConsolePutString('Rebooting...' + #10);
+  UG_ConsolePutString('Please, wait...');
 
   {$ifdef FPC}
   ch := ReadKey();

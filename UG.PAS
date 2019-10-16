@@ -242,7 +242,8 @@ type
     id: UG_U8;
     sub_id: UG_U8;
     event: UG_U8;
-    src: PUG_U8;
+    //src: PUG_U8;
+    src: Pointer;
   end;
 
   (* -------------------------------------------------------------------------------- *)
@@ -385,7 +386,7 @@ procedure UG_DrawHLine(x1, x2, y: UG_S16; c: UG_COLOR);
 procedure UG_DrawVLine(y1, y2, x: UG_S16; c: UG_COLOR);
 procedure UG_DrawLine(x1, y1: UG_S16; x2, y2: UG_S16; c: UG_COLOR);
 procedure UG_PutString(x, y: UG_S16; str: PChar);
-procedure UG_PutChar(chr: char; x, y: UG_S16; fc: UG_COLOR; bc: UG_COLOR);
+procedure UG_PutChar(chr: char; x, y: UG_S16; fc, bc: UG_COLOR);
 procedure UG_SetForecolor(c: UG_COLOR);
 procedure UG_SetBackcolor(c: UG_COLOR);
 function UG_GetXDim: UG_S16;
@@ -706,8 +707,7 @@ var
 (* -------------------------------------------------------------------------- *)
 (* -- INTERNAL FUNCTIONS                                                   -- *)
 (* -------------------------------------------------------------------------- *)
-procedure _UG_PutChar(chr: char; x, y: UG_S16; fc: UG_COLOR; bc: UG_COLOR;
-  const font: UG_FONT);
+procedure _UG_PutChar(chr: char; x, y: UG_S16; fc, bc: UG_COLOR; const font: UG_FONT);
 var
   i, j, k: UG_U16;
   xo, yo: UG_U16;
@@ -1270,7 +1270,7 @@ begin
     begin
       if obj^.event <> OBJ_EVENT_NONE then
       begin
-        msg.src := @obj;
+        msg.src := obj; (* make msg.src PUG_OBJECT ?*)
         msg.id := obj^.otype;
         msg.sub_id := obj^.id;
         msg.event := obj^.event;
@@ -1771,7 +1771,7 @@ begin
   _UG_PutChar(chr, x, y, fc, bc, gui^.font);
 end;
 
-(* ! P BUG ! CHECK ! *)
+(* ! PB ACK ! *)
 procedure UG_ConsolePutString(str: PChar);
 var
   chr: char;
@@ -1792,7 +1792,7 @@ begin
     else
       cw := gui^.font.char_width;
 
-    gui^.console.x_pos := gui^.console.x_pos + cw + gui^.char_h_space;
+    (* gui^.console.x_pos := gui^.console.x_pos + cw + gui^.char_h_space; *)
     if gui^.console.x_pos + cw > gui^.console.x_end then
     begin
       gui^.console.x_pos := gui^.console.x_start;
@@ -1808,6 +1808,9 @@ begin
     end;
     UG_PutChar(chr, gui^.console.x_pos, gui^.console.y_pos,
       gui^.console.fore_color, gui^.console.back_color);
+
+    gui^.console.x_pos := gui^.console.x_pos + cw + gui^.char_h_space;
+
     Inc(str);
   end;
 end;
@@ -1920,6 +1923,7 @@ begin
   UG_WindowCreate := UG_RESULT_OK;
 end;
 
+(* REWRITE *)
 function UG_WindowDelete(var wnd: UG_WINDOW): UG_RESULT;
 begin
   if @wnd = gui^.active_window then
@@ -1984,6 +1988,7 @@ begin
   end;
 end;
 
+(* REWRITE *)
 function UG_WindowResize(var wnd: UG_WINDOW; xs, ys: UG_S16; xe, ye: UG_S16): UG_RESULT;
 var
   pos: UG_S16;
@@ -2037,17 +2042,10 @@ var
   c: UG_COLOR;
 begin
   c := UG_WindowGetTitleTextColor(wnd);
-  if UG_WindowSetTitleTextColor(wnd, UG_WindowGetTitleColor(wnd)) = UG_RESULT_FAIL then
-  begin
+  if UG_WindowSetTitleTextColor(wnd, UG_WindowGetTitleColor(wnd)) = UG_RESULT_OK then
+    UG_WindowAlert := UG_WindowSetTitleColor(wnd, c);  
+  else  
     UG_WindowAlert := UG_RESULT_FAIL;
-    exit;
-  end;
-  if UG_WindowSetTitleColor(wnd, c) = UG_RESULT_FAIL then
-  begin
-    UG_WindowAlert := UG_RESULT_FAIL;
-    exit;
-  end;
-  UG_WindowAlert := UG_RESULT_OK;
 end;
 
 (* Windows setters *)
