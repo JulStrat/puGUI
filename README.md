@@ -4,8 +4,8 @@ Pascal mini GUI - port of Achim Döbler UGUI.
 
 ## Screenshots
 
-<img src="http://github.com/JulStrat/puGUI/s1.JPG">
+<img src="https://github.com/JulStrat/puGUI/blob/devop/s1.JPG">
 
-<img src="http://github.com/JulStrat/puGUI/s2.JPG">
+<img src="https://github.com/JulStrat/puGUI/blob/devop/s2.JPG">
 
-<img src="http://github.com/JulStrat/puGUI/s2.JPG">
+<img src="https://github.com/JulStrat/puGUI/blob/devop/s3.JPG">
