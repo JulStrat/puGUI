@@ -2043,7 +2043,7 @@ var
 begin
   c := UG_WindowGetTitleTextColor(wnd);
   if UG_WindowSetTitleTextColor(wnd, UG_WindowGetTitleColor(wnd)) = UG_RESULT_OK then
-    UG_WindowAlert := UG_WindowSetTitleColor(wnd, c);  
+    UG_WindowAlert := UG_WindowSetTitleColor(wnd, c)
   else  
     UG_WindowAlert := UG_RESULT_FAIL;
 end;
