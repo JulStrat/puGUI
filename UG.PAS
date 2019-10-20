@@ -1282,6 +1282,34 @@ begin
   end;
 end;
 
+{$ifdef USE_PRERENDER_EVENT}
+procedure _UG_SendObjectPrerenderEvent(wnd: pUG_WINDOW;  obj: pUG_OBJECT); 
+var
+  msg: UG_MESSAGE;
+begin
+  msg.event:= OBJ_EVENT_PRERENDER; 
+  msg.mtype:= MSG_TYPE_OBJECT; 
+  msg.id:= obj^.otype; 
+  msg.sub_id:= obj^.id; 
+  msg.src:= obj; 
+  wnd.cb(@msg); 
+end;
+{$endif}
+
+{$ifdef USE_POSTRENDER_EVENT}
+procedure _UG_SendObjectPostrenderEvent(wnd: pUG_WINDOW;  obj: pUG_OBJECT); 
+var
+  msg: UG_MESSAGE; 
+begin
+  msg.event:= OBJ_EVENT_POSTRENDER; 
+  msg.mtype:= MSG_TYPE_OBJECT; 
+  msg.id:= obj^.otype; 
+  msg.sub_id:= obj^.id; 
+  msg.src:= obj; 
+  wnd.cb(@msg); 
+end;
+{$endif}
+
 (* CLASSIC *)
 
 function UG_Init(var g: UG_GUI; p: UG_PSET; x, y: UG_S16): UG_S16;

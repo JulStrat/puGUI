@@ -28,6 +28,7 @@ var
   ugWnd: UG_WINDOW;
   {$ifdef UG_USE_BTN}
   ugBtn: UG_BUTTON;
+  ugBtn2: UG_BUTTON;
   {$endif}
   {$ifdef UG_USE_TXB}
   ugTbox: UG_TEXTBOX;
@@ -96,11 +97,9 @@ begin
   UG_SetBackcolor(black);
 
   UG_FontSelect(@FONT_8X14);
-  UG_PutString(100, 100, 'Hello, Pascal!');
+  UG_PutString(10, 100, 'Powered by Free Pascal. Font - FONT_8X14.');
   UG_FontSelect(@FONT_16X26);
-
-(*  UG_FontSelect(@FONT_Tuffy_20X32); *)
-  UG_PutString(140, 140, 'Hello, Pascal!');
+  UG_PutString(10, 140, 'Powered by Free Pascal. Font - FONT_16X26.');
 
 (*
   UG_DrawLine(0, 0, getmaxx, getmaxy, $F79E);
@@ -109,15 +108,14 @@ begin
   UG_FillCircle(250, 400, 80, white);
 *)
   UG_ConsoleSetArea(0, 3 * (getmaxy div 4), getmaxx - 2, getmaxy - 2);
-
-  UG_ConsoleSetForecolor(black);
   UG_ConsoleSetForecolor(C_BLUE);
-
-  UG_ConsoleSetBackcolor(white);
   UG_ConsoleSetBackcolor(C_WHITE);
   UG_FontSelect(@FONT_Tuffy_20X32);
+  UG_ConsolePutString('Tuffy_20X32 font. ');
+  UG_ConsoleSetForecolor(C_RED);
   UG_ConsolePutString('High Voltage' + #10);
   UG_ConsolePutString('Rebooting...' + #10);
+  UG_ConsoleSetForecolor(C_DARK_GREEN);
   UG_ConsolePutString('Please, wait...');
 
   {$ifdef FPC}
@@ -141,15 +139,22 @@ begin
   UG_WindowShow(ugWnd);
 
 {$ifdef UG_USE_BTN}
-  UG_ButtonCreate(ugWnd, ugBtn, BTN_ID_0, 10, 10, 200, 50);
-  UG_ButtonSetText(ugWnd, BTN_ID_0, 'Click Me !');
+  UG_ButtonCreate(ugWnd, ugBtn, BTN_ID_0, 10, 10, 210, 50);
+  UG_ButtonSetText(ugWnd, BTN_ID_0, 'Open door');
   UG_ButtonSetForeColor(ugWnd, BTN_ID_0, C_BLACK);
   UG_ButtonSetBackColor(ugWnd, BTN_ID_0, C_GRAY);
   (* UG_ButtonShow(ugWnd, BTN_ID_0); *)
+
+  UG_ButtonCreate(ugWnd, ugBtn2, BTN_ID_1, 210, 10, 410, 50);
+  UG_ButtonSetText(ugWnd, BTN_ID_1, 'Close window');
+  UG_ButtonSetForeColor(ugWnd, BTN_ID_1, C_BLACK);
+  UG_ButtonSetBackColor(ugWnd, BTN_ID_1, C_GRAY);
+  (* UG_ButtonShow(ugWnd, BTN_ID_1); *)
+
 {$endif}
 
 {$ifdef UG_USE_TXB}
-  UG_TextboxCreate(ugWnd, ugTbox, TXB_ID_0, 10, 60, 200, 100);
+  UG_TextboxCreate(ugWnd, ugTbox, TXB_ID_0, 10, 60, 210, 100);
   UG_TextboxSetForeColor(ugWnd, TXB_ID_0, C_BLUE);
   UG_TextboxSetBackColor(ugWnd, TXB_ID_0, C_GHOST_WHITE);
   UG_TextboxSetText(ugWnd, TXB_ID_0, 'UG Text Box');
@@ -160,8 +165,6 @@ begin
   {$ifdef FPC}
     while not PTCCrt.KeyPressed do
     begin
-      //ch := PTCCrt.ReadKey();
-      //if (ch = 'q') or (ch = 'Q') then break;
       if PTCMouse.LPressed then
       begin
         PTCMouse.GetMouseState(mx, my, mbtn);
@@ -180,16 +183,13 @@ begin
   UG_WindowCreate(ugWndReg, @ugObjReg[0], 20, WndCallBack);
   UG_WindowSetTitleText(ugWndReg, 'Registers Window');
   UG_WindowSetTitleTextFont(ugWndReg, @FONT_8X14);
-
   UG_WindowSetForeColor(ugWndReg, black);
   UG_WindowSetBackColor(ugWndReg, C_LIGHT_GRAY);
-
   UG_WindowSetTitleTextColor(ugWndReg, C_BLACK);
   UG_WindowSetTitleColor(ugWndReg, C_MOCCASIN);
-
   UG_WindowResize(ugWndReg, 140, 140, getmaxx - 140, getmaxy - 140);
 
-  UG_ImageCreate(ugWndReg, ugImg, IMG_ID_0, 300, 40, 0, 0);
+  UG_ImageCreate(ugWndReg, ugImg, IMG_ID_0, 10, 10, 0, 0);
   UG_ImageSetBMP(ugWndReg, IMG_ID_0, @logo);
   UG_WindowShow(ugWndReg);
   UG_Update;
