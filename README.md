@@ -6,7 +6,7 @@ Pascal mini GUI - port of Achim Döbler UGUI.
 
 TrueType font converter available (https://github.com/JulStrat/ttf2ugui).
 
-## Cokors
+## Colors
 
 (http://www.rapidtables.com/web/color/RGB_Color.htm).
 
