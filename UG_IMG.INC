@@ -34,6 +34,11 @@ begin
       tmp := p^;
       Inc(p);
       {
+      // RGB565 -> RGB888 using integer approximation
+      r8 = ( r5 << 3 ) | (r5 >> 2);
+      g8 = ( g6 << 2 ) | (g6 >> 4);
+      b8 = ( b5 << 3 ) | (b5 >> 2);      
+      
       (* Convert RGB565 to RGB888 *)
       r := (tmp shr 11) and $1F;
       r := r shl 3;

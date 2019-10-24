@@ -106,10 +106,10 @@ const
   OBJ_ID_17 = 17;
   OBJ_ID_18 = 18;
   OBJ_ID_19 = 19;
-
+(*
   UG_RESULT_FAIL = -1;
   UG_RESULT_OK = 0;
-
+*)
   MSG_TYPE_NONE = 0;
   MSG_TYPE_WINDOW = 1;
   MSG_TYPE_OBJECT = 2;
@@ -117,11 +117,13 @@ const
   TOUCH_STATE_PRESSED = 1;
   TOUCH_STATE_RELEASED = 0;
 
+(*
   OBJ_TYPE_NONE = 0;
   OBJ_TYPE_BUTTON = 1;
   OBJ_TYPE_TEXTBOX = 2;
   OBJ_TYPE_IMAGE = 3;
   OBJ_TYPE_CHECKBOX = 4;
+*)  
 
   (* Standard object events *)
   OBJ_EVENT_NONE = 0;
@@ -185,16 +187,8 @@ const
   DRIVER_FILL_AREA = 2;
 
 type
-
-  (* S_OBJECT = record end; *)
-  PUG_OBJECT = ^UG_OBJECT;
-  PUG_WINDOW = ^UG_WINDOW;
-
-  (* UG_OBJECT = S_OBJECT; *)
-  (* S_WINDOW = record end; *)
-
-  (* UG_WINDOW = S_WINDOW; *)
-  UG_RESULT = UG_S8;
+  { UG_RESULT = UG_S8; }
+  UG_RESULT = (UG_RESULT_OK, UG_RESULT_FAIL);
 
   PUG_COLOR = ^UG_COLOR;
   {$ifdef USE_COLOR_RGB888}
@@ -204,6 +198,8 @@ type
   UG_COLOR = UG_U16;
   {$endif}
 
+  PUG_OBJECT = ^UG_OBJECT;
+  PUG_WINDOW = ^UG_WINDOW;
 
   (* -------------------------------------------------------------------------- *)
   (* -- UNIVERSAL STRUCTURES                                                 -- *)
@@ -230,6 +226,9 @@ type
     h_space: UG_S16;
     v_space: UG_S16;
   end;
+  
+  UG_OBJ_TYPE = (OBJ_TYPE_NONE, OBJ_TYPE_BUTTON, OBJ_TYPE_TEXTBOX,
+    OBJ_TYPE_IMAGE, OBJ_TYPE_CHECKBOX);
 
   (* -------------------------------------------------------------------------------- *)
   (* -- MESSAGE                                                                    -- *)
@@ -270,7 +269,7 @@ type
     update: UG_CALLBACK;  (* pointer to object-specific update function *)
     a_abs: UG_AREA;       (* absolute area of the object                *)
     a_rel: UG_AREA;       (* relative area of the object                *)
-    otype: UG_U8;         (* object type                                *)
+    otype: UG_OBJ_TYPE;   (* object type                                *)
     id: UG_U8;            (* object ID                                  *)
     event: UG_U8;         (* object-specific events                     *)
     Data: PUG_U8;         (* pointer to object-specific data            *)
@@ -1088,7 +1087,7 @@ begin
   _UG_GetFreeObject := nil;
 end;
 
-function _UG_SearchObject(const wnd: UG_WINDOW; otype: UG_U8; id: UG_U8): PUG_OBJECT;
+function _UG_SearchObject(const wnd: UG_WINDOW; otype: UG_OBJ_TYPE; id: UG_U8): PUG_OBJECT;
 var
   i: UG_U8;
   obj: PUG_OBJECT;
@@ -1110,7 +1109,7 @@ begin
   _UG_SearchObject := nil;
 end;
 
-function _UG_DeleteObject(const wnd: UG_WINDOW; otype: UG_U8; id: UG_U8): UG_RESULT;
+function _UG_DeleteObject(const wnd: UG_WINDOW; otype: UG_OBJ_TYPE; id: UG_U8): UG_RESULT;
 var
   obj: PUG_OBJECT;
 begin
@@ -1130,7 +1129,7 @@ begin
       obj^.event := 0;
       obj^.id := 0;
       obj^.touch_state := 0;
-      obj^.otype := 0;
+      obj^.otype := OBJ_TYPE_NONE;
       obj^.update := nil;
       _UG_DeleteObject := UG_RESULT_OK;
     end;
@@ -1271,7 +1270,7 @@ begin
       if obj^.event <> OBJ_EVENT_NONE then
       begin
         msg.src := obj; (* make msg.src PUG_OBJECT ?*)
-        msg.id := obj^.otype;
+        msg.id := Ord(obj^.otype);
         msg.sub_id := obj^.id;
         msg.event := obj^.event;
         wnd^.cb(@msg);
@@ -1289,7 +1288,7 @@ var
 begin
   msg.event:= OBJ_EVENT_PRERENDER; 
   msg.mtype:= MSG_TYPE_OBJECT; 
-  msg.id:= obj^.otype; 
+  msg.id:= Ord(obj^.otype); 
   msg.sub_id:= obj^.id; 
   msg.src:= obj; 
   wnd.cb(@msg); 
@@ -1303,7 +1302,7 @@ var
 begin
   msg.event:= OBJ_EVENT_POSTRENDER; 
   msg.mtype:= MSG_TYPE_OBJECT; 
-  msg.id:= obj^.otype; 
+  msg.id:= Ord(obj^.otype); 
   msg.sub_id:= obj^.id; 
   msg.src:= obj; 
   wnd.cb(@msg); 
