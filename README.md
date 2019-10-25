@@ -2,6 +2,10 @@
 
 Pascal mini GUI - port of Achim Döbler UGUI.
 
+## API
+
+Original [reference guide](https://embeddedlightning.com/download/reference-guide/?wpdmdl=205)
+
 ## Fonts
 
 [TrueType font converter](https://github.com/JulStrat/ttf2ugui) available.

@@ -701,7 +701,6 @@ const
 
 var
   gui: PUG_GUI;
-  msg: UG_MESSAGE;
 
 (* -------------------------------------------------------------------------- *)
 (* -- INTERNAL FUNCTIONS                                                   -- *)
@@ -1246,6 +1245,8 @@ begin
 end;
 
 procedure _UG_HandleEvents(wnd: PUG_WINDOW);
+const
+  msg: UG_MESSAGE = (mtype: MSG_TYPE_NONE; id: 0; sub_id: 0; event: OBJ_EVENT_NONE; src: nil);
 var
   i: UG_U16;
   objcnt: UG_U16;
@@ -1258,18 +1259,18 @@ begin
   obj := wnd^.objlst;
 
   (* Handle window-related events *)
-  (*ToDo*)
+  (* ToDo *)
 
   (* Handle object-related events *)
   for i := 0 to Pred(objcnt) do
   begin
-    (* obj:= (UG_OBJECT* )@wnd.objlst[i]; *)
     objstate := obj^.state;
+    (* ? make one if ? *)
     if ((objstate and OBJ_STATE_FREE) = 0) and ((objstate and OBJ_STATE_VALID) <> 0) then
     begin
       if obj^.event <> OBJ_EVENT_NONE then
       begin
-        msg.src := obj; (* make msg.src PUG_OBJECT ?*)
+        msg.src := obj; (* ? make msg.src PUG_OBJECT ? *)
         msg.id := Ord(obj^.otype);
         msg.sub_id := obj^.id;
         msg.event := obj^.event;
