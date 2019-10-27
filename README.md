@@ -24,6 +24,8 @@ http://www.rapidtables.com/web/color/RGB_Color.htm.
 
 <img src="https://github.com/JulStrat/puGUI/blob/devop/Windows/s3.JPG">
 
+<img src="https://github.com/JulStrat/puGUI/blob/devop/Windows/s4.JPG">
+
 ### Linux 
 
 Raspberry Pi Model B, frame buffer device `/dev/fb0`.
