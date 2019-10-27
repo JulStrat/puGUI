@@ -32,6 +32,7 @@ var
   {$endif}
   {$ifdef UG_USE_TXB}
   ugTbox: UG_TEXTBOX;
+  ugTbox1: UG_TEXTBOX;
   {$endif}
   ugObj: array[0..19] of UG_OBJECT;
 
@@ -41,6 +42,13 @@ var
 
   procedure WndCallBack(msg: PUG_MESSAGE);
   begin
+    if msg^.mtype = MSG_TYPE_OBJECT then
+      if msg^.id = Ord(OBJ_TYPE_BUTTON) then
+        if msg^.sub_id = Ord(BTN_ID_0) then
+          UG.UG_ConsolePutString('BTN_ID_0' + #10)
+        else
+          if msg^.sub_id = Ord(BTN_ID_1) then
+            UG.UG_ConsolePutString('BTN_ID_1' + #10);
   end;
 
   procedure pset(x: UG_S16; y: UG_S16; c: UG_COLOR);
@@ -56,7 +64,7 @@ var
     SetColor(c);
     Line(x1, y1, x2, y2);
     (* SetColor(clr); *)
-    DrawLine := UG_RESULT_OK;
+    DrawLine := RESULT_OK;
   end;
 
   function FillFrame(x1, y1: UG_S16; x2, y2: UG_S16; c: UG_COLOR): UG_RESULT;
@@ -68,7 +76,7 @@ var
     (* SetColor(c); *)
     Bar(x1, y1, x2, y2);
     (* SetColor(clr); *)
-    FillFrame := UG_RESULT_OK;
+    FillFrame := RESULT_OK;
   end;
 
 begin
@@ -145,7 +153,7 @@ begin
   UG_ButtonSetBackColor(ugWnd, BTN_ID_0, C_GRAY);
   (* UG_ButtonShow(ugWnd, BTN_ID_0); *)
 
-  UG_ButtonCreate(ugWnd, ugBtn2, BTN_ID_1, 210, 10, 410, 50);
+  UG_ButtonCreate(ugWnd, ugBtn2, BTN_ID_1, 310, 10, 510, 50);
   UG_ButtonSetText(ugWnd, BTN_ID_1, 'Close window');
   UG_ButtonSetForeColor(ugWnd, BTN_ID_1, C_BLACK);
   UG_ButtonSetBackColor(ugWnd, BTN_ID_1, C_GRAY);
@@ -157,7 +165,13 @@ begin
   UG_TextboxCreate(ugWnd, ugTbox, TXB_ID_0, 10, 60, 210, 100);
   UG_TextboxSetForeColor(ugWnd, TXB_ID_0, C_BLUE);
   UG_TextboxSetBackColor(ugWnd, TXB_ID_0, C_GHOST_WHITE);
-  UG_TextboxSetText(ugWnd, TXB_ID_0, 'UG Text Box');
+  UG_TextboxSetText(ugWnd, TXB_ID_0, 'Closed');
+
+  UG_TextboxCreate(ugWnd, ugTbox1, TXB_ID_1, 310, 60, 510, 100);
+  UG_TextboxSetForeColor(ugWnd, TXB_ID_1, C_BLUE);
+  UG_TextboxSetBackColor(ugWnd, TXB_ID_1, C_GHOST_WHITE);
+  UG_TextboxSetText(ugWnd, TXB_ID_1, 'Opened');
+
 {$endif}
   UG_WindowShow(ugWnd);
   UG_Update;

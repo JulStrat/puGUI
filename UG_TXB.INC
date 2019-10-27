@@ -78,7 +78,7 @@ begin
   obj := _UG_GetFreeObject(wnd);
   if obj = nil then
   begin
-    UG_TextboxCreate := UG_RESULT_FAIL;
+    UG_TextboxCreate := RESULT_FAIL;
     exit;
   end;
   (* Initialize object-specific parameters *)
@@ -111,7 +111,7 @@ begin
   obj^.Data := @txb;
   obj^.state := obj^.state and (not OBJ_STATE_FREE);
   (* Update function: Do your thing! *)
-  UG_TextboxCreate := UG_RESULT_OK;
+  UG_TextboxCreate := RESULT_OK;
 end;
 
 function UG_TextboxDelete(const wnd: UG_WINDOW; id: UG_U8): UG_RESULT;
@@ -128,10 +128,10 @@ begin
   begin
     obj^.state := obj^.state or (OBJ_STATE_VISIBLE);
     obj^.state := obj^.state or (OBJ_STATE_UPDATE or OBJ_STATE_REDRAW);
-    UG_TextboxShow := UG_RESULT_OK;
+    UG_TextboxShow := RESULT_OK;
   end
   else
-    UG_TextboxShow := UG_RESULT_FAIL;
+    UG_TextboxShow := RESULT_FAIL;
 end;
 
 function UG_TextboxHide(const wnd: UG_WINDOW; id: UG_U8): UG_RESULT;
@@ -143,10 +143,10 @@ begin
   begin
     obj^.state := obj^.state and (not OBJ_STATE_VISIBLE);
     obj^.state := obj^.state or OBJ_STATE_UPDATE;
-    UG_TextboxHide := UG_RESULT_OK;
+    UG_TextboxHide := RESULT_OK;
   end
   else
-    UG_TextboxHide := UG_RESULT_FAIL;
+    UG_TextboxHide := RESULT_FAIL;
 end;
 
 (* Text box setters *)
@@ -162,10 +162,10 @@ begin
     txb := PUG_TEXTBOX(obj^.Data);
     txb^.fc := fc;
     obj^.state := obj^.state or (OBJ_STATE_UPDATE or OBJ_STATE_REDRAW);
-    UG_TextboxSetForeColor := UG_RESULT_OK;
+    UG_TextboxSetForeColor := RESULT_OK;
   end
   else
-    UG_TextboxSetForeColor := UG_RESULT_FAIL;
+    UG_TextboxSetForeColor := RESULT_FAIL;
 end;
 
 function UG_TextboxSetBackColor(const wnd: UG_WINDOW; id: UG_U8;
@@ -180,10 +180,10 @@ begin
     txb := PUG_TEXTBOX(obj^.Data);
     txb^.bc := bc;
     obj^.state := obj^.state or (OBJ_STATE_UPDATE or OBJ_STATE_REDRAW);
-    UG_TextboxSetBackColor := UG_RESULT_OK;
+    UG_TextboxSetBackColor := RESULT_OK;
   end
   else
-    UG_TextboxSetBackColor := UG_RESULT_FAIL;
+    UG_TextboxSetBackColor := RESULT_FAIL;
 end;
 
 function UG_TextboxSetText(const wnd: UG_WINDOW; id: UG_U8; str: PChar): UG_RESULT;
@@ -197,10 +197,10 @@ begin
     txb := PUG_TEXTBOX(obj^.Data);
     txb^.str := str;
     obj^.state := obj^.state or (OBJ_STATE_UPDATE or OBJ_STATE_REDRAW);
-    UG_TextboxSetText := UG_RESULT_OK;
+    UG_TextboxSetText := RESULT_OK;
   end
   else
-    UG_TextboxSetText := UG_RESULT_FAIL;
+    UG_TextboxSetText := RESULT_FAIL;
 end;
 
 function UG_TextboxSetFont(const wnd: UG_WINDOW; id: UG_U8; font: PUG_FONT): UG_RESULT;
@@ -214,10 +214,10 @@ begin
     txb := PUG_TEXTBOX(obj^.Data);
     txb^.font := font;
     obj^.state := obj^.state or (OBJ_STATE_UPDATE or OBJ_STATE_REDRAW);
-    UG_TextboxSetFont := UG_RESULT_OK;
+    UG_TextboxSetFont := RESULT_OK;
   end
   else
-    UG_TextboxSetFont := UG_RESULT_FAIL;
+    UG_TextboxSetFont := RESULT_FAIL;
 end;
 
 function UG_TextboxSetHSpace(const wnd: UG_WINDOW; id: UG_U8; hs: UG_S8): UG_RESULT;
@@ -231,10 +231,10 @@ begin
     txb := PUG_TEXTBOX(obj^.Data);
     txb^.h_space := hs;
     obj^.state := obj^.state or (OBJ_STATE_UPDATE or OBJ_STATE_REDRAW);
-    UG_TextboxSetHSpace := UG_RESULT_OK;
+    UG_TextboxSetHSpace := RESULT_OK;
   end
   else
-    UG_TextboxSetHSpace := UG_RESULT_FAIL;
+    UG_TextboxSetHSpace := RESULT_FAIL;
 end;
 
 
@@ -249,10 +249,10 @@ begin
     txb := PUG_TEXTBOX(obj^.Data);
     txb^.v_space := vs;
     obj^.state := obj^.state or (OBJ_STATE_UPDATE or OBJ_STATE_REDRAW);
-    UG_TextboxSetVSpace := UG_RESULT_OK;
+    UG_TextboxSetVSpace := RESULT_OK;
   end
   else
-    UG_TextboxSetVSpace := UG_RESULT_FAIL;
+    UG_TextboxSetVSpace := RESULT_FAIL;
 end;
 
 function UG_TextboxSetAlignment(const wnd: UG_WINDOW; id: UG_U8;
@@ -267,10 +267,10 @@ begin
     txb := PUG_TEXTBOX(obj^.Data);
     txb^.align := align;
     obj^.state := obj^.state or (OBJ_STATE_UPDATE or OBJ_STATE_REDRAW);
-    UG_TextboxSetAlignment := UG_RESULT_OK;
+    UG_TextboxSetAlignment := RESULT_OK;
   end
   else
-    UG_TextboxSetAlignment := UG_RESULT_FAIL;
+    UG_TextboxSetAlignment := RESULT_FAIL;
 end;
 
 (* Text box getters *)

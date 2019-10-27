@@ -110,7 +110,7 @@ begin
   obj := _UG_GetFreeObject(wnd);
   if obj = nil then
   begin
-    UG_ImageCreate := UG_RESULT_FAIL;
+    UG_ImageCreate := RESULT_FAIL;
     exit;
   end;
   (* Initialize object-specific parameters *)
@@ -134,7 +134,7 @@ begin
   obj^.Data := @img;
   (* Update function: Do your thing! *)
   obj^.state := obj^.state and (not OBJ_STATE_FREE);
-  UG_ImageCreate := UG_RESULT_OK;
+  UG_ImageCreate := RESULT_OK;
 end;
 
 function UG_ImageDelete(const wnd: UG_WINDOW; id: UG_U8): UG_RESULT;
@@ -151,10 +151,10 @@ begin
   begin
     obj^.state := obj^.state or (OBJ_STATE_VISIBLE or OBJ_STATE_UPDATE or
       OBJ_STATE_REDRAW);
-    UG_ImageShow := UG_RESULT_OK;
+    UG_ImageShow := RESULT_OK;
   end
   else
-    UG_ImageShow := UG_RESULT_FAIL;
+    UG_ImageShow := RESULT_FAIL;
 end;
 
 function UG_ImageHide(const wnd: UG_WINDOW; id: UG_U8): UG_RESULT;
@@ -166,10 +166,10 @@ begin
   begin
     obj^.state := obj^.state and (not OBJ_STATE_VISIBLE);
     obj^.state := obj^.state or OBJ_STATE_UPDATE;
-    UG_ImageHide := UG_RESULT_OK;
+    UG_ImageHide := RESULT_OK;
   end
   else
-    UG_ImageHide := UG_RESULT_FAIL;
+    UG_ImageHide := RESULT_FAIL;
 end;
 
 function UG_ImageSetBMP(const wnd: UG_WINDOW; id: UG_U8; bmp: PUG_BMP): UG_RESULT;
@@ -184,10 +184,10 @@ begin
     img^.img := PUG_U8(bmp);
     img^.itype := IMG_TYPE_BMP;
     obj^.state := obj^.state or (OBJ_STATE_UPDATE or OBJ_STATE_REDRAW);
-    UG_ImageSetBMP := UG_RESULT_OK;
+    UG_ImageSetBMP := RESULT_OK;
   end
   else
-    UG_ImageSetBMP := UG_RESULT_FAIL;
+    UG_ImageSetBMP := RESULT_FAIL;
 end;
 
 (*

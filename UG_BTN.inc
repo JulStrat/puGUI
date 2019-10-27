@@ -164,7 +164,7 @@ begin
   obj := _UG_GetFreeObject(wnd);
   if obj = nil then
   begin
-    UG_ButtonCreate := UG_RESULT_FAIL;
+    UG_ButtonCreate := RESULT_FAIL;
     exit;
   end;
 
@@ -202,7 +202,7 @@ begin
 
   (* Update function: Do your thing! *)
   obj^.state := obj^.state and (not OBJ_STATE_FREE);
-  UG_ButtonCreate := UG_RESULT_OK;
+  UG_ButtonCreate := RESULT_OK;
 end;
 
 function UG_ButtonDelete(const wnd: UG_WINDOW; id: UG_U8): UG_RESULT;
@@ -219,10 +219,10 @@ begin
   begin
     obj^.state := obj^.state or (OBJ_STATE_VISIBLE or OBJ_STATE_UPDATE or
       OBJ_STATE_REDRAW);
-    UG_ButtonShow := UG_RESULT_OK;
+    UG_ButtonShow := RESULT_OK;
   end
   else
-    UG_ButtonShow := UG_RESULT_FAIL;
+    UG_ButtonShow := RESULT_FAIL;
 end;
 
 function UG_ButtonHide(const wnd: UG_WINDOW; id: UG_U8): UG_RESULT;
@@ -239,10 +239,10 @@ begin
     obj^.event := OBJ_EVENT_NONE;
     obj^.state := obj^.state and (not OBJ_STATE_VISIBLE);
     obj^.state := obj^.state or OBJ_STATE_UPDATE;
-    UG_ButtonHide := UG_RESULT_OK;
+    UG_ButtonHide := RESULT_OK;
   end
   else
-    UG_ButtonHide := UG_RESULT_FAIL;
+    UG_ButtonHide := RESULT_FAIL;
 end;
 
 (* Button setters *)
@@ -259,10 +259,10 @@ begin
     btn := PUG_BUTTON(obj^.Data);
     btn^.fc := fc;
     obj^.state := obj^.state or (OBJ_STATE_UPDATE or OBJ_STATE_REDRAW);
-    UG_ButtonSetForeColor := UG_RESULT_OK;
+    UG_ButtonSetForeColor := RESULT_OK;
   end
   else
-    UG_ButtonSetForeColor := UG_RESULT_FAIL;
+    UG_ButtonSetForeColor := RESULT_FAIL;
 end;
 
 function UG_ButtonSetBackColor(const wnd: UG_WINDOW; id: UG_U8;
@@ -277,10 +277,10 @@ begin
     btn := PUG_BUTTON(obj^.Data);
     btn^.bc := bc;
     obj^.state := obj^.state or (OBJ_STATE_UPDATE or OBJ_STATE_REDRAW);
-    UG_ButtonSetBackColor := UG_RESULT_OK;
+    UG_ButtonSetBackColor := RESULT_OK;
   end
   else
-    UG_ButtonSetBackColor := UG_RESULT_FAIL;
+    UG_ButtonSetBackColor := RESULT_FAIL;
 end;
 
 function UG_ButtonSetAlternateForeColor(const wnd: UG_WINDOW; id: UG_U8;
@@ -295,10 +295,10 @@ begin
     btn := PUG_BUTTON(obj^.Data);
     btn^.afc := afc;
     obj^.state := obj^.state or (OBJ_STATE_UPDATE or OBJ_STATE_REDRAW);
-    UG_ButtonSetAlternateForeColor := UG_RESULT_OK;
+    UG_ButtonSetAlternateForeColor := RESULT_OK;
   end
   else
-    UG_ButtonSetAlternateForeColor := UG_RESULT_FAIL;
+    UG_ButtonSetAlternateForeColor := RESULT_FAIL;
 end;
 
 function UG_ButtonSetAlternateBackColor(const wnd: UG_WINDOW; id: UG_U8;
@@ -313,10 +313,10 @@ begin
     btn := PUG_BUTTON(obj^.Data);
     btn^.abc := abc;
     obj^.state := obj^.state or (OBJ_STATE_UPDATE or OBJ_STATE_REDRAW);
-    UG_ButtonSetAlternateBackColor := UG_RESULT_OK;
+    UG_ButtonSetAlternateBackColor := RESULT_OK;
   end
   else
-    UG_ButtonSetAlternateBackColor := UG_RESULT_FAIL;
+    UG_ButtonSetAlternateBackColor := RESULT_FAIL;
 end;
 
 function UG_ButtonSetText(const wnd: UG_WINDOW; id: UG_U8; str: PChar): UG_RESULT;
@@ -330,10 +330,10 @@ begin
     btn := PUG_BUTTON(obj^.Data);
     btn^.str := str;
     obj^.state := obj^.state or (OBJ_STATE_UPDATE or OBJ_STATE_REDRAW);
-    UG_ButtonSetText := UG_RESULT_OK;
+    UG_ButtonSetText := RESULT_OK;
   end
   else
-    UG_ButtonSetText := UG_RESULT_FAIL;
+    UG_ButtonSetText := RESULT_FAIL;
 end;
 
 function UG_ButtonSetFont(const wnd: UG_WINDOW; id: UG_U8; font: PUG_FONT): UG_RESULT;
@@ -347,10 +347,10 @@ begin
     btn := PUG_BUTTON(obj^.Data);
     btn^.font := font;
     obj^.state := obj^.state or (OBJ_STATE_UPDATE or OBJ_STATE_REDRAW);
-    UG_ButtonSetFont := UG_RESULT_OK;
+    UG_ButtonSetFont := RESULT_OK;
   end
   else
-    UG_ButtonSetFont := UG_RESULT_FAIL;
+    UG_ButtonSetFont := RESULT_FAIL;
 end;
 
 function UG_ButtonSetStyle(const wnd: UG_WINDOW; id: UG_U8; style: UG_U8): UG_RESULT;
@@ -386,10 +386,10 @@ begin
     else
       btn^.style := btn^.style and (not BTN_STYLE_3D);
     obj^.state := obj^.state or (OBJ_STATE_UPDATE or OBJ_STATE_REDRAW);
-    UG_ButtonSetStyle := UG_RESULT_OK;
+    UG_ButtonSetStyle := RESULT_OK;
   end
   else
-    UG_ButtonSetStyle := UG_RESULT_FAIL;
+    UG_ButtonSetStyle := RESULT_FAIL;
 end;
 
 function UG_ButtonSetHSpace(const wnd: UG_WINDOW; id: UG_U8; hs: UG_S8): UG_RESULT;
@@ -403,10 +403,10 @@ begin
     btn := PUG_BUTTON(obj^.Data);
     btn^.h_space := hs;
     obj^.state := obj^.state or (OBJ_STATE_UPDATE or OBJ_STATE_REDRAW);
-    UG_ButtonSetHSpace := UG_RESULT_OK;
+    UG_ButtonSetHSpace := RESULT_OK;
   end
   else
-    UG_ButtonSetHSpace := UG_RESULT_FAIL;
+    UG_ButtonSetHSpace := RESULT_FAIL;
 end;
 
 function UG_ButtonSetVSpace(const wnd: UG_WINDOW; id: UG_U8; vs: UG_S8): UG_RESULT;
@@ -420,10 +420,10 @@ begin
     btn := PUG_BUTTON(obj^.Data);
     btn^.v_space := vs;
     obj^.state := obj^.state or (OBJ_STATE_UPDATE or OBJ_STATE_REDRAW);
-    UG_ButtonSetVSpace := UG_RESULT_OK;
+    UG_ButtonSetVSpace := RESULT_OK;
   end
   else
-    UG_ButtonSetVSpace := UG_RESULT_FAIL;
+    UG_ButtonSetVSpace := RESULT_FAIL;
 end;
 
 function UG_ButtonSetAlignment(const wnd: UG_WINDOW; id: UG_U8;
@@ -438,10 +438,10 @@ begin
     btn := PUG_BUTTON(obj^.Data);
     btn^.align := align;
     obj^.state := obj^.state or (OBJ_STATE_UPDATE or OBJ_STATE_REDRAW);
-    UG_ButtonSetAlignment := UG_RESULT_OK;
+    UG_ButtonSetAlignment := RESULT_OK;
   end
   else
-    UG_ButtonSetAlignment := UG_RESULT_FAIL;
+    UG_ButtonSetAlignment := RESULT_FAIL;
 end;
 
 (* Button getters *)
