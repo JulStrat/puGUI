@@ -65,7 +65,7 @@ uses UG_FONTS, UG_TYPES
 {$endif};
 
 const
-  UG_VERSION = 1;
+  UG_VERSION = '0.1';
 
   {$I UG_CLR.INC}
   (* Alignments *)
@@ -110,10 +110,11 @@ const
   RESULT_FAIL = -1;
   RESULT_OK = 0;
 *)
+(*
   MSG_TYPE_NONE = 0;
   MSG_TYPE_WINDOW = 1;
   MSG_TYPE_OBJECT = 2;
-
+*)
   TOUCH_STATE_PRESSED = 1;
   TOUCH_STATE_RELEASED = 0;
 
@@ -227,6 +228,8 @@ type
     v_space: UG_S16;
   end;
   
+  UG_MSG_TYPE = (MSG_TYPE_NONE, MSG_TYPE_WINDOW, MSG_TYPE_OBJECT);
+
   UG_OBJ_TYPE = (OBJ_TYPE_NONE, OBJ_TYPE_BUTTON, OBJ_TYPE_TEXTBOX,
     OBJ_TYPE_IMAGE, OBJ_TYPE_CHECKBOX);
 
@@ -237,7 +240,7 @@ type
   PUG_MESSAGE = ^UG_MESSAGE;
 
   UG_MESSAGE = record
-    mtype: UG_U8;
+    mtype: UG_MSG_TYPE;
     id: UG_U8;
     sub_id: UG_U8;
     event: UG_U8;
