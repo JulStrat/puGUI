@@ -14,6 +14,13 @@ Original [reference guide](https://embeddedlightning.com/download/reference-guid
 
 http://www.rapidtables.com/web/color/RGB_Color.htm.
 
+## Project structure
+
+UG.PAS - Core.
+UG_BTN.INC - UG_BUTTON implementation.
+UG_TXT.INC - UG_TEXTBOX implementation.
+UG_IMG.INC - UG_IMAGE implementation.
+
 ## Screenshots
 
 ### Windows
