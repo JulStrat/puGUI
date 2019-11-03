@@ -65,7 +65,7 @@ uses UG_FONTS, UG_TYPES
 {$endif};
 
 const
-  UG_VERSION = 1;
+  UG_VERSION = '0.1';
 
   {$I UG_CLR.INC}
   (* Alignments *)
@@ -106,22 +106,25 @@ const
   OBJ_ID_17 = 17;
   OBJ_ID_18 = 18;
   OBJ_ID_19 = 19;
-
-  UG_RESULT_FAIL = -1;
-  UG_RESULT_OK = 0;
-
+(*
+  RESULT_FAIL = -1;
+  RESULT_OK = 0;
+*)
+(*
   MSG_TYPE_NONE = 0;
   MSG_TYPE_WINDOW = 1;
   MSG_TYPE_OBJECT = 2;
-
+*)
   TOUCH_STATE_PRESSED = 1;
   TOUCH_STATE_RELEASED = 0;
 
+(*
   OBJ_TYPE_NONE = 0;
   OBJ_TYPE_BUTTON = 1;
   OBJ_TYPE_TEXTBOX = 2;
   OBJ_TYPE_IMAGE = 3;
   OBJ_TYPE_CHECKBOX = 4;
+*)  
 
   (* Standard object events *)
   OBJ_EVENT_NONE = 0;
@@ -185,16 +188,8 @@ const
   DRIVER_FILL_AREA = 2;
 
 type
-
-  (* S_OBJECT = record end; *)
-  PUG_OBJECT = ^UG_OBJECT;
-  PUG_WINDOW = ^UG_WINDOW;
-
-  (* UG_OBJECT = S_OBJECT; *)
-  (* S_WINDOW = record end; *)
-
-  (* UG_WINDOW = S_WINDOW; *)
-  UG_RESULT = UG_S8;
+  { UG_RESULT = UG_S8; }
+  UG_RESULT = (RESULT_OK, RESULT_FAIL);
 
   PUG_COLOR = ^UG_COLOR;
   {$ifdef USE_COLOR_RGB888}
@@ -204,6 +199,8 @@ type
   UG_COLOR = UG_U16;
   {$endif}
 
+  PUG_OBJECT = ^UG_OBJECT;
+  PUG_WINDOW = ^UG_WINDOW;
 
   (* -------------------------------------------------------------------------- *)
   (* -- UNIVERSAL STRUCTURES                                                 -- *)
@@ -230,6 +227,11 @@ type
     h_space: UG_S16;
     v_space: UG_S16;
   end;
+  
+  UG_MSG_TYPE = (MSG_TYPE_NONE, MSG_TYPE_WINDOW, MSG_TYPE_OBJECT);
+
+  UG_OBJ_TYPE = (OBJ_TYPE_NONE, OBJ_TYPE_BUTTON, OBJ_TYPE_TEXTBOX,
+    OBJ_TYPE_IMAGE, OBJ_TYPE_CHECKBOX);
 
   (* -------------------------------------------------------------------------------- *)
   (* -- MESSAGE                                                                    -- *)
@@ -238,7 +240,7 @@ type
   PUG_MESSAGE = ^UG_MESSAGE;
 
   UG_MESSAGE = record
-    mtype: UG_U8;
+    mtype: UG_MSG_TYPE;
     id: UG_U8;
     sub_id: UG_U8;
     event: UG_U8;
@@ -270,7 +272,7 @@ type
     update: UG_CALLBACK;  (* pointer to object-specific update function *)
     a_abs: UG_AREA;       (* absolute area of the object                *)
     a_rel: UG_AREA;       (* relative area of the object                *)
-    otype: UG_U8;         (* object type                                *)
+    otype: UG_OBJ_TYPE;   (* object type                                *)
     id: UG_U8;            (* object ID                                  *)
     event: UG_U8;         (* object-specific events                     *)
     Data: PUG_U8;         (* pointer to object-specific data            *)
@@ -702,7 +704,6 @@ const
 
 var
   gui: PUG_GUI;
-  msg: UG_MESSAGE;
 
 (* -------------------------------------------------------------------------- *)
 (* -- INTERNAL FUNCTIONS                                                   -- *)
@@ -987,10 +988,10 @@ begin
     (* Draw line *)
     UG_DrawHLine(xs, xe, ys + wnd.title.Height,
       pal_window[11]);
-    _UG_WindowDrawTitle := UG_RESULT_OK;
+    _UG_WindowDrawTitle := RESULT_OK;
   end
   else
-    _UG_WindowDrawTitle := UG_RESULT_FAIL;
+    _UG_WindowDrawTitle := RESULT_FAIL;
 end;
 
 procedure _UG_WindowUpdate(var wnd: UG_WINDOW);
@@ -1065,7 +1066,7 @@ begin
       end;
     end;
   end;
-  _UG_WindowClear := UG_RESULT_OK;
+  _UG_WindowClear := RESULT_OK;
 end;
 
 function _UG_GetFreeObject(const wnd: UG_WINDOW): PUG_OBJECT;
@@ -1088,7 +1089,7 @@ begin
   _UG_GetFreeObject := nil;
 end;
 
-function _UG_SearchObject(const wnd: UG_WINDOW; otype: UG_U8; id: UG_U8): PUG_OBJECT;
+function _UG_SearchObject(const wnd: UG_WINDOW; otype: UG_OBJ_TYPE; id: UG_U8): PUG_OBJECT;
 var
   i: UG_U8;
   obj: PUG_OBJECT;
@@ -1110,7 +1111,7 @@ begin
   _UG_SearchObject := nil;
 end;
 
-function _UG_DeleteObject(const wnd: UG_WINDOW; otype: UG_U8; id: UG_U8): UG_RESULT;
+function _UG_DeleteObject(const wnd: UG_WINDOW; otype: UG_OBJ_TYPE; id: UG_U8): UG_RESULT;
 var
   obj: PUG_OBJECT;
 begin
@@ -1122,7 +1123,7 @@ begin
     (* We dont't want to delete a visible or busy object! *)
     if ((obj^.state and OBJ_STATE_VISIBLE) <> 0) or
       ((obj^.state and OBJ_STATE_UPDATE) <> 0) then
-      _UG_DeleteObject := UG_RESULT_FAIL
+      _UG_DeleteObject := RESULT_FAIL
     else
     begin
       obj^.state := OBJ_STATE_INIT;
@@ -1130,13 +1131,13 @@ begin
       obj^.event := 0;
       obj^.id := 0;
       obj^.touch_state := 0;
-      obj^.otype := 0;
+      obj^.otype := OBJ_TYPE_NONE;
       obj^.update := nil;
-      _UG_DeleteObject := UG_RESULT_OK;
+      _UG_DeleteObject := RESULT_OK;
     end;
   end
   else
-    _UG_DeleteObject := UG_RESULT_FAIL;
+    _UG_DeleteObject := RESULT_FAIL;
 end;
 
 procedure _UG_ProcessTouchData(wnd: PUG_WINDOW);
@@ -1247,6 +1248,8 @@ begin
 end;
 
 procedure _UG_HandleEvents(wnd: PUG_WINDOW);
+const
+  msg: UG_MESSAGE = (mtype: MSG_TYPE_NONE; id: 0; sub_id: 0; event: OBJ_EVENT_NONE; src: nil);
 var
   i: UG_U16;
   objcnt: UG_U16;
@@ -1259,19 +1262,19 @@ begin
   obj := wnd^.objlst;
 
   (* Handle window-related events *)
-  (*ToDo*)
+  (* ToDo *)
 
   (* Handle object-related events *)
   for i := 0 to Pred(objcnt) do
   begin
-    (* obj:= (UG_OBJECT* )@wnd.objlst[i]; *)
     objstate := obj^.state;
+    (* ? make one if ? *)
     if ((objstate and OBJ_STATE_FREE) = 0) and ((objstate and OBJ_STATE_VALID) <> 0) then
     begin
       if obj^.event <> OBJ_EVENT_NONE then
       begin
-        msg.src := obj; (* make msg.src PUG_OBJECT ?*)
-        msg.id := obj^.otype;
+        msg.src := obj; (* ? make msg.src PUG_OBJECT ? *)
+        msg.id := Ord(obj^.otype);
         msg.sub_id := obj^.id;
         msg.event := obj^.event;
         wnd^.cb(@msg);
@@ -1289,7 +1292,7 @@ var
 begin
   msg.event:= OBJ_EVENT_PRERENDER; 
   msg.mtype:= MSG_TYPE_OBJECT; 
-  msg.id:= obj^.otype; 
+  msg.id:= Ord(obj^.otype); 
   msg.sub_id:= obj^.id; 
   msg.src:= obj; 
   wnd.cb(@msg); 
@@ -1303,7 +1306,7 @@ var
 begin
   msg.event:= OBJ_EVENT_POSTRENDER; 
   msg.mtype:= MSG_TYPE_OBJECT; 
-  msg.id:= obj^.otype; 
+  msg.id:= Ord(obj^.otype); 
   msg.sub_id:= obj^.id; 
   msg.src:= obj; 
   wnd.cb(@msg); 
@@ -1393,7 +1396,7 @@ begin
   (* Is hardware acceleration available? *)
   if ((gui^.driver[DRIVER_FILL_FRAME].state and DRIVER_ENABLED) <> 0) and
     (_HW_FILLFRAME(gui^.driver[DRIVER_FILL_FRAME].driver)(x1, y1, x2, y2, c) =
-    UG_RESULT_OK) then
+    RESULT_OK) then
     exit;
 
   for m := y1 to y2 do
@@ -1666,7 +1669,7 @@ begin
   (* Is hardware acceleration available? *)
   if ((gui^.driver[DRIVER_DRAW_LINE].state and DRIVER_ENABLED) <> 0) and
     (_HW_DRAWLINE(gui^.driver[DRIVER_DRAW_LINE].driver)(x1, y, x2, y, c) =
-    UG_RESULT_OK) then
+    RESULT_OK) then
     exit;
 
   for x := x1 to x2 do
@@ -1688,7 +1691,7 @@ begin
   (* Is hardware acceleration available? *)
   if ((gui^.driver[DRIVER_DRAW_LINE].state and DRIVER_ENABLED) <> 0) and
     (_HW_DRAWLINE(gui^.driver[DRIVER_DRAW_LINE].driver)(x, y1, x, y2, c) =
-    UG_RESULT_OK) then
+    RESULT_OK) then
     exit;
 
   for y := y1 to y2 do
@@ -1709,7 +1712,7 @@ begin
   (* Is hardware acceleration available? *)
   if ((gui^.driver[DRIVER_DRAW_LINE].state and DRIVER_ENABLED) <> 0) and
     (_HW_DRAWLINE(gui^.driver[DRIVER_DRAW_LINE].driver)(x1, y1, x2, y2, c) =
-    UG_RESULT_OK) then
+    RESULT_OK) then
     exit;
 
   dx := x2 - x1;
@@ -1901,7 +1904,7 @@ begin
   obj := nil;
   if (objlst = nil) or (objcnt = 0) then
   begin
-    UG_WindowCreate := UG_RESULT_FAIL;
+    UG_WindowCreate := RESULT_FAIL;
     exit;
   end;
   obj := objlst;
@@ -1948,7 +1951,7 @@ begin
   wnd.title.ifc := C_WHITE;
   wnd.title.ibc := C_GRAY;
   wnd.title.Height := 15;
-  UG_WindowCreate := UG_RESULT_OK;
+  UG_WindowCreate := RESULT_OK;
 end;
 
 (* REWRITE *)
@@ -1956,7 +1959,7 @@ function UG_WindowDelete(var wnd: UG_WINDOW): UG_RESULT;
 begin
   if @wnd = gui^.active_window then
   begin
-    UG_WindowDelete := UG_RESULT_FAIL;
+    UG_WindowDelete := RESULT_FAIL;
   end
   else
   if (wnd.state and WND_STATE_VALID) <> 0 then
@@ -1970,10 +1973,10 @@ begin
     wnd.xe := 0;
     wnd.ye := 0;
     wnd.style := 0;
-    UG_WindowDelete := UG_RESULT_OK;
+    UG_WindowDelete := RESULT_OK;
   end
   else
-    UG_WindowDelete := UG_RESULT_FAIL;
+    UG_WindowDelete := RESULT_FAIL;
 end;
 
 function UG_WindowShow(var wnd: UG_WINDOW): UG_RESULT;
@@ -1982,7 +1985,7 @@ begin
   wnd.state := wnd.state or (WND_STATE_VISIBLE or WND_STATE_UPDATE);
   wnd.state := wnd.state and (not WND_STATE_REDRAW_TITLE);
   gui^.next_window := @wnd;
-  UG_WindowShow := UG_RESULT_OK;
+  UG_WindowShow := RESULT_OK;
 end;
 
 (* CHECK RETURN VALUE *)
@@ -2012,7 +2015,7 @@ begin
   begin
     (* If the old window is visible, clear it! *)
     _UG_WindowClear(wnd);
-    UG_WindowHide := UG_RESULT_OK;
+    UG_WindowHide := RESULT_OK;
   end;
 end;
 
@@ -2029,13 +2032,13 @@ begin
     (* Do some checks... *)
     if (xs < 0) or (ys < 0) or (xe > xmax) or (ye > ymax) then
     begin
-      UG_WindowResize := UG_RESULT_FAIL;
+      UG_WindowResize := RESULT_FAIL;
       exit;
     end;
 
     if ((xe - xs) < 10) or ((ye - ys) < 10) then
     begin
-      UG_WindowResize := UG_RESULT_FAIL;
+      UG_WindowResize := RESULT_FAIL;
       exit;
     end;
 
@@ -2059,10 +2062,10 @@ begin
       wnd.state := wnd.state and (not WND_STATE_REDRAW_TITLE);
       wnd.state := wnd.state or WND_STATE_UPDATE;
     end;
-    UG_WindowResize := UG_RESULT_OK;
+    UG_WindowResize := RESULT_OK;
   end
   else
-    UG_WindowResize := UG_RESULT_FAIL;
+    UG_WindowResize := RESULT_FAIL;
 end;
 
 function UG_WindowAlert(var wnd: UG_WINDOW): UG_RESULT;
@@ -2070,10 +2073,10 @@ var
   c: UG_COLOR;
 begin
   c := UG_WindowGetTitleTextColor(wnd);
-  if UG_WindowSetTitleTextColor(wnd, UG_WindowGetTitleColor(wnd)) = UG_RESULT_OK then
+  if UG_WindowSetTitleTextColor(wnd, UG_WindowGetTitleColor(wnd)) = RESULT_OK then
     UG_WindowAlert := UG_WindowSetTitleColor(wnd, c)
   else  
-    UG_WindowAlert := UG_RESULT_FAIL;
+    UG_WindowAlert := RESULT_FAIL;
 end;
 
 (* Windows setters *)
@@ -2084,10 +2087,10 @@ begin
   begin
     wnd.fc := fc;
     wnd.state := wnd.state or WND_STATE_UPDATE;
-    UG_WindowSetForeColor := UG_RESULT_OK;
+    UG_WindowSetForeColor := RESULT_OK;
   end
   else
-    UG_WindowSetForeColor := UG_RESULT_FAIL;
+    UG_WindowSetForeColor := RESULT_FAIL;
 end;
 
 function UG_WindowSetBackColor(var wnd: UG_WINDOW; bc: UG_COLOR): UG_RESULT;
@@ -2096,10 +2099,10 @@ begin
   begin
     wnd.bc := bc;
     wnd.state := wnd.state or WND_STATE_UPDATE;
-    UG_WindowSetBackColor := UG_RESULT_OK;
+    UG_WindowSetBackColor := RESULT_OK;
   end
   else
-    UG_WindowSetBackColor := UG_RESULT_FAIL;
+    UG_WindowSetBackColor := RESULT_FAIL;
 end;
 
 function UG_WindowSetTitleTextColor(var wnd: UG_WINDOW; c: UG_COLOR): UG_RESULT;
@@ -2108,10 +2111,10 @@ begin
   begin
     wnd.title.fc := c;
     wnd.state := wnd.state or (WND_STATE_UPDATE or WND_STATE_REDRAW_TITLE);
-    UG_WindowSetTitleTextColor := UG_RESULT_OK;
+    UG_WindowSetTitleTextColor := RESULT_OK;
   end
   else
-    UG_WindowSetTitleTextColor := UG_RESULT_FAIL;
+    UG_WindowSetTitleTextColor := RESULT_FAIL;
 end;
 
 function UG_WindowSetTitleColor(var wnd: UG_WINDOW; c: UG_COLOR): UG_RESULT;
@@ -2120,10 +2123,10 @@ begin
   begin
     wnd.title.bc := c;
     wnd.state := wnd.state or (WND_STATE_UPDATE or WND_STATE_REDRAW_TITLE);
-    UG_WindowSetTitleColor := UG_RESULT_OK;
+    UG_WindowSetTitleColor := RESULT_OK;
   end
   else
-    UG_WindowSetTitleColor := UG_RESULT_FAIL;
+    UG_WindowSetTitleColor := RESULT_FAIL;
 end;
 
 function UG_WindowSetTitleInactiveTextColor(var wnd: UG_WINDOW; c: UG_COLOR): UG_RESULT;
@@ -2132,10 +2135,10 @@ begin
   begin
     wnd.title.ifc := c;
     wnd.state := wnd.state or (WND_STATE_UPDATE or WND_STATE_REDRAW_TITLE);
-    UG_WindowSetTitleInactiveTextColor := UG_RESULT_OK;
+    UG_WindowSetTitleInactiveTextColor := RESULT_OK;
   end
   else
-    UG_WindowSetTitleInactiveTextColor := UG_RESULT_FAIL;
+    UG_WindowSetTitleInactiveTextColor := RESULT_FAIL;
 end;
 
 function UG_WindowSetTitleInactiveColor(var wnd: UG_WINDOW; c: UG_COLOR): UG_RESULT;
@@ -2144,10 +2147,10 @@ begin
   begin
     wnd.title.ibc := c;
     wnd.state := wnd.state or (WND_STATE_UPDATE or WND_STATE_REDRAW_TITLE);
-    UG_WindowSetTitleInactiveColor := UG_RESULT_OK;
+    UG_WindowSetTitleInactiveColor := RESULT_OK;
   end
   else
-    UG_WindowSetTitleInactiveColor := UG_RESULT_FAIL;
+    UG_WindowSetTitleInactiveColor := RESULT_FAIL;
 end;
 
 function UG_WindowSetTitleText(var wnd: UG_WINDOW; str: PChar): UG_RESULT;
@@ -2156,10 +2159,10 @@ begin
   begin
     wnd.title.str := str;
     wnd.state := wnd.state or (WND_STATE_UPDATE or WND_STATE_REDRAW_TITLE);
-    UG_WindowSetTitleText := UG_RESULT_OK;
+    UG_WindowSetTitleText := RESULT_OK;
   end
   else
-    UG_WindowSetTitleText := UG_RESULT_FAIL;
+    UG_WindowSetTitleText := RESULT_FAIL;
 end;
 
 function UG_WindowSetTitleTextFont(var wnd: UG_WINDOW; font: PUG_FONT): UG_RESULT;
@@ -2173,10 +2176,10 @@ begin
       wnd.title.Height := font^.char_height + 2;
       wnd.state := wnd.state and (not WND_STATE_REDRAW_TITLE);
     end;
-    UG_WindowSetTitleTextFont := UG_RESULT_OK;
+    UG_WindowSetTitleTextFont := RESULT_OK;
   end
   else
-    UG_WindowSetTitleTextFont := UG_RESULT_FAIL;
+    UG_WindowSetTitleTextFont := RESULT_FAIL;
 end;
 
 function UG_WindowSetTitleTextHSpace(var wnd: UG_WINDOW; hs: UG_S8): UG_RESULT;
@@ -2185,10 +2188,10 @@ begin
   begin
     wnd.title.h_space := hs;
     wnd.state := wnd.state or (WND_STATE_UPDATE or WND_STATE_REDRAW_TITLE);
-    UG_WindowSetTitleTextHSpace := UG_RESULT_OK;
+    UG_WindowSetTitleTextHSpace := RESULT_OK;
   end
   else
-    UG_WindowSetTitleTextHSpace := UG_RESULT_FAIL;
+    UG_WindowSetTitleTextHSpace := RESULT_FAIL;
 end;
 
 function UG_WindowSetTitleTextVSpace(var wnd: UG_WINDOW; vs: UG_S8): UG_RESULT;
@@ -2197,10 +2200,10 @@ begin
   begin
     wnd.title.v_space := vs;
     wnd.state := wnd.state or (WND_STATE_UPDATE or WND_STATE_REDRAW_TITLE);
-    UG_WindowSetTitleTextVSpace := UG_RESULT_OK;
+    UG_WindowSetTitleTextVSpace := RESULT_OK;
   end
   else
-    UG_WindowSetTitleTextVSpace := UG_RESULT_FAIL;
+    UG_WindowSetTitleTextVSpace := RESULT_FAIL;
 end;
 
 function UG_WindowSetTitleTextAlignment(var wnd: UG_WINDOW; align: UG_U8): UG_RESULT;
@@ -2209,10 +2212,10 @@ begin
   begin
     wnd.title.align := align;
     wnd.state := wnd.state or (WND_STATE_UPDATE or WND_STATE_REDRAW_TITLE);
-    UG_WindowSetTitleTextAlignment := UG_RESULT_OK;
+    UG_WindowSetTitleTextAlignment := RESULT_OK;
   end
   else
-    UG_WindowSetTitleTextAlignment := UG_RESULT_FAIL;
+    UG_WindowSetTitleTextAlignment := RESULT_FAIL;
 end;
 
 function UG_WindowSetTitleHeight(var wnd: UG_WINDOW; Height: UG_U8): UG_RESULT;
@@ -2222,10 +2225,10 @@ begin
     wnd.title.Height := Height;
     wnd.state := wnd.state and (not WND_STATE_REDRAW_TITLE);
     wnd.state := wnd.state or WND_STATE_UPDATE;
-    UG_WindowSetTitleHeight := UG_RESULT_OK;
+    UG_WindowSetTitleHeight := RESULT_OK;
   end
   else
-    UG_WindowSetTitleHeight := UG_RESULT_FAIL;
+    UG_WindowSetTitleHeight := RESULT_FAIL;
 end;
 
 function UG_WindowSetXStart(var wnd: UG_WINDOW; xs: UG_S16): UG_RESULT;
@@ -2236,7 +2239,7 @@ begin
     UG_WindowSetXStart := UG_WindowResize(wnd, wnd.xs, wnd.ys, wnd.xe, wnd.ye);
   end
   else
-    UG_WindowSetXStart := UG_RESULT_FAIL;
+    UG_WindowSetXStart := RESULT_FAIL;
 end;
 
 function UG_WindowSetYStart(var wnd: UG_WINDOW; ys: UG_S16): UG_RESULT;
@@ -2247,7 +2250,7 @@ begin
     UG_WindowSetYStart := UG_WindowResize(wnd, wnd.xs, wnd.ys, wnd.xe, wnd.ye);
   end
   else
-    UG_WindowSetYStart := UG_RESULT_FAIL;
+    UG_WindowSetYStart := RESULT_FAIL;
 end;
 
 function UG_WindowSetXEnd(var wnd: UG_WINDOW; xe: UG_S16): UG_RESULT;
@@ -2258,7 +2261,7 @@ begin
     UG_WindowSetXEnd := UG_WindowResize(wnd, wnd.xs, wnd.ys, wnd.xe, wnd.ye);
   end
   else
-    UG_WindowSetXEnd := UG_RESULT_FAIL;
+    UG_WindowSetXEnd := RESULT_FAIL;
 end;
 
 function UG_WindowSetYEnd(var wnd: UG_WINDOW; ye: UG_S16): UG_RESULT;
@@ -2269,7 +2272,7 @@ begin
     UG_WindowSetYEnd := UG_WindowResize(wnd, wnd.xs, wnd.ys, wnd.xe, wnd.ye);
   end
   else
-    UG_WindowSetYEnd := UG_RESULT_FAIL;
+    UG_WindowSetYEnd := RESULT_FAIL;
 end;
 
 function UG_WindowSetStyle(var wnd: UG_WINDOW; style: UG_U8): UG_RESULT;
@@ -2286,10 +2289,10 @@ begin
     else
       wnd.style := wnd.style and (not WND_STYLE_SHOW_TITLE);
     wnd.state := wnd.state or WND_STATE_UPDATE;
-    UG_WindowSetStyle := UG_RESULT_OK;
+    UG_WindowSetStyle := RESULT_OK;
   end
   else
-    UG_WindowSetStyle := UG_RESULT_FAIL;
+    UG_WindowSetStyle := RESULT_FAIL;
 end;
 
 (* Window getters *)
@@ -2447,10 +2450,10 @@ begin
     end;
     if (wnd.style and WND_STYLE_SHOW_TITLE) <> 0 then
       a.ys := a.ys + wnd.title.Height + 1;
-    UG_WindowGetArea := UG_RESULT_OK;
+    UG_WindowGetArea := RESULT_OK;
   end
   else
-    UG_WindowGetArea := UG_RESULT_FAIL;
+    UG_WindowGetArea := RESULT_FAIL;
 end;
 
 function UG_WindowGetInnerWidth(const wnd: UG_WINDOW): UG_S16;
